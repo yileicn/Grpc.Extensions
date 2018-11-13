@@ -1,0 +1,114 @@
+﻿@page
+@model FM.GrpcDashboard.Pages.GrpcModel
+@Html.AntiForgeryToken()
+@{
+    ViewData["Title"] = "Grpc";
+}
+@section Scripts {
+    <script>
+        $(function () {
+            $('#serverAddress').change(function () {
+                var val = $('#serverAddress').val();
+                if (val)
+                    $('#frm').get(0).submit();
+            });
+
+            $('.isThrottled').change(function () {
+                var srvName = $(this).attr('serviceName');
+                var methodName = $(this).attr('methodName');
+                var isThrottled = $(this).get(0).checked;
+                $.ajax({
+                    type: 'POST',
+                    url: '/Grpc?handler=Throttle',
+                    data: { serviceName: srvName, methodName: methodName, isThrottled: isThrottled },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    success: function (data) {
+                        if (!data.result) {
+                            alert(data.msg);
+                        }
+                        else {
+                            alert("执行成功");
+                        }
+                        location.reload();
+                    },
+                    error: function () {
+                        alert('发生错误');
+                    }
+                });
+            });
+
+            $('.saveResponseEnable').change(function () {
+                var srvName = $(this).attr('serviceName');
+                var methodName = $(this).attr('methodName');
+                var saveResponseEnable = $(this).get(0).checked;
+                $.ajax({
+                    type: 'POST',
+                    url: '/Grpc?handler=SaveResponse',
+                    data: { serviceName: srvName, methodName: methodName, saveResponseEnable: saveResponseEnable },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    success: function (data) {
+                        if (!data.result) {
+                            alert(data.msg);
+                        }
+                        else {
+                            alert("执行成功");
+                        }
+                        location.reload();
+                    },
+                    error: function () {
+                        alert('发生错误');
+                    }
+                });
+            });
+
+        });
+    </script>
+}
+<div>
+    <div style="margin:20px 0 10px 0">
+        <form id="frm" class="form-inline" method="get">
+            <input type="hidden" name="serviceName" value="@Model.ServiceName" />
+            <div class="form-group">
+                <label>服务启动时间</label>
+                <input type="text" class="form-control" value="@Model.Info.StartTime.FromUnixTimestamp().ToString("yyyy-MM-dd HH:mm:ss")" readonly>
+            </div>
+            <div class="form-group">
+                <select id="serverAddress" name="serverAddress" class="form-control" asp-items="@(Model.AddressInfos?.Select(q => new SelectListItem { Text = q, Value = q, Selected = q == Model.CurrentAddressInfo }))">
+                    <option value="">--服务器--</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    <div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>服务方法</td>
+                    <td>截流</td>
+                    <td>保存响应</td>
+                </tr>
+            </thead>
+            @if (Model.Info != null && Model.Info.MethodInfos != null && Model.Info.MethodInfos.Count > 0)
+            {
+                foreach (var m in Model.Info.MethodInfos.Where(q => !q.Name.StartsWith("/grpc.BaseService")).OrderBy(q => q.Name))
+                {
+                    <tr>
+                        <td><a href="@Url.Content("/Invoke?endpoint=")@($"{Model.CurrentAddressInfo}&methodName={m.Name}")">@m.Name</a></td>
+                        <td>
+                            <input type="checkbox" class="myCheckbox isThrottled" serviceName="@Model.ServiceName" methodName="@m.Name" value="@m.IsThrottled" @(m.IsThrottled ? "checked" : "")>
+                        </td>
+                        <td>
+                            <input type="checkbox" class="myCheckbox saveResponseEnable" serviceName="@Model.ServiceName" methodName="@m.Name" value="@m.SaveResponseEnable" @(m.SaveResponseEnable ? "checked" : "")>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>

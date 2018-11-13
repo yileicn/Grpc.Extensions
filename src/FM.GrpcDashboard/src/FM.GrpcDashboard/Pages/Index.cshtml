@@ -1,0 +1,36 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Consul";
+}
+
+<div>
+    <div style="margin:20px 0 10px 0">
+        <form method="get" class="form-inline">
+            <div class="form-group">
+                <input type="text" name="serviceName" class="form-control" style="width:500px;" value="@ViewData["ServiceName"]" placeholder="consul服务名称或grpc服务地址(如:127.0.0.1:50051)" />
+            </div>
+            <input type="submit" value="Search" class="btn btn-default" />
+        </form>
+    </div>
+    <div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>服务</td>
+                    <td>地址</td>
+                </tr>
+            </thead>
+            @if (Model.ConsulServices != null && Model.ConsulServices.Count > 0)
+            {
+                foreach (var s in Model.ConsulServices.GroupBy(q => q.Service).OrderBy(q => q.Key))
+                {
+                    <tr>
+                        <td><a href=@Url.Content("/Grpc?serviceName=")@s.Key>@s.Key</a></td>
+                        <td>@(string.Join(" / ", s.Select(q => $"{q.Address}:{q.Port}").Distinct().ToList()))</td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>

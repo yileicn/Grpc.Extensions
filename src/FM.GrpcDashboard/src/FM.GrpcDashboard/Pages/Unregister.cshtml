@@ -1,0 +1,24 @@
+﻿@page
+@model UnregisterModel
+@{
+    ViewData["Title"] = "服务反注册";
+}
+@section Scripts {
+    <script>
+        $(function () { 
+            if ('@ViewData["HttpMethod"]' === "post") {
+                alert('反注册成功');
+            }
+        });
+    </script>
+}
+<div>
+    <div style="margin:20px 0 10px 0">
+        <form method="post" class="form-inline">
+            <div class="form-group">
+                <input type="text" name="serviceName" class="form-control" style="width:500px;" value="@ViewData["ServiceName"]" placeholder="consul服务名称" />
+            </div>
+            <input type="submit" value="反注册" class="btn btn-default" />
+        </form>
+    </div>
+</div>

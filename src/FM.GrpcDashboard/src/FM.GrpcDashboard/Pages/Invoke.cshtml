@@ -1,0 +1,44 @@
+﻿@page
+@model FM.GrpcDashboard.Pages.InvokeModel
+@{
+    ViewData["Title"] = "Invoke";
+}
+<h2>在线调试</h2>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function fnSubmit() {
+            $('#btnSubmit').attr({ "disabled": "disabled" });
+            $('#txtResp').text("");
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/invoke")',
+                data: $("#frm").serialize(),
+                success: function (data) {
+                    $('#txtResp').text(data.respJson);
+                    $("#btnSubmit").removeAttr("disabled");
+                },
+                error: function () {
+                    alert('发生错误');
+                    $("#btnSubmit").removeAttr("disabled");
+                }
+            });
+        }
+
+    </script>
+}
+<div>
+    <form id="frm" method="post">
+        <div class="pull-right" style="margin:-45px 0 10px 0;">
+            <input type="hidden" name="Endpoint" value="@Model.Endpoint" />
+            <input type="hidden" name="MethodName" value="@Model.MethodName" />
+            <input id="btnSubmit" style="width:200px;" type="button" value="调用" class="btn btn-success" onclick="fnSubmit();" />
+        </div>
+        <div style="margin:10px auto;">
+            <textarea name="RequestJson" class="form-control" rows="10">@Model.MethodInfoRS?.RequestJson</textarea>
+        </div>
+        <div>
+            <textarea id="txtResp" class="form-control" rows="10" readonly>@Model.MethodInfoRS?.ResponseJson</textarea>
+        </div>
+    </form>
+</div>

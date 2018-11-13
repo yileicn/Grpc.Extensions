@@ -1,0 +1,30 @@
+﻿@page
+@model ConsulSetModel
+@{
+    ViewData["Title"] = "ConsulSet";
+}
+
+@section Scripts {
+    <script>
+        $(function () {
+            if ('@ViewData["HttpMethod"]' === "post") {
+                alert('重新设置consul地址OK');
+            }
+        });
+        $("#nodes").change(function () {
+            $("input[name=addr]").val($(this).val());
+        });
+    </script>
+}
+<div>
+    <div style="margin:20px 0 10px 0">
+        <form method="post" class="form-inline">
+            <div class="form-group">
+                @Html.DropDownList("nodes", ViewData["Nodes"] as SelectList,"请选择",new {@class="form-control" })
+                <input type="text" name="addr" class="form-control" value="@ViewBag.addr" style="width:500px;" placeholder="consul地址" />
+            </div>
+            <input type="submit" value="重新设置consul地址" class="btn btn-default" />
+        </form>
+    </div>
+</div>
+
