@@ -16,6 +16,7 @@ namespace Grpc.Extension
 {
     public static class GrpcExtensions
     {
+        #region 服务端扩展
         /// <summary>
         /// 使用基础过滤器
         /// </summary>
@@ -92,12 +93,11 @@ namespace Grpc.Extension
         /// <param name="maps"></param>
         /// <param name="toConsulTags"></param>
         /// <returns></returns>
-        public static Server UseConsulConfig(this Server server, string consulUrl, string toConsulServiceName, List<ChannelMap> maps = null, params string[] toConsulTags)
+        public static Server UseConsulConfig(this Server server, string consulUrl, string toConsulServiceName, params string[] toConsulTags)
         {
             GrpcExtensionsOptions.Instance.ConsulUrl = consulUrl;
             GrpcExtensionsOptions.Instance.ToConsulServiceName = toConsulServiceName;
             GrpcExtensionsOptions.Instance.ToConsulTags = toConsulTags;
-
             return server;
         }
 
@@ -115,7 +115,7 @@ namespace Grpc.Extension
                 MetaModel.StartTime = DateTime.Now;
                 MetaModel.Ip = ipAndPort.Host;
                 MetaModel.Port = ipAndPort.BoundPort;
-
+                Console.WriteLine($"server listening {MetaModel.Ip}:{MetaModel.Port}");
                 ConsulManager.Instance.RegisterService();
             }
             return server;
@@ -132,5 +132,6 @@ namespace Grpc.Extension
             server.ShutdownAsync().Wait();
             return server;
         }
+        #endregion
     }
 }

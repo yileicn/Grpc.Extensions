@@ -12,18 +12,27 @@ namespace Grpc.Extension.Common
         {
             var chProperty = obj.GetType().GetTypeInfo().GetProperty(name, bindingFlags);
             var chReflector = chProperty.GetReflector();
-            var callHandlers = chReflector.GetValue(obj) as T;
+            var value = chReflector.GetValue(obj) as T;
 
-            return callHandlers;
+            return value;
         }
 
         public static Tuple<T, FieldInfo> GetFieldValue<T>(this object obj, string name, BindingFlags bindingFlags) where T : class
         {
             var chField = obj.GetType().GetTypeInfo().GetField(name, bindingFlags);
             var chReflector = chField.GetReflector();
-            var callHandlers = chReflector.GetValue(obj) as T;
+            var value = chReflector.GetValue(obj) as T;
 
-            return Tuple.Create(callHandlers, chField);
+            return Tuple.Create(value, chField);
+        }
+
+        public static T GetFieldValue<T>(this Type type, string name, BindingFlags bindingFlags) where T : class
+        {
+            var chField = type.GetTypeInfo().GetField(name, bindingFlags);
+            var chReflector = chField.GetReflector();
+            var value = chReflector.GetValue(null) as T;
+
+            return value;
         }
     }
 }

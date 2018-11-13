@@ -52,7 +52,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <None Include="..\..\..\protos\helloworld.proto">
+    <None Include="..\..\protos\helloworld.proto">
       <Link>protos\helloworld.proto</Link>
     </None>
     <None Include="..\generate_protos.bat">

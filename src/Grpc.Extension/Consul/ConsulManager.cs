@@ -14,10 +14,8 @@ namespace Grpc.Extension.Consul
     {
         public bool RegisterEnable => !string.IsNullOrWhiteSpace(GrpcExtensionsOptions.Instance.ConsulUrl) && !string.IsNullOrWhiteSpace(GrpcExtensionsOptions.Instance.ToConsulServiceName);
 
-        Timer _timerTTL;
-        string _guid;
-        string _ip = null;
-        int _port = 0;
+        private Timer _timerTTL;
+        private string _guid;
         private ConcurrentDictionary<string, int> _serviceInvokeIndexs = new ConcurrentDictionary<string, int>();
         private static Lazy<ConsulManager> _instance = new Lazy<ConsulManager>(() => new ConsulManager(), true);
         public static ConsulManager Instance => _instance.Value;
@@ -80,18 +78,6 @@ namespace Grpc.Extension.Consul
 
         private void RegisterServiceCore()
         {
-            _ip = MetaModel.Ip;
-            _port = MetaModel.Port;
-            if (!string.IsNullOrWhiteSpace(GrpcExtensionsOptions.Instance.ConsulSrvEndpoint))
-            {
-                var ipAndPort = GrpcExtensionsOptions.Instance.ConsulSrvEndpoint.Split(":".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                _ip = ipAndPort[0];
-                if (ipAndPort.Length > 1)
-                {
-                    _port = int.Parse(ipAndPort[1]);
-                }
-            }
-
             using (var client = CreateConsulClient())
             {
                 var registration = new AgentServiceRegistration()
@@ -100,8 +86,8 @@ namespace Grpc.Extension.Consul
                     Name = GrpcExtensionsOptions.Instance.ToConsulServiceName,
                     Tags = GrpcExtensionsOptions.Instance.ToConsulTags,
                     EnableTagOverride = true,
-                    Address = _ip,
-                    Port = _port,
+                    Address = MetaModel.Ip,
+                    Port = MetaModel.Port,
                     //因为公司的consul不支持consul主动检查服务状态，所以注释掉
                     //Check = new AgentServiceCheck
                     //{
@@ -142,7 +128,7 @@ namespace Grpc.Extension.Consul
 
         private string GetServiceId()
         {
-            return $"{GrpcExtensionsOptions.Instance.ToConsulServiceName}-{(!string.IsNullOrWhiteSpace(_ip) ? _ip : MetaModel.Ip)}-{(_port > 0 ? _port : MetaModel.Port)}-{_guid}";
+            return $"{GrpcExtensionsOptions.Instance.ToConsulServiceName}-{(MetaModel.Ip)}-{(MetaModel.Port)}-{_guid}";
         }
 
         private string GetTTLCheckId()

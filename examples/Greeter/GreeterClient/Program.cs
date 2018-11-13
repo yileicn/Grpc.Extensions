@@ -13,8 +13,13 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using Grpc.Core;
+using Grpc.Extension;
+using Grpc.Extension.Model;
 using Helloworld;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GreeterClient
 {
@@ -22,15 +27,25 @@ namespace GreeterClient
     {
         public static void Main(string[] args)
         {
-            Channel channel = new Channel("127.0.0.1:50051", ChannelCredentials.Insecure);
+            //使用配制文件
+            var configPath = Path.Combine(AppContext.BaseDirectory, "config");
+            var configBuilder = new ConfigurationBuilder();
+            var config = configBuilder.SetBasePath(configPath).AddJsonFile("appsettings.json", false, true).Build();
+            //使用依赖注入
+            var services = new ServiceCollection()
+                .UseAutoGrpcChannel()//根据consul自动生成channel
+                .AddGrpcClient<Greeter.GreeterClient>(config["ConsulUrl"], "Greeter.Test");//注入grpc client
+            var provider = services.BuildServiceProvider();
+            //从容器获取client
+            var client = provider.GetService<Greeter.GreeterClient>();
+            var user = "you";
 
-            var client = new Greeter.GreeterClient(channel);
-            String user = "you";
+            for (int i = 0; i < 3; i++)
+            {
+                var reply = client.SayHello(new HelloRequest { Name = user + i.ToString() });
+                Console.WriteLine($"Greeting{i.ToString()}: {reply.Message}");
+            }
 
-            var reply = client.SayHello(new HelloRequest { Name = user });
-            Console.WriteLine("Greeting: " + reply.Message);
-
-            channel.ShutdownAsync().Wait();
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }

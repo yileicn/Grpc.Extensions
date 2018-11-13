@@ -13,7 +13,7 @@ namespace Grpc.Extension.Consul
     /// </summary>
     public class ChannelManager
     {
-        private List<ChannelMap> _maps = new List<ChannelMap>();
+        private List<ChannelConfig> _configs = new List<ChannelConfig>();
         private ConcurrentDictionary<string, Channel> _channels = new ConcurrentDictionary<string, Channel>();
 
         private static Lazy<ChannelManager> _instance = new Lazy<ChannelManager>(() => new ChannelManager(), true);
@@ -22,19 +22,21 @@ namespace Grpc.Extension.Consul
         {
         }
 
-        internal void Init(List<ChannelMap> maps)
+        public List<ChannelConfig> Configs
         {
-            _maps = maps;
+            get { return _configs; }
+            set { _configs = value; }
         }
+
         /// <summary>
         /// 根据客户端代理类型获取channel
         /// </summary>
-        public Channel GetChannel(string clientProxyFullName)
+        public Channel GetChannel(string grpcServiceName)
         {
-            var map = _maps?.FirstOrDefault(q => q.ClientProxyFullName == clientProxyFullName?.Trim());
+            var map = _configs?.FirstOrDefault(q => q.GrpcServiceName == grpcServiceName?.Trim());
             if (map == null)
             {
-                LoggerAccessor.Instance.LoggerError?.Invoke(new Exception($"ClientProxyFullName({clientProxyFullName ?? ""}) has not ChannelMap"));
+                LoggerAccessor.Instance.LoggerError?.Invoke(new Exception($"GetChannel({grpcServiceName ?? ""}) has not exists"));
                 return null;
             }
             if (map.UseDirect)

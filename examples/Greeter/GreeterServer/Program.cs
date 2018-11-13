@@ -13,50 +13,40 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Grpc.Core;
-using Grpc.Extension;
-using Helloworld;
+using System.IO;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace GreeterServer
 {
-    class GreeterImpl : Greeter.GreeterBase
-    {
-        // Server side handler of the SayHello RPC
-        public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
-        {
-            return Task.FromResult(new HelloReply { Message = "Hello " + request.Name });
-        }
-    }
-
     class Program
     {
-        const int Port = 50051;
-
         public static void Main(string[] args)
         {
-            var grpcService = Greeter.BindService(new GreeterImpl())
-                .UseBaseInterceptor()//使用基本的过滤器(性能监控,熔断处理)
-                .UseDashBoard()//使用DashBoard,需要使用FM.GrpcDashboard
-                .UseLogger(log =>//使用日志
-                {
-                    log.LoggerMonitor = info => Console.WriteLine(info);
-                    log.LoggerError = exception => Console.WriteLine(exception);
-                });
-            Server server = new Server
+            using (var host = BuildHost(args))
             {
-                Services = { grpcService },
-                Ports = { new ServerPort("192.168.0.137", Port, ServerCredentials.Insecure) }
-            };
-            server.UseConsulConfig("http://192.168.8.6:8500","test")//使用Consul
-                .StartAndRegisterService();//启动服务并注册到consul
+                host.Run();
+            }
+        }
 
-            Console.WriteLine("Greeter server listening on port " + Port);
-            Console.WriteLine("Press any key to stop the server...");
-            Console.ReadKey();
+        public static IHost BuildHost(string[] args)
+        {
+            var configPath = Path.Combine(AppContext.BaseDirectory, "config");
+            var host = new HostBuilder()
+                .ConfigureHostConfiguration(conf =>
+                {
+                    conf.SetBasePath(configPath);
+                    conf.AddJsonFile("hostsettings.json", optional: true);
+                })
+                .ConfigureAppConfiguration((ctx, conf) =>
+                {
+                    conf.SetBasePath(configPath);
+                    conf.AddJsonFile("appsettings.json", false, true);
+                })
+                .ConfigureServices((ctx, services) => { services.AddHostedService<GrpcHostService>(); });
 
-            server.StopAndDeRegisterService();//停止服务并从consul反注册
+            return host.Build();
         }
     }
 }

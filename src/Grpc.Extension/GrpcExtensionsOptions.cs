@@ -19,8 +19,6 @@ namespace Grpc.Extension
 
         public string ConsulUrl { get; set; }
 
-        public string ConsulSrvEndpoint { get; set; }
-
         public string ToConsulServiceName { get; set; }
 
         public string[] ToConsulTags { get; set; }
