@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using System.ServiceModel.Channels;
 using System.Text;
 using Grpc.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Grpc.Extension.Consul
 {
     public class AutoChannelCallInvoker : CallInvoker
     {
+        private ChannelManager _channelManager;
+        public AutoChannelCallInvoker()
+        {
+            this._channelManager = GrpcExtensions.ServiceProvider.GetService<ChannelManager>();
+        }
+
         /// <summary>
         /// Invokes a simple remote call in a blocking fashion.
         /// </summary>
@@ -62,7 +69,7 @@ namespace Grpc.Extension.Consul
                 where TRequest : class
                 where TResponse : class
         {
-            var channel = ChannelManager.Instance.GetChannel(method.ServiceName);
+            var channel = _channelManager.GetChannel(method.ServiceName);
             return new CallInvocationDetails<TRequest, TResponse>(channel, method, host, options);
         }
     }

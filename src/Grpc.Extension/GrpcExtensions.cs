@@ -11,11 +11,14 @@ using Grpc.Extension.Common;
 using Grpc.Extension.Consul;
 using Grpc.Extension.Internal;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Grpc.Extension
 {
     public static class GrpcExtensions
     {
+        internal static IServiceProvider ServiceProvider { get; set; }
+
         #region 服务端扩展
         /// <summary>
         /// 使用基础过滤器
@@ -139,7 +142,9 @@ namespace Grpc.Extension
                 MetaModel.Ip = ipAndPort.Host;
                 MetaModel.Port = ipAndPort.BoundPort;
                 Console.WriteLine($"server listening {MetaModel.Ip}:{MetaModel.Port}");
-                ConsulManager.Instance.RegisterService();
+                //注册到Consul
+                var consulManager = ServiceProvider.GetService<ConsulManager>();
+                consulManager.RegisterService();
             }
             return server;
         }
@@ -151,8 +156,11 @@ namespace Grpc.Extension
         /// <returns></returns>
         public static Server StopAndDeRegisterService(this Server server)
         {
-            ConsulManager.Instance.DeregisterService();
+            //从Consul反注册
+            var consulManager = ServiceProvider.GetService<ConsulManager>();
+            consulManager.DeregisterService();
             server.ShutdownAsync().Wait();
+            
             return server;
         }
         #endregion

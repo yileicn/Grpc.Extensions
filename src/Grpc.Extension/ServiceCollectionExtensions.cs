@@ -1,25 +1,35 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Grpc.Core;
 using Grpc.Extension.Consul;
 using Grpc.Extension.Model;
 using System.Reflection;
 using Grpc.Extension.Common;
+using Grpc.Extension.LoadBalancer;
 
 namespace Grpc.Extension
 {
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// 根据consul自动生成channel
+        /// 添加Grpc扩展
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection UseAutoGrpcChannel(this IServiceCollection services)
+        public static IServiceCollection AddGrpcExtensions(this IServiceCollection services)
         {
             services.AddSingleton<CallInvoker, AutoChannelCallInvoker>();
+            services.AddSingleton<ConsulManager>();
+            services.AddSingleton<ChannelManager>();
+            //默认使用轮询负载策略 后续可扩展其他策略（基于session, 随机等）
+            if (! services.Any(p => p.ServiceType == typeof(ILoadBalancer)))
+            {
+                services.AddSingleton<ILoadBalancer, RoundLoadBalancer>();
+            }
+            GrpcExtensions.ServiceProvider = services.BuildServiceProvider();
             return services;
         }
 
@@ -41,7 +51,8 @@ namespace Grpc.Extension
             };
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             channelConfig.GrpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
-            ChannelManager.Instance.Configs.Add(channelConfig);
+            var channelManager = GrpcExtensions.ServiceProvider.GetService<ChannelManager>();
+            channelManager.Configs.Add(channelConfig);
             return services;
         }
     }

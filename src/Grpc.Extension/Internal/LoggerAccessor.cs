@@ -17,14 +17,17 @@ namespace Grpc.Extension.Internal
         private LoggerAccessor()
         {
         }
+
         /// <summary>
         /// 写调试日志
         /// </summary>
-        public Action<string> LoggerTrace;
+        public Action<string> LoggerTrace { get; set; }
+
         /// <summary>
         /// 写异常日志
         /// </summary>
-        public Action<Exception> LoggerError;
+        public Action<Exception> LoggerError { get; set; }
+
         /// <summary>
         /// 写监控日志
         /// </summary>

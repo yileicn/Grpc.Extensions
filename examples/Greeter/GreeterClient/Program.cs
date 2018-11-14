@@ -33,14 +33,14 @@ namespace GreeterClient
             var config = configBuilder.SetBasePath(configPath).AddJsonFile("appsettings.json", false, true).Build();
             //使用依赖注入
             var services = new ServiceCollection()
-                .UseAutoGrpcChannel()//根据consul自动生成channel
+                .AddGrpcExtensions()//注入GrpcExtensions
                 .AddGrpcClient<Greeter.GreeterClient>(config["ConsulUrl"], "Greeter.Test");//注入grpc client
             var provider = services.BuildServiceProvider();
             //从容器获取client
             var client = provider.GetService<Greeter.GreeterClient>();
             var user = "you";
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var reply = client.SayHello(new HelloRequest { Name = user + i.ToString() });
                 Console.WriteLine($"Greeting{i.ToString()}: {reply.Message}");

@@ -14,9 +14,11 @@
 
 using System;
 using System.IO;
+using Grpc.Extension;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace GreeterServer
 {
@@ -44,8 +46,11 @@ namespace GreeterServer
                     conf.SetBasePath(configPath);
                     conf.AddJsonFile("appsettings.json", false, true);
                 })
-                .ConfigureServices((ctx, services) => { services.AddHostedService<GrpcHostServiceV2>(); });
-
+                .ConfigureServices((ctx, services) =>
+                {
+                    services.AddGrpcExtensions(); //×¢ÈëGrpcExtensions
+                    services.AddHostedService<GrpcHostServiceV2>();
+                });
             return host.Build();
         }
     }

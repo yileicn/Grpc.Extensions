@@ -1,8 +1,6 @@
 ﻿using Consul;
-using Grpc.Core;
 using Grpc.Extension.Model;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -17,30 +15,16 @@ namespace Grpc.Extension.Consul
 
         private Timer _timerTTL;
         private string _guid;
-        private ConcurrentDictionary<string, int> _serviceInvokeIndexs = new ConcurrentDictionary<string, int>();
-        private static Lazy<ConsulManager> _instance = new Lazy<ConsulManager>(() => new ConsulManager(), true);
-        public static ConsulManager Instance => _instance.Value;
-        private ConsulManager()
+
+        public ConsulManager()
         {
-            _guid = Guid.NewGuid().ToString();
+            this._guid = Guid.NewGuid().ToString();
         }
-        /// <summary>
-        /// 根据服务名称返回服务地址
-        /// 默认使用轮转分发策略 后续可扩展其他策略（基于session, 随机等）
-        /// </summary>
-        public string GetEndpoint(string serviceName, string consulUrl = null)
-        {
-            var endpoints = GetEndpointsFromConsul(serviceName, consulUrl);
-            if (endpoints == null || endpoints.Count == 0)
-            {
-                throw new Exception($"gen endpoints from concul of {serviceName} is null");
-            }
-            return SelectBestEndpoint(serviceName, endpoints);
-        }
+
         /// <summary>
         /// 从consul获取可用的节点信息
         /// </summary>
-        private List<string> GetEndpointsFromConsul(string serviceName, string consulUrl = null)
+        public List<string> GetEndpointsFromConsul(string serviceName, string consulUrl = null)
         {
             using (var client = CreateConsulClient(consulUrl))
             {
@@ -48,21 +32,7 @@ namespace Grpc.Extension.Consul
                 return res.Response.Select(q => $"{q.Service.Address}:{q.Service.Port}").ToList();
             }
         }
-        /// <summary>
-        /// 选择一个最佳的节点
-        /// 轮转分发策略
-        /// </summary>
-        private string SelectBestEndpoint(string serviceName, List<string> endpoints)
-        {
-            endpoints = endpoints.OrderBy(q => q).ToList();
-            var index = _serviceInvokeIndexs.GetOrAdd(serviceName, 0);
-            if (index >= endpoints.Count)
-            {
-                index = _serviceInvokeIndexs.AddOrUpdate(serviceName, 0, (k, v) => 0);
-            }
-            _serviceInvokeIndexs.AddOrUpdate(serviceName, index, (k, v) => v + 1);
-            return endpoints.ElementAt(index);
-        }
+        
         /// <summary>
         /// 注册服务到consul
         /// </summary>

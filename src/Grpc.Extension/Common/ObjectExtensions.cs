@@ -57,10 +57,10 @@ namespace Grpc.Extension.Common
                         continue;
                     }
 
-                    //if (GrpcExtensionsOptions.Instance.FillPropExcludePrefixs.Any(q => p.PropertyType.GetTypeInfo().FullName.StartsWith(q)))
-                    //{
-                    //    continue;
-                    //}
+                    if (GrpcExtensionsOptions.Instance.FillPropExcludePrefixs.Any(q => p.PropertyType.GetTypeInfo().FullName.StartsWith(q)))
+                    {
+                        continue;
+                    }
 
                     var subSrc = Activator.CreateInstance(p.PropertyType);
                     subSrc = FillProp(subSrc);
