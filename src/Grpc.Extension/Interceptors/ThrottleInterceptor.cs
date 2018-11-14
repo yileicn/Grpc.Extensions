@@ -7,7 +7,7 @@ using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Extension.Internal;
 
-namespace Grpc.Extension.Filter
+namespace Grpc.Extension.Interceptors
 {
     /// <summary>
     /// 手动熔断处理

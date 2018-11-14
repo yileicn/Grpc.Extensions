@@ -10,7 +10,7 @@ using Grpc.Extension.Internal;
 
 namespace Grpc.Extension.BaseService
 {
-    public class MetaService
+    public class MetaService : IGrpcService
     {
         /// <summary>
         /// 注册grpc服务方法

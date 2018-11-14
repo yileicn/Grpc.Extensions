@@ -1,6 +1,6 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
-using Grpc.Extension.Filter;
+using Grpc.Extension.Interceptors;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,6 +22,7 @@ namespace Grpc.Extension
         /// </summary>
         /// <param name="serverServiceDefinition"></param>
         /// <returns></returns>
+        [Obsolete("请使用ServerBuiler")]
         public static ServerServiceDefinition UseBaseInterceptor(this ServerServiceDefinition serverServiceDefinition)
         {
             //性能监控，熔断处理
@@ -35,6 +36,7 @@ namespace Grpc.Extension
         /// </summary>
         /// <param name="serverServiceDefinition"></param>
         /// <returns></returns>
+        [Obsolete("请使用ServerBuiler")]
         public static ServerServiceDefinition UseDashBoard(this ServerServiceDefinition serverServiceDefinition)
         {
             var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
@@ -45,59 +47,80 @@ namespace Grpc.Extension
             var metaBuilder = ServerServiceDefinition.CreateBuilder();
             metaService.RegisterMethod(metaBuilder);
             var metaCallHandlers = metaBuilder.GetFieldValue<IDictionary>("callHandlers", bindingFlags).Item1;
-            
+
             foreach (DictionaryEntry callHandler in callHandlers)
             {
                 metaCallHandlers.Add(callHandler.Key, callHandler.Value);
             }
             #endregion
 
-            #region 获取Grpc元数据信息
-            foreach (DictionaryEntry callHandler in metaCallHandlers)
-            {
-                //反射获取Handlers
-                var hFiled = callHandler.Value.GetFieldValue<Delegate>("handler", bindingFlags);
-                var handler = hFiled.Item1;
-                var types = hFiled.Item2.DeclaringType.GenericTypeArguments;
-                MetaModel.Methods.Add((new MetaMethodModel
-                {
-                    FullName = callHandler.Key.ToString(),
-                    RequestType = types[0],
-                    ResponseType = types[1],
-                    Handler = handler
-                }));
-            }
-            #endregion
+            //生成Grpc元数据信息
+            GrpcServiceExtension.BuildMeta(metaCallHandlers);
 
             return metaBuilder.Build();
         }
 
         /// <summary>
-        /// 配制日志
+        /// 注入Grpc配制
         /// </summary>
-        /// <param name="serverServiceDefinition"></param>
-        /// <param name="action"></param>
+        /// <param name="server"></param>
+        /// <param name="options"></param>
         /// <returns></returns>
-        public static ServerServiceDefinition UseLogger(this ServerServiceDefinition serverServiceDefinition,Action<LoggerAccessor> action)
+        [Obsolete("请使用ServerBuiler")]
+        public static Server UseGrpcOptions(this Server server, GrpcServerOptions options)
         {
-            action(LoggerAccessor.Instance);
-            return serverServiceDefinition;
+            GrpcServerOptions.Instance.ServiceAddress = options.ServiceAddress;
+            GrpcServerOptions.Instance.ConsulUrl = options.ConsulUrl;
+            GrpcServerOptions.Instance.ConsulServiceName = options.ConsulServiceName;
+            GrpcServerOptions.Instance.ConsulTags = options.ConsulTags;
+
+            //添加服务IPAndPort
+            var ipPort = NetHelper.GetIPAndPort(GrpcServerOptions.Instance.ServiceAddress);
+            server.Ports.Add(new ServerPort(ipPort.Item1, ipPort.Item2, ServerCredentials.Insecure));
+            return server;
         }
 
         /// <summary>
-        /// Consul配制
+        /// 注入GrpcService
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="consulUrl"></param>
-        /// <param name="toConsulServiceName"></param>
-        /// <param name="maps"></param>
-        /// <param name="toConsulTags"></param>
+        /// <param name="grpcServices"></param>
         /// <returns></returns>
-        public static Server UseConsulConfig(this Server server, string consulUrl, string toConsulServiceName, params string[] toConsulTags)
+        public static Server UseGrpcService(this Server server, IEnumerable<IGrpcService> grpcServices)
         {
-            GrpcExtensionsOptions.Instance.ConsulUrl = consulUrl;
-            GrpcExtensionsOptions.Instance.ToConsulServiceName = toConsulServiceName;
-            GrpcExtensionsOptions.Instance.ToConsulTags = toConsulTags;
+            var builder  = ServerServiceDefinition.CreateBuilder();
+            grpcServices.ToList().ForEach(grpc => grpc.RegisterMethod(builder));
+            server.Services.Add(builder.Build());
+            return server;
+        }
+
+        /// <summary>
+        /// 使用DashBoard(提供基础服务)
+        /// </summary>
+        /// <param name="server"></param>
+        /// <returns></returns>
+        public static Server UseDashBoard(this Server server)
+        {
+            foreach (var serverServiceDefinition in server.Services)
+            {
+                var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+                var callHandlers = serverServiceDefinition.GetPropertyValue<IDictionary>("CallHandlers", bindingFlags);
+                GrpcServiceExtension.BuildMeta(callHandlers);
+            }
+            //注册基础服务
+            server.UseGrpcService(new List<IGrpcService> { new CmdService(), new MetaService() });
+            return server;
+        }
+
+        /// <summary>
+        /// 配制日志
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static Server UseLogger(this Server server,Action<LoggerAccessor> action)
+        {
+            action(LoggerAccessor.Instance);
             return server;
         }
 

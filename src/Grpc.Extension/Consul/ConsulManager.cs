@@ -12,7 +12,8 @@ namespace Grpc.Extension.Consul
 {
     public class ConsulManager
     {
-        public bool RegisterEnable => !string.IsNullOrWhiteSpace(GrpcExtensionsOptions.Instance.ConsulUrl) && !string.IsNullOrWhiteSpace(GrpcExtensionsOptions.Instance.ToConsulServiceName);
+        public bool RegisterEnable => !string.IsNullOrWhiteSpace(GrpcServerOptions.Instance.ConsulUrl) && 
+                                      !string.IsNullOrWhiteSpace(GrpcServerOptions.Instance.ConsulServiceName);
 
         private Timer _timerTTL;
         private string _guid;
@@ -83,8 +84,8 @@ namespace Grpc.Extension.Consul
                 var registration = new AgentServiceRegistration()
                 {
                     ID = GetServiceId(),
-                    Name = GrpcExtensionsOptions.Instance.ToConsulServiceName,
-                    Tags = GrpcExtensionsOptions.Instance.ToConsulTags,
+                    Name = GrpcServerOptions.Instance.ConsulServiceName,
+                    Tags = GrpcServerOptions.Instance.ConsulTags?.Split(','),
                     EnableTagOverride = true,
                     Address = MetaModel.Ip,
                     Port = MetaModel.Port,
@@ -123,12 +124,12 @@ namespace Grpc.Extension.Consul
 
         private ConsulClient CreateConsulClient(string consulUrl = null)
         {
-            return new ConsulClient(conf => conf.Address = new Uri(!string.IsNullOrWhiteSpace(consulUrl) ? consulUrl : GrpcExtensionsOptions.Instance.ConsulUrl));
+            return new ConsulClient(conf => conf.Address = new Uri(!string.IsNullOrWhiteSpace(consulUrl) ? consulUrl : GrpcServerOptions.Instance.ConsulUrl));
         }
 
         private string GetServiceId()
         {
-            return $"{GrpcExtensionsOptions.Instance.ToConsulServiceName}-{(MetaModel.Ip)}-{(MetaModel.Port)}-{_guid}";
+            return $"{GrpcServerOptions.Instance.ConsulServiceName}-{(MetaModel.Ip)}-{(MetaModel.Port)}-{_guid}";
         }
 
         private string GetTTLCheckId()
@@ -165,7 +166,7 @@ namespace Grpc.Extension.Consul
             }
             finally
             {
-                _timerTTL.Change(TimeSpan.FromSeconds(GrpcExtensionsOptions.Instance.ConsulTTLIntervalSeconds), TimeSpan.FromSeconds(GrpcExtensionsOptions.Instance.ConsulTTLIntervalSeconds));
+                _timerTTL.Change(TimeSpan.FromSeconds(GrpcServerOptions.Instance.ConsulTTLInterval), TimeSpan.FromSeconds(GrpcServerOptions.Instance.ConsulTTLInterval));
             }
         }
     }

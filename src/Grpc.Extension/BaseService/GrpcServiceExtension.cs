@@ -1,8 +1,11 @@
 ﻿using Grpc.Core;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Grpc.Extension.Common;
+using Grpc.Extension.Model;
 
 namespace Grpc.Extension.BaseService
 {
@@ -13,19 +16,43 @@ namespace Grpc.Extension.BaseService
         /// </summary>
         /// <typeparam name="TRequest"></typeparam>
         /// <typeparam name="TResponse"></typeparam>
-        /// <param name="serverServiceDefinition"></param>
+        /// <param name="builder"></param>
         /// <param name="methodName"></param>
         /// <param name="package"></param>
         /// <param name="srvName"></param>
         /// <param name="mType"></param>
         /// <returns></returns>
-        public static Method<TRequest, TResponse> BuildMethod<TRequest, TResponse>(this ServerServiceDefinition.Builder serverServiceDefinition,
+        public static Method<TRequest, TResponse> BuildMethod<TRequest, TResponse>(this ServerServiceDefinition.Builder builder,
             string methodName, string package, string srvName, MethodType mType = MethodType.Unary)
         {
             string serviceName = $"{package}.{srvName}";
             var request = Marshallers.Create<TRequest>((arg) => ProtobufExtensions.Serialize<TRequest>(arg), data => ProtobufExtensions.Deserialize<TRequest>(data));
             var response = Marshallers.Create<TResponse>((arg) => ProtobufExtensions.Serialize<TResponse>(arg), data => ProtobufExtensions.Deserialize<TResponse>(data));
             return new Method<TRequest, TResponse>(mType, serviceName, methodName, request, response);
+        }
+
+        /// <summary>
+        /// 生成Grpc元数据信息
+        /// </summary>
+        /// <param name="builder"></param>
+        public static void BuildMeta(IDictionary callHandlers)
+        {
+            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            //获取Grpc元数据信息
+            foreach (DictionaryEntry callHandler in callHandlers)
+            {
+                //反射获取Handlers
+                var hFiled = callHandler.Value.GetFieldValue<Delegate>("handler", bindingFlags);
+                var handler = hFiled.Item1;
+                var types = hFiled.Item2.DeclaringType.GenericTypeArguments;
+                MetaModel.Methods.Add((new MetaMethodModel
+                {
+                    FullName = callHandler.Key.ToString(),
+                    RequestType = types[0],
+                    ResponseType = types[1],
+                    Handler = handler
+                }));
+            }
         }
     }
 }

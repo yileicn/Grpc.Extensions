@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GreeterImpl.cs" />
+    <Compile Include="GrpcHostServiceV2.cs" />
     <Compile Include="GrpcHostService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

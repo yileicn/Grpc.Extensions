@@ -44,7 +44,7 @@ namespace GreeterServer
                     conf.SetBasePath(configPath);
                     conf.AddJsonFile("appsettings.json", false, true);
                 })
-                .ConfigureServices((ctx, services) => { services.AddHostedService<GrpcHostService>(); });
+                .ConfigureServices((ctx, services) => { services.AddHostedService<GrpcHostServiceV2>(); });
 
             return host.Build();
         }

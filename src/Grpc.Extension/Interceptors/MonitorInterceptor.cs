@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Grpc.Extension.Common;
 using Grpc.Extension.Internal;
 
-namespace Grpc.Extension.Filter
+namespace Grpc.Extension.Interceptors
 {
     /// <summary>
     /// 性能监控,记录日志

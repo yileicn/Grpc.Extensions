@@ -23,6 +23,14 @@ namespace Grpc.Extension
             return services;
         }
 
+        /// <summary>
+        /// 添加GrpcClient,生成元数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="consulUrl"></param>
+        /// <param name="consulServiceName"></param>
+        /// <returns></returns>
         public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, string consulUrl,string consulServiceName) where T: class
         {
             services.AddSingleton<T>();
