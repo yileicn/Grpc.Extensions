@@ -23,7 +23,7 @@ namespace Grpc.Extension.BaseService
         /// <param name="mType"></param>
         /// <returns></returns>
         public static Method<TRequest, TResponse> BuildMethod<TRequest, TResponse>(this IGrpcService srv,
-            string methodName, string package = "", string srvName = "", MethodType mType = MethodType.Unary)
+            string methodName, string package = null, string srvName = null, MethodType mType = MethodType.Unary)
         {
             var serviceName = srvName ??
                               GrpcExtensionsOptions.Instance.GlobalService ??

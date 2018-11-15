@@ -14,7 +14,7 @@ namespace Grpc.Extension.Interceptors
     /// </summary>
     public class ThrottleInterceptor : ServerInterceptor
     {
-        public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
+        public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
             ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
         {
             if (ThrottleManager.Instance.IsThrottled(context.Method))
@@ -23,7 +23,7 @@ namespace Grpc.Extension.Interceptors
                     StatusCode.Cancelled,
                     Newtonsoft.Json.JsonConvert.SerializeObject(new { Code = 503, Detail = Consts.ThrottledMsg })));
             }
-            return continuation(request, context);
+            return await continuation(request, context);
         }
     }
 }

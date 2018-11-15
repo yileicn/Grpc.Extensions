@@ -16,7 +16,7 @@ namespace Grpc.Extension.Interceptors
     /// </summary>
     public class MonitorInterceptor : ServerInterceptor
     {
-        public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
+        public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
             ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
         {
             var trace = context.RequestHeaders.FirstOrDefault(q => q.Key == Consts.TraceId);
@@ -34,7 +34,7 @@ namespace Grpc.Extension.Interceptors
             };
             try
             {
-                var result = continuation(request, context);
+                var result = await continuation(request, context);
                 model.Status = "ok";
                 
                 model.ResponseData = MonitorManager.Instance.SaveResponseMethodEnable(context.Method) ? result?.ToJson() : Consts.NotResponseMsg;
