@@ -82,7 +82,7 @@ namespace Grpc.Extension
             server.Ports.Add(new ServerPort(ipPort.Item1, ipPort.Item2, ServerCredentials.Insecure));
             return server;
         }
-
+        
         /// <summary>
         /// 注入GrpcService
         /// </summary>
@@ -121,7 +121,7 @@ namespace Grpc.Extension
         /// <param name="server"></param>
         /// <param name="action"></param>
         /// <returns></returns>
-        public static Server UseLogger(this Server server,Action<LoggerAccessor> action)
+        public static Server UseLogger(this Server server, Action<LoggerAccessor> action)
         {
             action(LoggerAccessor.Instance);
             return server;

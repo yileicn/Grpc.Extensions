@@ -16,16 +16,23 @@ namespace Grpc.Extension.BaseService
         /// </summary>
         /// <typeparam name="TRequest"></typeparam>
         /// <typeparam name="TResponse"></typeparam>
-        /// <param name="builder"></param>
+        /// <param name="srv"></param>
         /// <param name="methodName"></param>
         /// <param name="package"></param>
         /// <param name="srvName"></param>
         /// <param name="mType"></param>
         /// <returns></returns>
-        public static Method<TRequest, TResponse> BuildMethod<TRequest, TResponse>(this ServerServiceDefinition.Builder builder,
-            string methodName, string package, string srvName, MethodType mType = MethodType.Unary)
+        public static Method<TRequest, TResponse> BuildMethod<TRequest, TResponse>(this IGrpcService srv,
+            string methodName, string package = "", string srvName = "", MethodType mType = MethodType.Unary)
         {
-            string serviceName = $"{package}.{srvName}";
+            var serviceName = srvName ??
+                              GrpcExtensionsOptions.Instance.GlobalService ??
+                              srv.GetType().Name;
+            var pkg = package ?? GrpcExtensionsOptions.Instance.GlobalPackage;
+            if (!string.IsNullOrWhiteSpace(pkg))
+            {
+                serviceName = $"{pkg}.{serviceName}";
+            }
             var request = Marshallers.Create<TRequest>((arg) => ProtobufExtensions.Serialize<TRequest>(arg), data => ProtobufExtensions.Deserialize<TRequest>(data));
             var response = Marshallers.Create<TResponse>((arg) => ProtobufExtensions.Serialize<TResponse>(arg), data => ProtobufExtensions.Deserialize<TResponse>(data));
             return new Method<TRequest, TResponse>(mType, serviceName, methodName, request, response);

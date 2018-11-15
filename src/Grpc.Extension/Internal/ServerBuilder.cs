@@ -16,7 +16,18 @@ namespace Grpc.Extension.Internal
         private readonly List<ServerServiceDefinition> _serviceDefinitions = new List<ServerServiceDefinition>();
 
         /// <summary>
-        /// 注入Grpc配制
+        /// 注入基本配制
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public ServerBuilder UseOptions(Action<GrpcExtensionsOptions> action)
+        {
+            action(GrpcExtensionsOptions.Instance);
+            return this;
+        }
+
+        /// <summary>
+        /// 注入Grpc,Consul配制
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
@@ -53,6 +64,10 @@ namespace Grpc.Extension.Internal
             return this;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ServerBuilder UseBaseInterceptor()
         {
             //性能监控，熔断处理
@@ -69,6 +84,17 @@ namespace Grpc.Extension.Internal
         public ServerBuilder UseInterceptor(Interceptor interceptor)
         {
             _interceptors.Add(interceptor);
+            return this;
+        }
+
+        /// <summary>
+        /// 配制日志
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public ServerBuilder UseLogger(Action<LoggerAccessor> action)
+        {
+            action(LoggerAccessor.Instance);
             return this;
         }
 

@@ -17,9 +17,9 @@ namespace Grpc.Extension.BaseService
         /// </summary>
         public void RegisterMethod(ServerServiceDefinition.Builder builder)
         {
-            builder.AddMethod(builder.BuildMethod<InfoRQ, InfoRS>("Info", "grpc", Consts.BaseServiceName), Info);
-            builder.AddMethod(builder.BuildMethod<MethodInfoRQ, MethodInfoRS>("MethodInfo", "grpc", Consts.BaseServiceName), MethodInfo);
-            builder.AddMethod(builder.BuildMethod<MethodInvokeRQ, MethodInvokeRS>("MethodInvoke", "grpc", Consts.BaseServiceName), MethodInvoke);
+            builder.AddMethod(this.BuildMethod<InfoRQ, InfoRS>("Info", "grpc", Consts.BaseServiceName), Info);
+            builder.AddMethod(this.BuildMethod<MethodInfoRQ, MethodInfoRS>("MethodInfo", "grpc", Consts.BaseServiceName), MethodInfo);
+            builder.AddMethod(this.BuildMethod<MethodInvokeRQ, MethodInvokeRS>("MethodInvoke", "grpc", Consts.BaseServiceName), MethodInvoke);
 
         }
         /// <summary>

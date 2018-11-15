@@ -16,8 +16,8 @@ namespace Grpc.Extension.BaseService
         /// </summary>
         public void RegisterMethod(ServerServiceDefinition.Builder builder)
         {
-            builder.AddMethod(builder.BuildMethod<AddDelThrottleRQ, CmdRS>("AddDelThrottle", "grpc", Consts.BaseServiceName), AddDelThrottle);
-            builder.AddMethod(builder.BuildMethod<AddDelSaveResponseEnableRQ, CmdRS>("AddDelSaveResponseEnable", "grpc", Consts.BaseServiceName), AddDelSaveResponseEnable);
+            builder.AddMethod(this.BuildMethod<AddDelThrottleRQ, CmdRS>("AddDelThrottle", "grpc", Consts.BaseServiceName), AddDelThrottle);
+            builder.AddMethod(this.BuildMethod<AddDelSaveResponseEnableRQ, CmdRS>("AddDelSaveResponseEnable", "grpc", Consts.BaseServiceName), AddDelSaveResponseEnable);
         }
         /// <summary>
         /// 添加删除截流的method
