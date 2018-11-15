@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Grpc.Extension.Consul
 {
+    /// <summary>
+    /// 自动负载的CallInvoker
+    /// </summary>
     public class AutoChannelCallInvoker : CallInvoker
     {
         private ChannelManager _channelManager;

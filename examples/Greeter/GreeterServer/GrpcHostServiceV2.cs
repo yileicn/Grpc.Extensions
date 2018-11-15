@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Extension;
+using Grpc.Extension.Interceptors;
 using Grpc.Extension.Internal;
 using Helloworld;
 using Microsoft.Extensions.Configuration;
@@ -17,10 +18,12 @@ namespace GreeterServer
     {
         private Server _server;
         private IConfiguration _conf;
+        private IEnumerable<ServerInterceptor> _serverInterceptors;
 
-        public GrpcHostServiceV2(IConfiguration conf)
+        public GrpcHostServiceV2(IConfiguration conf, IEnumerable<ServerInterceptor> serverInterceptors)
         {
             this._conf = conf;
+            this._serverInterceptors = serverInterceptors;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -29,7 +32,7 @@ namespace GreeterServer
             var serverBuilder = new ServerBuilder();
             var serverOptions = _conf.GetSection("GrpcServer").Get<GrpcServerOptions>();
             _server = serverBuilder.UseGrpcOptions(serverOptions)
-                .UseBaseInterceptor() //使用基本的过滤器(性能监控,熔断处理
+                .UseInterceptor(_serverInterceptors) //使用中间件
                 .UseGrpcService(Greeter.BindService(new GreeterImpl()))
                 .UseLogger(log =>//使用日志
                 {

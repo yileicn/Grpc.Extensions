@@ -8,6 +8,7 @@ using Grpc.Extension.Consul;
 using Grpc.Extension.Model;
 using System.Reflection;
 using Grpc.Extension.Common;
+using Grpc.Extension.Interceptors;
 using Grpc.Extension.LoadBalancer;
 
 namespace Grpc.Extension
@@ -21,7 +22,13 @@ namespace Grpc.Extension
         /// <returns></returns>
         public static IServiceCollection AddGrpcExtensions(this IServiceCollection services)
         {
-            services.AddSingleton<CallInvoker, AutoChannelCallInvoker>();
+            //添加服务端中间件
+            services.AddSingleton<ServerInterceptor, MonitorInterceptor>();
+            services.AddSingleton<ServerInterceptor, ThrottleInterceptor>();
+            //添加客户端中间件的CallInvoker
+            services.AddSingleton<AutoChannelCallInvoker>();
+            services.AddSingleton<CallInvoker, InterceptorCallInvoker>();
+            //添加Consul,Channel的Manager
             services.AddSingleton<ConsulManager>();
             services.AddSingleton<ChannelManager>();
             //默认使用轮询负载策略 后续可扩展其他策略（基于session, 随机等）

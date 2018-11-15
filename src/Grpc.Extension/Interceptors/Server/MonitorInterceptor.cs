@@ -14,7 +14,7 @@ namespace Grpc.Extension.Interceptors
     /// <summary>
     /// 性能监控,记录日志
     /// </summary>
-    public class MonitorInterceptor : Interceptor
+    public class MonitorInterceptor : ServerInterceptor
     {
         public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
             ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)

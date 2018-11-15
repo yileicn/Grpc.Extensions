@@ -12,7 +12,7 @@ namespace Grpc.Extension.Internal
 {
     public class ServerBuilder
     {
-        private readonly List<Interceptor> _interceptors = new List<Interceptor>();
+        private readonly List<ServerInterceptor> _interceptors = new List<ServerInterceptor>();
         private readonly List<ServerServiceDefinition> _serviceDefinitions = new List<ServerServiceDefinition>();
 
         /// <summary>
@@ -65,25 +65,24 @@ namespace Grpc.Extension.Internal
         }
 
         /// <summary>
-        /// 
+        /// 注入服务端中间件
         /// </summary>
+        /// <param name="interceptor"></param>
         /// <returns></returns>
-        public ServerBuilder UseBaseInterceptor()
+        public ServerBuilder UseInterceptor(ServerInterceptor interceptor)
         {
-            //性能监控，熔断处理
-            this.UseInterceptor(new MonitorInterceptor())//性能监控
-                .UseInterceptor(new ThrottleInterceptor());//熔断处理
+            _interceptors.Add(interceptor);
             return this;
         }
 
         /// <summary>
-        /// 注入中间件
+        /// 注入服务端中间件
         /// </summary>
-        /// <param name="interceptor"></param>
+        /// <param name="interceptors"></param>
         /// <returns></returns>
-        public ServerBuilder UseInterceptor(Interceptor interceptor)
+        public ServerBuilder UseInterceptor(IEnumerable<ServerInterceptor> interceptors)
         {
-            _interceptors.Add(interceptor);
+            _interceptors.AddRange(interceptors);
             return this;
         }
 

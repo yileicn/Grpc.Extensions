@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using Grpc.Core;
 using Grpc.Extension;
+using Grpc.Extension.Interceptors;
 using Grpc.Extension.Model;
 using Helloworld;
 using Microsoft.Extensions.Configuration;
@@ -34,8 +35,10 @@ namespace GreeterClient
             //使用依赖注入
             var services = new ServiceCollection()
                 .AddGrpcExtensions()//注入GrpcExtensions
+                .AddSingleton<ClientInterceptor>(new ClientCallTimeout(10))//注入客户端中间件
                 .AddGrpcClient<Greeter.GreeterClient>(config["ConsulUrl"], "Greeter.Test");//注入grpc client
             var provider = services.BuildServiceProvider();
+            
             //从容器获取client
             var client = provider.GetService<Greeter.GreeterClient>();
             var user = "you";
