@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Extension;
-using Grpc.Extension.Model;
 using Helloworld;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;

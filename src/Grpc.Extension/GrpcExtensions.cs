@@ -121,6 +121,7 @@ namespace Grpc.Extension
         /// <param name="server"></param>
         /// <param name="action"></param>
         /// <returns></returns>
+        [Obsolete("请使用ServerBuiler")]
         public static Server UseLogger(this Server server, Action<LoggerAccessor> action)
         {
             action(LoggerAccessor.Instance);
