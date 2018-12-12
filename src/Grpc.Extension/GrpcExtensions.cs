@@ -82,13 +82,14 @@ namespace Grpc.Extension
             server.Ports.Add(new ServerPort(ipPort.Item1, ipPort.Item2, ServerCredentials.Insecure));
             return server;
         }
-        
+
         /// <summary>
         /// 注入GrpcService
         /// </summary>
         /// <param name="server"></param>
         /// <param name="grpcServices"></param>
         /// <returns></returns>
+        [Obsolete("请使用ServerBuiler")]
         public static Server UseGrpcService(this Server server, IEnumerable<IGrpcService> grpcServices)
         {
             var builder  = ServerServiceDefinition.CreateBuilder();
@@ -102,6 +103,7 @@ namespace Grpc.Extension
         /// </summary>
         /// <param name="server"></param>
         /// <returns></returns>
+        [Obsolete("请使用ServerBuiler")]
         public static Server UseDashBoard(this Server server)
         {
             foreach (var serverServiceDefinition in server.Services)

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Extension.BaseService;
+using Grpc.Extension.Common;
 using Grpc.Extension.Interceptors;
 using Grpc.Extension.Model;
 
@@ -61,6 +64,23 @@ namespace Grpc.Extension.Internal
             var builder = ServerServiceDefinition.CreateBuilder();
             grpcServices.ToList().ForEach(grpc => grpc.RegisterMethod(builder));
             _serviceDefinitions.Add(builder.Build());
+            return this;
+        }
+
+        /// <summary>
+        /// 使用DashBoard(提供基础服务)
+        /// </summary>
+        /// <returns></returns>
+        public ServerBuilder UseDashBoard()
+        {
+            foreach (var serverServiceDefinition in _serviceDefinitions)
+            {
+                var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+                var callHandlers = serverServiceDefinition.GetPropertyValue<IDictionary>("CallHandlers", bindingFlags);
+                GrpcServiceExtension.BuildMeta(callHandlers);
+            }
+            //注册基础服务
+            UseGrpcService(new List<IGrpcService> { new CmdService(), new MetaService() });
             return this;
         }
 

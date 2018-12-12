@@ -34,15 +34,15 @@ namespace GreeterServer
             _server = serverBuilder.UseGrpcOptions(serverOptions)
                 .UseInterceptor(_serverInterceptors) //使用中间件
                 .UseGrpcService(Greeter.BindService(new GreeterImpl()))
+                .UseDashBoard()//使用DashBoard,需要使用FM.GrpcDashboard网站
                 .UseLogger(log =>//使用日志
                 {
                     log.LoggerMonitor = info => Console.WriteLine(info);
                     log.LoggerError = exception => Console.WriteLine(exception);
                 })
                 .Build();
-            //使用DashBoard，日志，注册consul
-            _server.UseDashBoard()//使用DashBoard,需要使用FM.GrpcDashboard网站
-               .StartAndRegisterService();//启动服务并注册到consul
+            //启动服务并注册到consul
+            _server.StartAndRegisterService();
 
             return Task.CompletedTask;
         }
