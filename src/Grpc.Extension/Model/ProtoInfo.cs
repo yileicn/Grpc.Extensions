@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using Grpc.Core;
+using ProtoBuf;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -29,6 +30,8 @@ namespace Grpc.Extension.Model
         {
             get { return "/" + ServiceName + "/" + MethodName; }
         }
+
+        public MethodType MethodType { get; set; }
 
         public static ConcurrentDictionary<string, string> Protos = new ConcurrentDictionary<string, string>();
     }

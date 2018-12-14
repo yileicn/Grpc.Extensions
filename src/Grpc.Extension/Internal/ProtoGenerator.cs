@@ -116,7 +116,7 @@ namespace Grpc.Extension.Internal
         /// <summary>
         /// 生成grpc的service的proto内容
         /// </summary>
-        private static string GenGrpcServiceProto(string msgProtoFile, string pkgName, string srvName, List<Tuple<string, string, string>> methodInfo)
+        private static string GenGrpcServiceProto(string msgProtoFile, string pkgName, string srvName, List<ProtoMethodInfo> methodInfo)
         {
             var sb = new StringBuilder();
             sb.AppendLine("syntax = \"proto3\";");
@@ -133,7 +133,26 @@ namespace Grpc.Extension.Internal
             sb.AppendLine("service " + srvName + " {");
 
             var template = @"   rpc {0}({1}) returns({2})";
-            methodInfo.ForEach(q => sb.AppendLine(Environment.NewLine + string.Format(template, q.Item1, q.Item2, q.Item3) + ";"));
+            methodInfo.ForEach(q => {
+                var requestName = q.RequestName;
+                var responseName = q.ResponseName;
+                switch (q.MethodType)
+                {
+                    case Core.MethodType.Unary:
+                        break;
+                    case Core.MethodType.ClientStreaming:
+                        requestName = "stream " + requestName;
+                        break;
+                    case Core.MethodType.ServerStreaming:
+                        responseName = "stream " + responseName;
+                        break;
+                    case Core.MethodType.DuplexStreaming:
+                        requestName = "stream " + requestName;
+                        responseName = "stream " + responseName;
+                        break;
+                }
+                sb.AppendLine(Environment.NewLine + string.Format(template, q.MethodName, requestName, responseName) + ";");
+            });
 
             sb.AppendLine("}");
             return sb.ToString();
@@ -183,7 +202,7 @@ namespace Grpc.Extension.Internal
                 {
                     File.Delete(protoPath);
                 }
-                var methodInfos = grp.ToList().Select(m => Tuple.Create(m.MethodName, m.RequestName, m.ResponseName)).ToList();
+                var methodInfos = grp.ToList();
                 var srvProtoContent = GenGrpcServiceProto(msgProto, pkg, srv, methodInfos);
                 File.AppendAllText(protoPath, srvProtoContent);
                 #endregion

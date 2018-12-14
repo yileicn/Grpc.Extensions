@@ -42,7 +42,8 @@ namespace Grpc.Extension.BaseService
                     ServiceName = serviceName,
                     MethodName = methodName,
                     RequestName = typeof(TRequest).Name,
-                    ResponseName = typeof(TResponse).Name
+                    ResponseName = typeof(TResponse).Name,
+                    MethodType = mType
                 });
                 ProtoGenerator.AddProto<TRequest>(typeof(TRequest).Name);
                 ProtoGenerator.AddProto<TResponse>(typeof(TResponse).Name);
