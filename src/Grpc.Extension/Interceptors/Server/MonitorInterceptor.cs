@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Extension.Common;
 using Grpc.Extension.Internal;
+using Grpc.Core.Utils;
 
 namespace Grpc.Extension.Interceptors
 {
@@ -16,8 +17,8 @@ namespace Grpc.Extension.Interceptors
     /// </summary>
     public class MonitorInterceptor : ServerInterceptor
     {
-        public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
-            ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
+        private async Task<TResponse> Monitor<TRequest, TResponse>(object request, 
+            ServerCallContext context, Delegate continuation, object response = null)
         {
             var trace = context.RequestHeaders.FirstOrDefault(q => q.Key == Consts.TraceId);
             if (trace == null)
@@ -29,17 +30,38 @@ namespace Grpc.Extension.Interceptors
             {
                 ClientIp = context.Peer,
                 RequestUrl = context.Method,
-                RequestData = request?.ToJson(),
+                //RequestData = request?.ToJson(),
                 TraceId = trace.Value
             };
+            if (request is TRequest)
+            {
+                model.RequestData = request?.ToJson();
+            }
+            else if(request is IAsyncStreamReader<TRequest>)
+            {
+                var requests = new List<TRequest>();
+                //await requestStream.ForEachAsync(req=> {
+                //    requests.Add(req);
+                //    return Task.CompletedTask;
+                //});
+                model.RequestData = requests?.ToJson();
+            }
             try
             {
-                var result = await continuation(request, context);
-                model.Status = "ok";
-                
-                model.ResponseData = MonitorManager.Instance.SaveResponseMethodEnable(context.Method) ? result?.ToJson() : Consts.NotResponseMsg;
+                if (response == null)
+                {
+                    var result = await (continuation.DynamicInvoke(request, context) as Task<TResponse>);
+                    model.Status = "ok";
 
-                return result;
+                    model.ResponseData = MonitorManager.Instance.SaveResponseMethodEnable(context.Method) ? result?.ToJson() : Consts.NotResponseMsg;
+
+                    return result;
+                }
+                else
+                {
+                    await (continuation.DynamicInvoke(request, context) as Task);
+                    return default(TResponse);
+                }
             }
             catch (Exception ex)
             {
@@ -66,5 +88,26 @@ namespace Grpc.Extension.Interceptors
             }
         }
 
+        public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
+            ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
+        {
+            return await Monitor<TRequest, TResponse>(request, context, continuation);
+        }
+
+        public override async Task<TResponse> ClientStreamingServerHandler<TRequest, TResponse>(IAsyncStreamReader<TRequest> requestStream,
+            ServerCallContext context, ClientStreamingServerMethod<TRequest, TResponse> continuation)
+        {
+            return await Monitor<TRequest, TResponse>(requestStream, context, continuation);
+        }
+
+        public override async Task ServerStreamingServerHandler<TRequest, TResponse>(TRequest request, IServerStreamWriter<TResponse> responseStream, ServerCallContext context, ServerStreamingServerMethod<TRequest, TResponse> continuation)
+        {
+            await Monitor<TRequest, TResponse>(request, context, continuation,responseStream);
+        }
+
+        public override async Task DuplexStreamingServerHandler<TRequest, TResponse>(IAsyncStreamReader<TRequest> requestStream, IServerStreamWriter<TResponse> responseStream, ServerCallContext context, DuplexStreamingServerMethod<TRequest, TResponse> continuation)
+        {
+            await Monitor<TRequest, TResponse>(requestStream, context, continuation, responseStream);
+        }
     }
 }
