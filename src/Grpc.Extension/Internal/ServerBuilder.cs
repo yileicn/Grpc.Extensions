@@ -68,6 +68,17 @@ namespace Grpc.Extension.Internal
         }
 
         /// <summary>
+        /// CodeFirst生成proto文件
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        public ServerBuilder UseProtoGenerate(string dir)
+        {
+            ProtoGenerator.Gen(dir);
+            return this;
+        }
+
+        /// <summary>
         /// 使用DashBoard(提供基础服务)
         /// </summary>
         /// <returns></returns>

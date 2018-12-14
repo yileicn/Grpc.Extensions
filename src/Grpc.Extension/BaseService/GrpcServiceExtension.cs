@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Grpc.Extension.Common;
 using Grpc.Extension.Model;
+using Grpc.Extension.Internal;
 
 namespace Grpc.Extension.BaseService
 {
@@ -33,6 +34,20 @@ namespace Grpc.Extension.BaseService
             {
                 serviceName = $"{pkg}.{serviceName}";
             }
+            #region 为生成proto收集信息
+            if (!(srv is IGrpcBaseService) || GrpcExtensionsOptions.Instance.GenBaseServiceProtoEnable)
+            {
+                ProtoInfo.Methods.Add(new ProtoMethodInfo
+                {
+                    ServiceName = serviceName,
+                    MethodName = methodName,
+                    RequestName = typeof(TRequest).Name,
+                    ResponseName = typeof(TResponse).Name
+                });
+                ProtoGenerator.AddProto<TRequest>(typeof(TRequest).Name);
+                ProtoGenerator.AddProto<TResponse>(typeof(TResponse).Name);
+            }
+            #endregion
             var request = Marshallers.Create<TRequest>((arg) => ProtobufExtensions.Serialize<TRequest>(arg), data => ProtobufExtensions.Deserialize<TRequest>(data));
             var response = Marshallers.Create<TResponse>((arg) => ProtobufExtensions.Serialize<TResponse>(arg), data => ProtobufExtensions.Deserialize<TResponse>(data));
             return new Method<TRequest, TResponse>(mType, serviceName, methodName, request, response);
@@ -58,7 +73,7 @@ namespace Grpc.Extension.BaseService
                     RequestType = types[0],
                     ResponseType = types[1],
                     Handler = handler
-                }));
+                }));                
             }
         }
     }

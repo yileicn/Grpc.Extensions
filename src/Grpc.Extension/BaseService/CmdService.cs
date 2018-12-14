@@ -9,7 +9,7 @@ namespace Grpc.Extension.BaseService
     /// <summary>
     /// 执行命令的服务
     /// </summary>
-    public class CmdService : IGrpcService
+    public class CmdService : IGrpcBaseService
     {
         /// <summary>
         /// 注册服务方法
