@@ -14,6 +14,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Extension;
 using Grpc.Extension.Interceptors;
@@ -41,6 +42,8 @@ namespace GreeterClient
             
             //´ÓÈÝÆ÷»ñÈ¡client
             var client = provider.GetService<Greeter.GreeterClient>();
+            //StreamTest(client).Wait();
+
             var user = "you";
 
             for (int i = 0; i < 10; i++)
@@ -51,6 +54,18 @@ namespace GreeterClient
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
+        }
+
+        public static async Task StreamTest(Greeter.GreeterClient client)
+        {
+            using (var stream = client.SayHelloStream())
+            {
+                await stream.RequestStream.WriteAsync(new HelloRequest() { Name = "yilei" });
+                await stream.RequestStream.WriteAsync(new HelloRequest() { Name = "zhangshan" });
+                await stream.RequestStream.CompleteAsync();
+                Console.WriteLine("GreetingStream:" + stream.ResponseAsync.Result.Message);
+            }
+                
         }
     }
 }
