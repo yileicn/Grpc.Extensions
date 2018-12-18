@@ -37,8 +37,8 @@ namespace MathServer
             var serverOptions = _conf.GetSection("GrpcServer").Get<GrpcServerOptions>();
             _server = serverBuilder
                 .UseOptions(options => {
-                    options.GlobalPackage = "Math";
-                    options.ProtoNameSpace = "Math";
+                    //options.GlobalPackage = "MathGrpc";
+                    options.ProtoNameSpace = "MathGrpc";
                 })
                 .UseGrpcOptions(serverOptions)
                 .UseInterceptor(_serverInterceptors) //使用中间件

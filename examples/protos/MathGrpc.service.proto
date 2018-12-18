@@ -1,0 +1,13 @@
+syntax = "proto3";
+option csharp_namespace = "MathGrpc";
+import "MathGrpc.message.proto";
+
+
+service MathGrpc {
+
+   rpc Add(AddRequest) returns(IntMessage);
+
+   rpc Sub(SubRequest) returns(IntMessage);
+
+   rpc Sum(stream SumRequest) returns(IntMessage);
+}

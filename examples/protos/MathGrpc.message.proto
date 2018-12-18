@@ -1,0 +1,22 @@
+syntax = "proto3";
+option csharp_namespace = "MathGrpc";
+
+
+
+message AddRequest {
+   int32 Num1 = 1;
+   int32 Num2 = 2;
+}
+
+message SubRequest {
+   int32 Num1 = 1;
+   int32 Num2 = 2;
+}
+
+message SumRequest {
+   int32 Num = 1;
+}
+
+message IntMessage {
+   int32 Value = 1;
+}

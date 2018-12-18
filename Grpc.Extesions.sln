@@ -23,7 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeFirst", "CodeFirst", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathServer", "examples\CodeFirst\MathServer\MathServer.csproj", "{D8942E3B-2EE2-454E-85D6-A87ED1BE3907}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math", "examples\CodeFirst\Math\Math.csproj", "{4BDF0944-F493-4D6B-BC30-A7C349E7080E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Math", "examples\CodeFirst\Math\Math.csproj", "{4BDF0944-F493-4D6B-BC30-A7C349E7080E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathClient", "examples\CodeFirst\MathClient\MathClient.csproj", "{EE3555D8-A6BA-4340-9F56-121B24C48E0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{4BDF0944-F493-4D6B-BC30-A7C349E7080E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BDF0944-F493-4D6B-BC30-A7C349E7080E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BDF0944-F493-4D6B-BC30-A7C349E7080E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE3555D8-A6BA-4340-9F56-121B24C48E0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE3555D8-A6BA-4340-9F56-121B24C48E0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE3555D8-A6BA-4340-9F56-121B24C48E0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE3555D8-A6BA-4340-9F56-121B24C48E0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +78,7 @@ Global
 		{BE41EB1C-CB4F-4EDD-9E47-17D54308B014} = {4C928E46-8040-4B94-B73F-4D4412741F83}
 		{D8942E3B-2EE2-454E-85D6-A87ED1BE3907} = {BE41EB1C-CB4F-4EDD-9E47-17D54308B014}
 		{4BDF0944-F493-4D6B-BC30-A7C349E7080E} = {BE41EB1C-CB4F-4EDD-9E47-17D54308B014}
+		{EE3555D8-A6BA-4340-9F56-121B24C48E0C} = {BE41EB1C-CB4F-4EDD-9E47-17D54308B014}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89FBBEF6-DF3C-43D4-BD32-075D5E3D14F2}
