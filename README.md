@@ -17,6 +17,7 @@
 -  [gRPC - An RPC library and framework](https://github.com/grpc/grpc)
 -  [Consul - Service Discovery and Configuration Made Easy](https://consul.io)
 -  [Polly - Polly is a .NET resilience and transient-fault-handling library](https://github.com/App-vNext/Polly)
+-  [OpenTracing(Jaeger) - a Distributed Tracing System](https://github.com/jaegertracing/jaeger)
 
 ## 感谢
 感谢以下的项目,排名不分先后
