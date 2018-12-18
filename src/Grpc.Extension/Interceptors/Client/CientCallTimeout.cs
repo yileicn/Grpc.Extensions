@@ -25,7 +25,7 @@ namespace Grpc.Extension.Interceptors
         {
             var callOptions = SetDeadline(context.Options);
             var newContext = new ClientInterceptorContext<TRequest, TResponse>(context.Method, context.Host, callOptions);
-            return continuation(request, context);
+            return continuation(request, newContext);
         }
 
         private CallOptions SetDeadline(CallOptions callOptions)

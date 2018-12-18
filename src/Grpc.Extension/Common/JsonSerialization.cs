@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Grpc.Extension.Common
 {
-    internal static class JsonSerialization
+    public static class JsonSerialization
     {
         static JsonSerializerSettings settings = new JsonSerializerSettings()
         {

@@ -37,13 +37,9 @@ namespace MathServer
                 .ConfigureServices((ctx, services) =>
                 {
                     //grpc
-                    services.Scan(scan => scan
-                        .FromAssemblyOf<MathGrpc>()
-                            .AddClasses(classes => classes.AssignableTo<IGrpcService>())
-                                .AsImplementedInterfaces()
-                                .WithSingletonLifetime());
-                    services.AddGrpcExtensions(); //×¢ÈëGrpcExtensions
-                    services.AddHostedService<GrpcHostServiceV2>();
+                    services.AddGrpc();
+                    //jaeger
+                    services.AddJaeger(ctx.Configuration);
                 });
             return host.Build();
         }
