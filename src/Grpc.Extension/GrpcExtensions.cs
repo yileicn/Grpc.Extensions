@@ -15,6 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Grpc.Extension
 {
+    /// <summary>
+    /// Grpc扩展
+    /// </summary>
     public static class GrpcExtensions
     {
         internal static IServiceProvider ServiceProvider { get; set; }

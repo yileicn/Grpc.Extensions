@@ -10,6 +10,9 @@ using Grpc.Extension.Internal;
 
 namespace Grpc.Extension.BaseService
 {
+    /// <summary>
+    /// GrpcServiceExtension
+    /// </summary>
     public static class GrpcServiceExtension
     {
         /// <summary>

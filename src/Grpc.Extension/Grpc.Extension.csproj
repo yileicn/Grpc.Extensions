@@ -17,6 +17,10 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>E:\Code\git\FollowmeNew\Grpc\Grpc.Extesions\src\Grpc.Extension\Grpc.Extension.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AspectCore.Extensions.Reflection" Version="1.0.1" />
     <PackageReference Include="Consul" Version="0.7.2.6" />

@@ -13,6 +13,9 @@ using Grpc.Extension.Model;
 
 namespace Grpc.Extension.Internal
 {
+    /// <summary>
+    /// ServerBuilder
+    /// </summary>
     public class ServerBuilder
     {
         private readonly List<ServerInterceptor> _interceptors = new List<ServerInterceptor>();
@@ -128,6 +131,10 @@ namespace Grpc.Extension.Internal
             return this;
         }
 
+        /// <summary>
+        /// 构建Server
+        /// </summary>
+        /// <returns></returns>
         public Server Build()
         {
             Server server = new Server();
