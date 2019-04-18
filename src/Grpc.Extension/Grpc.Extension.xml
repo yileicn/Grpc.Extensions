@@ -131,58 +131,6 @@
             <param name="serviceAddress"></param>
             <returns></returns>
         </member>
-        <member name="T:Grpc.Extension.Consul.AutoChannelCallInvoker">
-            <summary>
-            自动负载的CallInvoker
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Consul.AutoChannelCallInvoker.BlockingUnaryCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions,``0)">
-            <summary>
-            Invokes a simple remote call in a blocking fashion.
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Consul.AutoChannelCallInvoker.AsyncUnaryCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions,``0)">
-            <summary>
-            Invokes a simple remote call asynchronously.
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Consul.AutoChannelCallInvoker.AsyncServerStreamingCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions,``0)">
-            <summary>
-            Invokes a server streaming call asynchronously.
-            In server streaming scenario, client sends on request and server responds with a stream of responses.
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Consul.AutoChannelCallInvoker.AsyncClientStreamingCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions)">
-            <summary>
-            Invokes a client streaming call asynchronously.
-            In client streaming scenario, client sends a stream of requests and server responds with a single response.
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Consul.AutoChannelCallInvoker.AsyncDuplexStreamingCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions)">
-            <summary>
-            Invokes a duplex streaming call asynchronously.
-            In duplex streaming scenario, client sends a stream of requests and server responds with a stream of responses.
-            The response stream is completely independent and both side can be sending messages at the same time.
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Consul.AutoChannelCallInvoker.CreateCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions)">
-            <summary>Creates call invocation details for given method.</summary>
-        </member>
-        <member name="T:Grpc.Extension.Consul.ChannelManager">
-            <summary>
-            Channel统一管理
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Consul.ChannelManager.GetChannel(System.String)">
-            <summary>
-            根据客户端代理类型获取channel
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Consul.ChannelManager.GetEndpoint(System.String,System.String)">
-            <summary>
-            根据服务名称返回服务地址
-            </summary>
-        </member>
         <member name="M:Grpc.Extension.Consul.ConsulManager.GetEndpointsFromConsul(System.String,System.String)">
             <summary>
             从consul获取可用的节点信息
@@ -399,6 +347,63 @@
         <member name="T:Grpc.Extension.InterceptorCallInvoker">
             <summary>
             客户端中间件的CallInvoker
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Internal.AutoChannelCallInvoker">
+            <summary>
+            自动负载的CallInvoker
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Internal.AutoChannelCallInvoker.BlockingUnaryCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions,``0)">
+            <summary>
+            Invokes a simple remote call in a blocking fashion.
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Internal.AutoChannelCallInvoker.AsyncUnaryCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions,``0)">
+            <summary>
+            Invokes a simple remote call asynchronously.
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Internal.AutoChannelCallInvoker.AsyncServerStreamingCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions,``0)">
+            <summary>
+            Invokes a server streaming call asynchronously.
+            In server streaming scenario, client sends on request and server responds with a stream of responses.
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Internal.AutoChannelCallInvoker.AsyncClientStreamingCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions)">
+            <summary>
+            Invokes a client streaming call asynchronously.
+            In client streaming scenario, client sends a stream of requests and server responds with a single response.
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Internal.AutoChannelCallInvoker.AsyncDuplexStreamingCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions)">
+            <summary>
+            Invokes a duplex streaming call asynchronously.
+            In duplex streaming scenario, client sends a stream of requests and server responds with a stream of responses.
+            The response stream is completely independent and both side can be sending messages at the same time.
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Internal.AutoChannelCallInvoker.CreateCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions)">
+            <summary>Creates call invocation details for given method.</summary>
+        </member>
+        <member name="T:Grpc.Extension.Internal.ChannelManager">
+            <summary>
+            Channel统一管理
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Internal.ChannelManager.GetChannel(System.String)">
+            <summary>
+            根据客户端代理类型获取channel
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Internal.ChannelManager.GetEndpoint(System.String,System.String)">
+            <summary>
+            根据服务名称返回服务地址
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Internal.GrpcClientManager">
+            <summary>
+            GrpcClient
             </summary>
         </member>
         <member name="T:Grpc.Extension.Internal.CommonError">
