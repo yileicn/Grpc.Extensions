@@ -32,6 +32,7 @@ namespace Grpc.Extension
             //添加Consul,Channel的Manager
             services.AddSingleton<ConsulManager>();
             services.AddSingleton<ChannelManager>();
+            services.AddSingleton<GrpcClientManager>();
             //默认使用轮询负载策略 后续可扩展其他策略（基于session, 随机等）
             if (! services.Any(p => p.ServiceType == typeof(ILoadBalancer)))
             {

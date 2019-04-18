@@ -9,6 +9,8 @@ using Grpc.Extension.Common;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Grpc.Extension.Consul;
+using Grpc.Extension.Interceptors;
+using Grpc.Core.Interceptors;
 
 namespace Grpc.Extension.Internal
 {
@@ -114,14 +116,21 @@ namespace Grpc.Extension.Internal
     /// </summary>
     public class GrpcClientManager
     {
-        public static T GetGrpcClient<T>() where T : ClientBase<T>
+        private IEnumerable<ClientInterceptor> _clientInterceptors;
+        public GrpcClientManager(IEnumerable<ClientInterceptor> clientInterceptors)
+        {
+            this._clientInterceptors = clientInterceptors;
+        }
+
+        public T GetGrpcClient<T>() where T : ClientBase<T>
         {
             var channelManager = GrpcExtensions.ServiceProvider.GetService<ChannelManager>();
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             var grpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
 
             var channel = channelManager.GetChannel(grpcServiceName);
-            var client = Activator.CreateInstance(typeof(T), channel);
+            var callInvoker = channel.Intercept(_clientInterceptors.ToArray());
+            var client = Activator.CreateInstance(typeof(T), callInvoker);
 
             return client as T;
         }
