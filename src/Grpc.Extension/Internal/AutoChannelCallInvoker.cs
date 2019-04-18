@@ -5,7 +5,7 @@ using System.Text;
 using Grpc.Core;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Grpc.Extension.Consul
+namespace Grpc.Extension.Internal
 {
     /// <summary>
     /// 自动负载的CallInvoker

@@ -3,18 +3,20 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Grpc.Extension.Internal;
 using Grpc.Extension.LoadBalancer;
 using Grpc.Extension.Model;
+using Grpc.Extension.Common;
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using Grpc.Extension.Consul;
 
-namespace Grpc.Extension.Consul
+namespace Grpc.Extension.Internal
 {
     /// <summary>
     /// Channel统一管理
     /// </summary>
     public class ChannelManager
     {
-        private List<ChannelConfig> _configs = new List<ChannelConfig>();
         private ConcurrentDictionary<string, ChannelInfo> _channels = new ConcurrentDictionary<string, ChannelInfo>();
         private ConsulManager _consulManager;
         private ILoadBalancer _loadBalancer;
@@ -25,18 +27,14 @@ namespace Grpc.Extension.Consul
             this._loadBalancer = loadBalancer;
         }
 
-        public List<ChannelConfig> Configs
-        {
-            get { return _configs; }
-            set { _configs = value; }
-        }
+        public List<ChannelConfig> Configs { get; set; } = new List<ChannelConfig>();
 
         /// <summary>
         /// 根据客户端代理类型获取channel
         /// </summary>
         public Channel GetChannel(string grpcServiceName)
         {
-            var config = _configs?.FirstOrDefault(q => q.GrpcServiceName == grpcServiceName?.Trim());
+            var config = Configs?.FirstOrDefault(q => q.GrpcServiceName == grpcServiceName?.Trim());
             if (config == null)
             {
                 LoggerAccessor.Instance.LoggerError?.Invoke(new Exception($"GetChannel({grpcServiceName ?? ""}) has not exists"));
@@ -56,7 +54,7 @@ namespace Grpc.Extension.Consul
         /// <summary>
         /// 根据服务名称返回服务地址
         /// </summary>
-        public string GetEndpoint(string serviceName, string consulUrl = null)
+        public string GetEndpoint(string serviceName, string consulUrl)
         {
             //获取健康的endpoints
             var healthEndpoints = _consulManager.GetEndpointsFromConsul(serviceName, consulUrl);
@@ -108,6 +106,24 @@ namespace Grpc.Extension.Consul
         public void Shutdown()
         {
             _channels.Select(q => q.Value).ToList().ForEach(q => q.Channel.ShutdownAsync().Wait());
+        }
+    }
+
+    /// <summary>
+    /// GrpcClient
+    /// </summary>
+    public class GrpcClientManager
+    {
+        public static T GetGrpcClient<T>() where T : ClientBase<T>
+        {
+            var channelManager = GrpcExtensions.ServiceProvider.GetService<ChannelManager>();
+            var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
+            var grpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
+
+            var channel = channelManager.GetChannel(grpcServiceName);
+            var client = Activator.CreateInstance(typeof(T), channel);
+
+            return client as T;
         }
     }
 }

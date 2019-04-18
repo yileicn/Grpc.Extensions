@@ -10,6 +10,7 @@ using System.Reflection;
 using Grpc.Extension.Common;
 using Grpc.Extension.Interceptors;
 using Grpc.Extension.LoadBalancer;
+using Grpc.Extension.Internal;
 
 namespace Grpc.Extension
 {
@@ -48,7 +49,7 @@ namespace Grpc.Extension
         /// <param name="consulUrl"></param>
         /// <param name="consulServiceName"></param>
         /// <returns></returns>
-        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, string consulUrl,string consulServiceName) where T: class
+        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, string consulUrl,string consulServiceName) where T: ClientBase<T>
         {
             services.AddSingleton<T>();
             var channelConfig = new ChannelConfig

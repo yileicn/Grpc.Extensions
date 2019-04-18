@@ -24,7 +24,7 @@ namespace Grpc.Extension.Consul
         /// <summary>
         /// 从consul获取可用的节点信息
         /// </summary>
-        public List<string> GetEndpointsFromConsul(string serviceName, string consulUrl = null)
+        public List<string> GetEndpointsFromConsul(string serviceName, string consulUrl)
         {
             using (var client = CreateConsulClient(consulUrl))
             {
