@@ -65,7 +65,17 @@ namespace Grpc.Extension.Internal
         public ServerBuilder UseGrpcService(IEnumerable<IGrpcService> grpcServices)
         {
             var builder = ServerServiceDefinition.CreateBuilder();
-            grpcServices.ToList().ForEach(grpc => grpc.RegisterMethod(builder));
+            //grpcServices.ToList().ForEach(grpc => grpc.RegisterMethod(builder));
+            grpcServices.ToList().ForEach(grpc => {
+                if (grpc is IGrpcBaseService)
+                {
+                    GrpcMethodHelper.AutoRegisterMethod(grpc, builder, Consts.BaseServicePackage, Consts.BaseServiceName);
+                }
+                else
+                {
+                    GrpcMethodHelper.AutoRegisterMethod(grpc, builder);
+                }
+            });
             _serviceDefinitions.Add(builder.Build());
             return this;
         }

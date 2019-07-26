@@ -2,6 +2,8 @@
 {
     internal class Consts
     {
+        public const string BaseServicePackage = "grpc";
+
         public const string BaseServiceName = "BaseService";
 
         public const string TraceId = "traceid";
