@@ -416,6 +416,14 @@
             返回一个rpc异常到客户端
             </summary>
         </member>
+        <member name="M:Grpc.Extension.Internal.GrpcMethodHelper.AutoRegisterMethod(Grpc.Extension.BaseService.IGrpcService,Grpc.Core.ServerServiceDefinition.Builder,System.String,System.String)">
+            <summary>
+            自动注册服务方法
+            </summary>
+            <param name="srv"></param>
+            <param name="builder"></param>
+            <param name="serviceName"></param>
+        </member>
         <member name="T:Grpc.Extension.Internal.LoggerAccessor">
             <summary>
             日志访问
