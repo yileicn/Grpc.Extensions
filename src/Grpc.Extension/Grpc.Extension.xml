@@ -151,51 +151,6 @@
             Grpc扩展
             </summary>
         </member>
-        <member name="M:Grpc.Extension.GrpcExtensions.UseBaseInterceptor(Grpc.Core.ServerServiceDefinition)">
-            <summary>
-            使用基础过滤器
-            </summary>
-            <param name="serverServiceDefinition"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Grpc.Extension.GrpcExtensions.UseDashBoard(Grpc.Core.ServerServiceDefinition)">
-            <summary>
-            使用DashBoard(提供基础服务)
-            </summary>
-            <param name="serverServiceDefinition"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Grpc.Extension.GrpcExtensions.UseGrpcOptions(Grpc.Core.Server,Grpc.Extension.GrpcServerOptions)">
-            <summary>
-            注入Grpc配制
-            </summary>
-            <param name="server"></param>
-            <param name="options"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Grpc.Extension.GrpcExtensions.UseGrpcService(Grpc.Core.Server,System.Collections.Generic.IEnumerable{Grpc.Extension.BaseService.IGrpcService})">
-            <summary>
-            注入GrpcService
-            </summary>
-            <param name="server"></param>
-            <param name="grpcServices"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Grpc.Extension.GrpcExtensions.UseDashBoard(Grpc.Core.Server)">
-            <summary>
-            使用DashBoard(提供基础服务)
-            </summary>
-            <param name="server"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Grpc.Extension.GrpcExtensions.UseLogger(Grpc.Core.Server,System.Action{Grpc.Extension.Internal.LoggerAccessor})">
-            <summary>
-            配制日志
-            </summary>
-            <param name="server"></param>
-            <param name="action"></param>
-            <returns></returns>
-        </member>
         <member name="M:Grpc.Extension.GrpcExtensions.StartAndRegisterService(Grpc.Core.Server)">
             <summary>
             启动并注册服务
