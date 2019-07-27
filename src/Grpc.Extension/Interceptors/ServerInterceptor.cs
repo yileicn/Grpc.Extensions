@@ -7,6 +7,9 @@ using Grpc.Core.Interceptors;
 
 namespace Grpc.Extension.Interceptors
 {
+    /// <summary>
+    /// 服务端拦截器
+    /// </summary>
     public abstract class ServerInterceptor : Interceptor
     {
         /// <summary>

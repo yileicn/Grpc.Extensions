@@ -2,11 +2,14 @@
 
 namespace Grpc.Extension.Model
 {
-    public class ChannelConfig
+    /// <summary>
+    /// ChannelConfig
+    /// </summary>
+    internal class ChannelConfig
     {
-        public string ConsulUrl { get; set; }
+        public string DiscoveryUrl { get; set; }
 
-        public string ConsulServiceName { get; set; }
+        public string DiscoveryServiceName { get; set; }
 
         public string DirectEndpoint { get; set; }
 

@@ -60,7 +60,7 @@ namespace Grpc.Extension.BaseService
         /// <summary>
         /// 生成Grpc元数据信息
         /// </summary>
-        /// <param name="builder"></param>
+        /// <param name="callHandlers"></param>
         public static void BuildMeta(IDictionary callHandlers)
         {
             var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;

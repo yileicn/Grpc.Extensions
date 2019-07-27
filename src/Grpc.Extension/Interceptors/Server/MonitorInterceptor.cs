@@ -15,7 +15,7 @@ namespace Grpc.Extension.Interceptors
     /// <summary>
     /// 性能监控,记录日志
     /// </summary>
-    public class MonitorInterceptor : ServerInterceptor
+    internal class MonitorInterceptor : ServerInterceptor
     {
         private async Task<TResponse> Monitor<TRequest, TResponse>(object request, 
             ServerCallContext context, Delegate continuation, object response = null)

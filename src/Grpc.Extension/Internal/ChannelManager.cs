@@ -5,31 +5,31 @@ using System.Collections.Generic;
 using System.Linq;
 using Grpc.Extension.LoadBalancer;
 using Grpc.Extension.Model;
-using Grpc.Extension.Common;
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using Grpc.Extension.Consul;
-using Grpc.Extension.Interceptors;
-using Grpc.Core.Interceptors;
+using Grpc.Extension.Discovery;
 
 namespace Grpc.Extension.Internal
 {
     /// <summary>
     /// Channel统一管理
     /// </summary>
-    public class ChannelManager
+    internal class ChannelManager
     {
         private ConcurrentDictionary<string, ChannelInfo> _channels = new ConcurrentDictionary<string, ChannelInfo>();
-        private ConsulManager _consulManager;
+        private IServiceDiscovery _serviceDiscovery;
         private ILoadBalancer _loadBalancer;
 
-        public ChannelManager(ConsulManager consulManager, ILoadBalancer loadBalancer)
+        /// <summary>
+        /// Channel统一管理
+        /// </summary>
+        /// <param name="serviceDiscovery"></param>
+        /// <param name="loadBalancer"></param>
+        public ChannelManager(IServiceDiscovery serviceDiscovery, ILoadBalancer loadBalancer)
         {
-            this._consulManager = consulManager;
+            this._serviceDiscovery = serviceDiscovery;
             this._loadBalancer = loadBalancer;
         }
 
-        public List<ChannelConfig> Configs { get; set; } = new List<ChannelConfig>();
+        internal List<ChannelConfig> Configs { get; set; } = new List<ChannelConfig>();
 
         /// <summary>
         /// 根据客户端代理类型获取channel
@@ -44,28 +44,28 @@ namespace Grpc.Extension.Internal
             }
             if (config.UseDirect)
             {
-                return GetChannelCore(config.DirectEndpoint,config.ConsulServiceName);
+                return GetChannelCore(config.DirectEndpoint,config.DiscoveryServiceName);
             }
-            else//from consul
+            else//from discovery
             {
-                var endPoint = GetEndpoint(config.ConsulServiceName, config.ConsulUrl);
-                return GetChannelCore(endPoint,config.ConsulServiceName);
+                var endPoint = GetEndpoint(config.DiscoveryServiceName, config.DiscoveryUrl);
+                return GetChannelCore(endPoint,config.DiscoveryServiceName);
             }
         }
 
         /// <summary>
         /// 根据服务名称返回服务地址
         /// </summary>
-        public string GetEndpoint(string serviceName, string consulUrl)
+        private string GetEndpoint(string serviceName, string consulUrl)
         {
             //获取健康的endpoints
-            var healthEndpoints = _consulManager.GetEndpointsFromConsul(serviceName, consulUrl);
+            var healthEndpoints = _serviceDiscovery.GetEndpoints(serviceName, consulUrl);
             if (healthEndpoints == null || healthEndpoints.Count == 0)
             {
                 throw new Exception($"get endpoints from consul of {serviceName} is null");
             }
             //获取错误的channel
-            var errorChannel = _channels.Where(p => p.Value.ConsulServiceName == serviceName &&
+            var errorChannel = _channels.Where(p => p.Value.DiscoveryServiceName == serviceName &&
                                                 !healthEndpoints.Contains(p.Key)).ToList();
             //关闭并删除错误的channel
             foreach (var channel in errorChannel)
@@ -77,12 +77,12 @@ namespace Grpc.Extension.Internal
             return _loadBalancer.SelectEndpoint(serviceName, healthEndpoints);
         }
 
-        private Channel GetChannelCore(string endpoint,string consulServiceName)
+        private Channel GetChannelCore(string endpoint,string serviceName)
         {
             Func<string, ChannelInfo> addFunc = key =>
                 new ChannelInfo()
                 {
-                    ConsulServiceName = consulServiceName,
+                    DiscoveryServiceName = serviceName,
                     Channel = new Channel(key, ChannelCredentials.Insecure)
                 };
             //获取channel，不存在就添加
@@ -95,7 +95,7 @@ namespace Grpc.Extension.Internal
                 //新增或者修改channel
                 return _channels.AddOrUpdate(endpoint, addFunc, (key, value) => new ChannelInfo()
                     {
-                        ConsulServiceName = consulServiceName,
+                        DiscoveryServiceName = serviceName,
                         Channel = new Channel(key, ChannelCredentials.Insecure)
                     }).Channel;
             }
@@ -105,34 +105,12 @@ namespace Grpc.Extension.Internal
             }
         }
 
+        /// <summary>
+        /// 关闭Channel
+        /// </summary>
         public void Shutdown()
         {
             _channels.Select(q => q.Value).ToList().ForEach(q => q.Channel.ShutdownAsync().Wait());
-        }
-    }
-
-    /// <summary>
-    /// GrpcClient
-    /// </summary>
-    public class GrpcClientManager
-    {
-        private IEnumerable<ClientInterceptor> _clientInterceptors;
-        public GrpcClientManager(IEnumerable<ClientInterceptor> clientInterceptors)
-        {
-            this._clientInterceptors = clientInterceptors;
-        }
-
-        public T GetGrpcClient<T>() where T : ClientBase<T>
-        {
-            var channelManager = GrpcExtensions.ServiceProvider.GetService<ChannelManager>();
-            var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
-            var grpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
-
-            var channel = channelManager.GetChannel(grpcServiceName);
-            var callInvoker = channel.Intercept(_clientInterceptors.ToArray());
-            var client = Activator.CreateInstance(typeof(T), callInvoker);
-
-            return client as T;
         }
     }
 }

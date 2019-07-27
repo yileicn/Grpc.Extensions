@@ -6,7 +6,7 @@ using AspectCore.Extensions.Reflection;
 
 namespace Grpc.Extension.Common
 {
-    public static class ReflectorExtensions
+    internal static class ReflectorExtensions
     {
         /// <summary>
         /// 获取属性值
@@ -72,7 +72,7 @@ namespace Grpc.Extension.Common
         public static MethodInfo GetMethodInfo(this Type type, string name, BindingFlags bindingFlags)
         {
             var method = type.GetMethod(name, bindingFlags);
-            if(method==null) throw new InvalidOperationException($"Cannot locate method {name}");
+            if(method == null) throw new InvalidOperationException($"Cannot locate method {name}");
             return method;
         }
     }

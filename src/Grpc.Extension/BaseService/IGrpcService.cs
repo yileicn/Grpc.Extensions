@@ -5,6 +5,9 @@ using Grpc.Core;
 
 namespace Grpc.Extension.BaseService
 {
+    /// <summary>
+    /// GrpcService
+    /// </summary>
     public interface IGrpcService
     {
         /// <summary>

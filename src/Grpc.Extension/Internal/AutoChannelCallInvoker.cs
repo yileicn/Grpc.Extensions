@@ -8,11 +8,15 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Grpc.Extension.Internal
 {
     /// <summary>
-    /// 自动负载的CallInvoker
+    /// 自动负载Channel的CallInvoker
     /// </summary>
-    public class AutoChannelCallInvoker : CallInvoker
+    internal class AutoChannelCallInvoker : CallInvoker
     {
         private ChannelManager _channelManager;
+
+        /// <summary>
+        /// 自动负载Channel的CallInvoker
+        /// </summary>
         public AutoChannelCallInvoker()
         {
             this._channelManager = GrpcExtensions.ServiceProvider.GetService<ChannelManager>();

@@ -9,7 +9,7 @@ using Grpc.Extension.Common;
 namespace Grpc.Extension.Internal
 {
     // ReSharper disable once IdentifierTypo
-    public static class GrpcMethodHelper
+    internal static class GrpcMethodHelper
     {
         // ReSharper disable once InconsistentNaming
         private static readonly MethodInfo buildMethod;
@@ -47,7 +47,7 @@ namespace Grpc.Extension.Internal
                 if (method.ReturnType == typeof(void) || method.ReturnType.BaseType != typeof(Task)) continue;
                 var parameters = method.GetParameters();
                 if (parameters.Length != 2 || parameters[1].ParameterType != typeof(ServerCallContext) ||
-                    method.CustomAttributes.Any(x => x.AttributeType == typeof(NotRpcMethodAttribute))) continue;
+                    method.CustomAttributes.Any(x => x.AttributeType == typeof(NotGrpcMethodAttribute))) continue;
 
                 Type inputType = parameters[0].ParameterType;
                 Type outputType = method.ReturnType.GenericTypeArguments[0];
@@ -62,5 +62,9 @@ namespace Grpc.Extension.Internal
             }
         }
     }
-    public sealed class NotRpcMethodAttribute : Attribute { }
+
+    /// <summary>
+    /// 非Grpc方法
+    /// </summary>
+    public sealed class NotGrpcMethodAttribute : Attribute { }
 }

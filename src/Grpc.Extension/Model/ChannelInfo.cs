@@ -5,9 +5,9 @@ using Grpc.Core;
 
 namespace Grpc.Extension.Model
 {
-    public class ChannelInfo
+    internal class ChannelInfo
     {
-        public string ConsulServiceName { get; set; }
+        public string DiscoveryServiceName { get; set; }
         public Channel Channel { get; set; }
     }
 }

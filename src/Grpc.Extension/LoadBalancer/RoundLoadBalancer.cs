@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Grpc.Extension.LoadBalancer
 {
+    /// <summary>
+    /// 轮询负载
+    /// </summary>
     public class RoundLoadBalancer : ILoadBalancer 
     {
         private ConcurrentDictionary<string, int> _serviceInvokeIndexs = new ConcurrentDictionary<string, int>();

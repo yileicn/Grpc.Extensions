@@ -13,7 +13,7 @@ namespace Grpc.Extension
     /// <summary>
     /// 客户端中间件的CallInvoker
     /// </summary>
-    public class InterceptorCallInvoker : CallInvoker
+    internal class InterceptorCallInvoker : CallInvoker
     {
         private CallInvoker _interceptorCallInvoker;
         public InterceptorCallInvoker(AutoChannelCallInvoker autoChannelCallInvoker, IEnumerable<ClientInterceptor> clientInterceptors)

@@ -39,10 +39,11 @@ namespace Grpc.Extension.Internal
         /// <returns></returns>
         public ServerBuilder UseGrpcOptions(GrpcServerOptions options)
         {
+            options.InitCompatible();//兼容老版本
             GrpcServerOptions.Instance.ServiceAddress = options.ServiceAddress;
-            GrpcServerOptions.Instance.ConsulUrl = options.ConsulUrl;
-            GrpcServerOptions.Instance.ConsulServiceName = options.ConsulServiceName;
-            GrpcServerOptions.Instance.ConsulTags = options.ConsulTags;
+            GrpcServerOptions.Instance.DiscoveryUrl = options.DiscoveryUrl;
+            GrpcServerOptions.Instance.DiscoveryServiceName = options.DiscoveryServiceName;
+            GrpcServerOptions.Instance.DiscoveryTags = options.DiscoveryTags;
             return this;
         }
 

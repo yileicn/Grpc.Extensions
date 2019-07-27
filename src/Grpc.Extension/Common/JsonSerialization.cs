@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Grpc.Extension.Common
 {
+    /// <summary>
+    /// JsonSerialization
+    /// </summary>
     public static class JsonSerialization
     {
         static JsonSerializerSettings settings = new JsonSerializerSettings()
@@ -17,7 +20,10 @@ namespace Grpc.Extension.Common
         /// <summary>
         /// 使用json序列化为字符串
         /// </summary>
+        /// <param name="input"></param>
         /// <param name="dateTimeFormat">默认null,即使用json.net默认的序列化机制，如："\/Date(1439335800000+0800)\/"</param>
+        /// <param name="ignoreNullValue"></param>
+        /// <param name="isIndented"></param>
         /// <returns></returns>
         public static string ToJson(this object input, string dateTimeFormat = "yyyy-MM-dd HH:mm:ss", bool ignoreNullValue = true, bool isIndented = false)
         {
@@ -44,6 +50,7 @@ namespace Grpc.Extension.Common
         /// <typeparam name="T"></typeparam>
         /// <param name="input"></param>
         /// <param name="dateTimeFormat">默认null,即使用json.net默认的序列化机制</param>
+        /// <param name="ignoreNullValue"></param>
         /// <returns></returns>
         public static T TryFromJson<T>(this string input, string dateTimeFormat = "yyyy-MM-dd HH:mm:ss", bool ignoreNullValue = true)
         {
@@ -62,6 +69,7 @@ namespace Grpc.Extension.Common
         /// <typeparam name="T"></typeparam>
         /// <param name="input"></param>
         /// <param name="dateTimeFormat">默认null,即使用json.net默认的序列化机制</param>
+        /// <param name="ignoreNullValue"></param>
         /// <returns></returns>
         public static T FromJson<T>(this string input, string dateTimeFormat = "yyyy-MM-dd HH:mm:ss", bool ignoreNullValue = true)
         {
@@ -86,9 +94,10 @@ namespace Grpc.Extension.Common
         /// <summary>
         /// 从序列化字符串里反序列化
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="input"></param>
+        /// <param name="type"></param>
         /// <param name="dateTimeFormat">默认null,即使用json.net默认的序列化机制</param>
+        /// <param name="ignoreNullValue"></param>
         /// <returns></returns>
         public static object FromJson(this string input, Type type, string dateTimeFormat = "yyyy-MM-dd HH:mm:ss", bool ignoreNullValue = true)
         {

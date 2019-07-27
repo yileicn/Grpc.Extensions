@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Grpc.Extension.LoadBalancer
 {
+    /// <summary>
+    /// 随机负载
+    /// </summary>
     public class RandomLoadBalancer : ILoadBalancer
     {
         /// <summary>

@@ -15,7 +15,7 @@ namespace Grpc.Extension.Internal
         private static List<string> saveResponseMethods = new List<string>();
         private static readonly Lazy<MonitorManager> instance = new Lazy<MonitorManager>(() => new MonitorManager(), true);
 
-        public static MonitorManager Instance
+        internal static MonitorManager Instance
         {
             get { return instance.Value; }
         }

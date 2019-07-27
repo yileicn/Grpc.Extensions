@@ -12,6 +12,7 @@ using Grpc.Extension.Consul;
 using Grpc.Extension.Internal;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Grpc.Extension.Discovery;
 
 namespace Grpc.Extension
 {
@@ -39,9 +40,16 @@ namespace Grpc.Extension
                 MetaModel.Ip = ipAndPort.Host;
                 MetaModel.Port = ipAndPort.BoundPort;
                 Console.WriteLine($"server listening {MetaModel.Ip}:{MetaModel.Port}");
-                //注册到Consul
-                var consulManager = ServiceProvider.GetService<ConsulManager>();
-                consulManager.RegisterService();
+                
+                //检查服务注册配制
+                if (string.IsNullOrWhiteSpace(GrpcServerOptions.Instance.DiscoveryUrl))
+                    throw new ArgumentException("DiscoveryUrl is null");
+                if (string.IsNullOrWhiteSpace(GrpcServerOptions.Instance.DiscoveryServiceName))
+                    throw new ArgumentException("DiscoveryServiceName is null");
+
+                //服务注册
+                var serviceRegister = ServiceProvider.GetService<IServiceRegister>();
+                serviceRegister.RegisterService();
             }
             return server;
         }
@@ -53,9 +61,9 @@ namespace Grpc.Extension
         /// <returns></returns>
         public static Server StopAndDeRegisterService(this Server server)
         {
-            //从Consul反注册
-            var consulManager = ServiceProvider.GetService<ConsulManager>();
-            consulManager.DeregisterService();
+            //服务反注册
+            var serviceRegister = ServiceProvider.GetService<IServiceRegister>();
+            serviceRegister.DeregisterService();
             server.ShutdownAsync().Wait();
             
             return server;

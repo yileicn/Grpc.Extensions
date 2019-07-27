@@ -7,7 +7,7 @@ namespace Grpc.Extension
     public class GrpcExtensionsOptions
     {
         private static Lazy<GrpcExtensionsOptions> instance = new Lazy<GrpcExtensionsOptions>(() => new GrpcExtensionsOptions(), true);
-        public static GrpcExtensionsOptions Instance => instance.Value;
+        internal static GrpcExtensionsOptions Instance => instance.Value;
 
         private GrpcExtensionsOptions()
         {

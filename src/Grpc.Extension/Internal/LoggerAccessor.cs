@@ -10,7 +10,7 @@ namespace Grpc.Extension.Internal
     public class LoggerAccessor
     {
         private static Lazy<LoggerAccessor> instance = new Lazy<LoggerAccessor>(() => new LoggerAccessor(), true);
-        public static LoggerAccessor Instance
+        internal static LoggerAccessor Instance
         {
             get { return instance.Value; }
         }

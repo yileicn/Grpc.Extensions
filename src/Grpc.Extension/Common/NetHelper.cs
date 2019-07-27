@@ -4,6 +4,9 @@ using System.Net.NetworkInformation;
 
 namespace Grpc.Extension
 {
+    /// <summary>
+    /// NetHelper
+    /// </summary>
     public static class NetHelper
     {
         /// <summary>

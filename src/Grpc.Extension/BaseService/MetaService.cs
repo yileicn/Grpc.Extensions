@@ -10,6 +10,9 @@ using Grpc.Extension.Internal;
 
 namespace Grpc.Extension.BaseService
 {
+    /// <summary>
+    /// Grpc元数据服务
+    /// </summary>
     public class MetaService : IGrpcBaseService
     {
         /// <summary>

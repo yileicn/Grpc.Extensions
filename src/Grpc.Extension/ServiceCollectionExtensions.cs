@@ -11,9 +11,13 @@ using Grpc.Extension.Common;
 using Grpc.Extension.Interceptors;
 using Grpc.Extension.LoadBalancer;
 using Grpc.Extension.Internal;
+using Grpc.Extension.Discovery;
 
 namespace Grpc.Extension
 {
+    /// <summary>
+    /// ServiceCollectionExtensions
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
         /// <summary>
@@ -29,12 +33,16 @@ namespace Grpc.Extension
             //添加客户端中间件的CallInvoker
             services.AddSingleton<AutoChannelCallInvoker>();
             services.AddSingleton<CallInvoker, InterceptorCallInvoker>();
-            //添加Consul,Channel的Manager
-            services.AddSingleton<ConsulManager>();
+            //默认使用consul服务注册,服务发现，在外面可以注入其它策略
+            if (!services.Any(p => p.ServiceType == typeof(IServiceRegister)))
+            {
+                services.AddConsulDiscovery();
+            }            
+            //添加Channel的Manager
             services.AddSingleton<ChannelManager>();
             services.AddSingleton<GrpcClientManager>();
-            //默认使用轮询负载策略 后续可扩展其他策略（基于session, 随机等）
-            if (! services.Any(p => p.ServiceType == typeof(ILoadBalancer)))
+            //默认使用轮询负载策略，在外面可以注入其它策略
+            if (!services.Any(p => p.ServiceType == typeof(ILoadBalancer)))
             {
                 services.AddSingleton<ILoadBalancer, RoundLoadBalancer>();
             }
@@ -47,16 +55,16 @@ namespace Grpc.Extension
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="services"></param>
-        /// <param name="consulUrl"></param>
-        /// <param name="consulServiceName"></param>
+        /// <param name="discoveryUrl"></param>
+        /// <param name="discoveryServiceName"></param>
         /// <returns></returns>
-        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, string consulUrl,string consulServiceName) where T: ClientBase<T>
+        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, string discoveryUrl,string discoveryServiceName) where T: ClientBase<T>
         {
             services.AddSingleton<T>();
             var channelConfig = new ChannelConfig
             {
-                ConsulUrl = consulUrl,
-                ConsulServiceName = consulServiceName
+                DiscoveryUrl = discoveryUrl,
+                DiscoveryServiceName = discoveryServiceName
             };
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             channelConfig.GrpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);

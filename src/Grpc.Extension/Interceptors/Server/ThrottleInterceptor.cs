@@ -12,7 +12,7 @@ namespace Grpc.Extension.Interceptors
     /// <summary>
     /// 手动熔断处理
     /// </summary>
-    public class ThrottleInterceptor : ServerInterceptor
+    internal class ThrottleInterceptor : ServerInterceptor
     {
         public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
             ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)

@@ -10,7 +10,7 @@ namespace Grpc.Extension.Internal
         private static readonly object sync = new object();
         private List<string> throttleMethods = new List<string>();
         private static Lazy<ThrottleManager> instance = new Lazy<ThrottleManager>(() => new ThrottleManager(), true);
-        public static ThrottleManager Instance => instance.Value;
+        internal static ThrottleManager Instance => instance.Value;
 
         public void Add(string fullName)
         {
