@@ -126,11 +126,19 @@ namespace Grpc.Extension.Internal
         /// <returns></returns>
         public ServerBuilder UseDashBoard()
         {
-            foreach (var serverServiceDefinition in _serviceDefinitions)
+            var serviceBinder = new GrpcServiceBinder();
+            
+            foreach (var serviceDefinition in _serviceDefinitions)
             {
                 var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                var callHandlers = serverServiceDefinition.GetPropertyValue<IDictionary>("CallHandlers", bindingFlags);
+                /*
+                //生成Grpc元数据信息(1.19以前可以反射处理)
+                var callHandlers = serviceDefinition.GetPropertyValue<IDictionary>("CallHandlers", bindingFlags);
                 GrpcServiceExtension.BuildMeta(callHandlers);
+                */
+                //生成Grpc元数据信息(1.19以后使用自定义serviceBinder)
+                var bindMethodInfo = serviceDefinition.GetType().GetMethodInfo("BindService", bindingFlags);
+                bindMethodInfo.Invoke(serviceDefinition, new[] { serviceBinder });
             }
             //注册基础服务
             UseGrpcService(new List<IGrpcService> { new CmdService(), new MetaService() });
