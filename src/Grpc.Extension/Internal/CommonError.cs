@@ -21,15 +21,39 @@ namespace Grpc.Extension.Internal
             {
                 return rpcEx;
             }
-
+            //构建RpcException
             var errModel = new ErrorModel
             {
                 Code = ParseCode(ex),
                 Detail = ex.Message,
-                Internal = ex.ToString(),
+                Internal = GetFlatException(ex),
                 Status = (int)StatusCode.Internal
             };
-            return new RpcException(new Status(StatusCode.Internal, errModel.ToJson()));
+            rpcEx = new RpcException(new Status(StatusCode.Internal, errModel.ToJson()));
+            rpcEx.Data.Add("ErrorCode", errModel.Code);
+            return rpcEx;
+        }
+
+        /// <summary>
+        /// 返回一个FlatException
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <returns></returns>
+        private static string GetFlatException(Exception ex)
+        {
+            var exception = "";
+            if (ex is AggregateException aex)
+            {
+                foreach (var e in aex.Flatten().InnerExceptions)
+                {
+                    exception += e?.ToString() + Environment.NewLine;
+                }
+            }
+            else
+            {
+                exception = ex.ToString();
+            }
+            return exception;
         }
 
         private static int ParseCode(Exception ex)
@@ -42,7 +66,7 @@ namespace Grpc.Extension.Internal
             }
             catch
             {
-                return 1;
+                return GrpcServerOptions.Instance.DefaultErrorCode;
             }
         }
     }

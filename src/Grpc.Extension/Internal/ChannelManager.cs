@@ -29,7 +29,7 @@ namespace Grpc.Extension.Internal
             this._loadBalancer = loadBalancer;
         }
 
-        internal List<ChannelConfig> Configs { get; set; } = new List<ChannelConfig>();
+        internal static List<ChannelConfig> Configs { get; set; } = new List<ChannelConfig>();
 
         /// <summary>
         /// 根据客户端代理类型获取channel

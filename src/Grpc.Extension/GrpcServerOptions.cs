@@ -37,7 +37,13 @@ namespace Grpc.Extension
         /// </summary>
         public int DiscoveryTTLInterval { get; set; } = 10;
 
+        /// <summary>
+        /// 默认错误码
+        /// </summary>
+        public int DefaultErrorCode { get; set; } = 1;
+
         #region 兼容老版本
+        /*
         /// <summary>
         /// 服务注册地址(http://192.168.8.6:8500)
         /// </summary>
@@ -62,6 +68,7 @@ namespace Grpc.Extension
                 DiscoveryServiceName = ConsulServiceName;
             }
         }
+        */
         #endregion
     }
 

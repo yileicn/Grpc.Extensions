@@ -1,5 +1,4 @@
-﻿using Grpc.Core.Interceptors;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Grpc.Core;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Extension.Common;
 using Grpc.Extension.Internal;
-using Grpc.Core.Utils;
 
 namespace Grpc.Extension.Interceptors
 {
@@ -65,21 +63,11 @@ namespace Grpc.Extension.Interceptors
             }
             catch (Exception ex)
             {
-                if (ex is AggregateException aex)
-                {
-                    foreach (var e in aex.Flatten().InnerExceptions)
-                    {
-                        model.Exception += e?.ToString() + Environment.NewLine;
-                    }
-                }
-                else
-                {
-                    model.Exception = ex?.ToString();
-                }
-
+                var rpcEx = CommonError.BuildRpcException(ex);
+                model.Exception = rpcEx.ToString();
                 model.Status = "error";
-                LoggerAccessor.Instance.LoggerError?.Invoke(new Exception(model.Exception));
-                throw CommonError.BuildRpcException(ex);
+                LoggerAccessor.Instance.LoggerError?.Invoke(rpcEx);
+                throw rpcEx;
             }
             finally
             {

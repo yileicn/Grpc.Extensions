@@ -9,7 +9,8 @@ using Grpc.Core.Interceptors;
 using Grpc.Extension.BaseService;
 using Grpc.Extension.Common;
 using Grpc.Extension.Interceptors;
-using Grpc.Extension.Model;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Grpc.Extension.Internal
 {
@@ -20,6 +21,18 @@ namespace Grpc.Extension.Internal
     {
         private readonly List<ServerInterceptor> _interceptors = new List<ServerInterceptor>();
         private readonly List<ServerServiceDefinition> _serviceDefinitions = new List<ServerServiceDefinition>();
+
+        public ServerBuilder(IServiceProvider serviceProvider,
+            IConfiguration conf,
+            IEnumerable<ServerInterceptor> serverInterceptors,
+            IEnumerable<IGrpcService> grpcServices)
+        {
+            GrpcExtensions.ServiceProvider = serviceProvider;
+            //初始化配制,注入中间件,GrpcService
+            this.InitGrpcOptions(conf)//初始化配制
+                .UseInterceptor(serverInterceptors)//注入中间件
+                .UseGrpcService(grpcServices);//注入GrpcService
+        }
 
         /// <summary>
         /// 注入基本配制
@@ -33,17 +46,32 @@ namespace Grpc.Extension.Internal
         }
 
         /// <summary>
+        /// 从配制文件初始化
+        /// </summary>
+        /// <param name="conf"></param>
+        private ServerBuilder InitGrpcOptions(IConfiguration conf)
+        {
+            var section = conf.GetSection("GrpcServer");
+            GrpcServerOptions.Instance.ServiceAddress = section["ServiceAddress"];
+            //Discovery配制
+            GrpcServerOptions.Instance.DiscoveryUrl = section["DiscoveryUrl"] ?? section["ConsulUrl"];
+            GrpcServerOptions.Instance.DiscoveryServiceName = section["DiscoveryServiceName"] ?? section["ConsulServiceName"];
+            GrpcServerOptions.Instance.DiscoveryTags = section["DiscoveryTags"] ?? section["ConsulTags"];
+            //错误码配制
+            if(int.TryParse(section["DefaultErrorCode"], out int defaultErrorCode))
+                GrpcServerOptions.Instance.DefaultErrorCode = defaultErrorCode;
+
+            return this;
+        }
+
+        /// <summary>
         /// 注入Grpc,Consul配制
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public ServerBuilder UseGrpcOptions(GrpcServerOptions options)
+        public ServerBuilder UseGrpcOptions(Action<GrpcServerOptions> options)
         {
-            options.InitCompatible();//兼容老版本
-            GrpcServerOptions.Instance.ServiceAddress = options.ServiceAddress;
-            GrpcServerOptions.Instance.DiscoveryUrl = options.DiscoveryUrl;
-            GrpcServerOptions.Instance.DiscoveryServiceName = options.DiscoveryServiceName;
-            GrpcServerOptions.Instance.DiscoveryTags = options.DiscoveryTags;
+            options(GrpcServerOptions.Instance);
             return this;
         }
 
@@ -63,7 +91,7 @@ namespace Grpc.Extension.Internal
         /// </summary>
         /// <param name="grpcServices"></param>
         /// <returns></returns>
-        public ServerBuilder UseGrpcService(IEnumerable<IGrpcService> grpcServices)
+        private ServerBuilder UseGrpcService(IEnumerable<IGrpcService> grpcServices)
         {
             var builder = ServerServiceDefinition.CreateBuilder();
             //grpcServices.ToList().ForEach(grpc => grpc.RegisterMethod(builder));
@@ -114,7 +142,7 @@ namespace Grpc.Extension.Internal
         /// </summary>
         /// <param name="interceptor"></param>
         /// <returns></returns>
-        public ServerBuilder UseInterceptor(ServerInterceptor interceptor)
+        private ServerBuilder UseInterceptor(ServerInterceptor interceptor)
         {
             _interceptors.Add(interceptor);
             return this;
@@ -125,7 +153,7 @@ namespace Grpc.Extension.Internal
         /// </summary>
         /// <param name="interceptors"></param>
         /// <returns></returns>
-        public ServerBuilder UseInterceptor(IEnumerable<ServerInterceptor> interceptors)
+        private ServerBuilder UseInterceptor(IEnumerable<ServerInterceptor> interceptors)
         {
             _interceptors.AddRange(interceptors);
             return this;

@@ -27,6 +27,8 @@ namespace Grpc.Extension
         /// <returns></returns>
         public static IServiceCollection AddGrpcExtensions(this IServiceCollection services)
         {
+            //添加ServerBuilder
+            services.AddSingleton<ServerBuilder>();
             //添加服务端中间件
             services.AddSingleton<ServerInterceptor, MonitorInterceptor>();
             services.AddSingleton<ServerInterceptor, ThrottleInterceptor>();
@@ -46,7 +48,6 @@ namespace Grpc.Extension
             {
                 services.AddSingleton<ILoadBalancer, RoundLoadBalancer>();
             }
-            GrpcExtensions.ServiceProvider = services.BuildServiceProvider();
             return services;
         }
 
@@ -68,8 +69,7 @@ namespace Grpc.Extension
             };
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             channelConfig.GrpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
-            var channelManager = GrpcExtensions.ServiceProvider.GetService<ChannelManager>();
-            channelManager.Configs.Add(channelConfig);
+            ChannelManager.Configs.Add(channelConfig);
             return services;
         }
     }

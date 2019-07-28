@@ -18,31 +18,23 @@ namespace MathServer
     {
         private Server _server;
         private IConfiguration _conf;
-        private IEnumerable<IGrpcService> _grpcServices;
-        private IEnumerable<ServerInterceptor> _serverInterceptors;
+        private ServerBuilder _serverBuilder;
 
         public GrpcHostServiceV2(IConfiguration conf,
-            IEnumerable<IGrpcService> grpcServices,
-            IEnumerable<ServerInterceptor> serverInterceptors)
+            ServerBuilder serverBuilder)
         {
             this._conf = conf;
-            this._grpcServices = grpcServices;
-            this._serverInterceptors = serverInterceptors;
+            this._serverBuilder = serverBuilder;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             //构建Server
-            var serverBuilder = new ServerBuilder();
-            var serverOptions = _conf.GetSection("GrpcServer").Get<GrpcServerOptions>();
-            _server = serverBuilder
+            _server = _serverBuilder
                 .UseOptions(options => {
                     //options.GlobalPackage = "MathGrpc";
                     options.ProtoNameSpace = "MathGrpc";
                 })
-                .UseGrpcOptions(serverOptions)
-                .UseInterceptor(_serverInterceptors) //使用中间件
-                .UseGrpcService(_grpcServices)
                 .UseDashBoard()//使用DashBoard,需要使用FM.GrpcDashboard网站
                 .UseLogger(log =>//使用日志
                 {

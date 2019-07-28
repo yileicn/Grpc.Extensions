@@ -18,21 +18,18 @@ namespace GreeterServer
     {
         private Server _server;
         private IConfiguration _conf;
-        private IEnumerable<ServerInterceptor> _serverInterceptors;
+        private ServerBuilder _serverBuilder;
 
-        public GrpcHostServiceV2(IConfiguration conf, IEnumerable<ServerInterceptor> serverInterceptors)
+        public GrpcHostServiceV2(IConfiguration conf, ServerBuilder serverBuilder)
         {
             this._conf = conf;
-            this._serverInterceptors = serverInterceptors;
+            this._serverBuilder = serverBuilder;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             //构建Server
-            var serverBuilder = new ServerBuilder();
-            var serverOptions = _conf.GetSection("GrpcServer").Get<GrpcServerOptions>();
-            _server = serverBuilder.UseGrpcOptions(serverOptions)
-                .UseInterceptor(_serverInterceptors) //使用中间件
+            _server = _serverBuilder
                 .UseGrpcService(Greeter.BindService(new GreeterImpl()))
                 .UseDashBoard()//使用DashBoard,需要使用FM.GrpcDashboard网站
                 .UseLogger(log =>//使用日志

@@ -17,9 +17,9 @@ namespace Grpc.Extension.Internal
         /// <summary>
         /// 自动负载Channel的CallInvoker
         /// </summary>
-        public AutoChannelCallInvoker()
+        public AutoChannelCallInvoker(ChannelManager channelManager)
         {
-            this._channelManager = GrpcExtensions.ServiceProvider.GetService<ChannelManager>();
+            this._channelManager = channelManager;
         }
 
         /// <summary>
