@@ -12,6 +12,9 @@ using Grpc.Extension.Interceptors;
 using Grpc.Extension.LoadBalancer;
 using Grpc.Extension.Internal;
 using Grpc.Extension.Discovery;
+using Microsoft.Extensions.Logging;
+using OpenTracing;
+using Microsoft.Extensions.Configuration;
 
 namespace Grpc.Extension
 {
@@ -70,6 +73,46 @@ namespace Grpc.Extension
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             channelConfig.GrpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
             ChannelManager.Configs.Add(channelConfig);
+            return services;
+        }
+
+        /// <summary>
+        /// 添加Jaeger和Interceptor
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="conf"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddJaeger(this IServiceCollection services, IConfiguration conf)
+        {
+            var key = "GrpcServer:Jaeger";
+            var jaegerOptions = conf.GetSection(key).Get<JaegerOptions>();
+            if (jaegerOptions == null)
+                throw new ArgumentException($"{key} Value cannot be null");
+
+            if (string.IsNullOrWhiteSpace(jaegerOptions.AgentIp))
+                throw new ArgumentException($"{key}:AgentIp Value cannot be null");
+
+            if (jaegerOptions.AgentPort == 0)
+                throw new ArgumentNullException($"{key}:AgentPort Value cannot be null");
+
+            //jaeger
+            services.AddSingleton<ITracer>(sp => {
+                var serviceName = jaegerOptions.ServiceName ?? GrpcServerOptions.Instance.DiscoveryServiceName;
+                var tracer = new Jaeger.Tracer.Builder(serviceName)
+               .WithLoggerFactory(sp.GetService<ILoggerFactory>())
+               .WithSampler(new Jaeger.Samplers.ConstSampler(true))
+               .WithReporter(new Jaeger.Reporters.RemoteReporter.Builder()
+                   .WithFlushInterval(TimeSpan.FromSeconds(5))
+                   .WithMaxQueueSize(5)
+                   .WithSender(new Jaeger.Senders.UdpSender(jaegerOptions.AgentIp, jaegerOptions.AgentPort, 1024 * 5)).Build())
+               .Build();
+                return tracer;
+            });
+           
+            //添加jaeger中间件
+            services.AddSingleton<ServerInterceptor, JaegerTracingInterceptor>();
+            services.AddSingleton<ClientInterceptor, ClientJaegerTracingInterceptor>();
+
             return services;
         }
     }

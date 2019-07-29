@@ -31,25 +31,5 @@ namespace MathServer
             services.AddGrpcExtensions(); //注入GrpcExtensions
             services.AddHostedService<GrpcHostServiceV2>();
         }
-
-        public static void AddJaeger(this IServiceCollection services,IConfiguration conf)
-        {
-            var provider = services.BuildServiceProvider();
-            var loggerFactory = provider.GetService<ILoggerFactory>();
-            //jaeger
-            var tracer = new Tracer.Builder("MathServer")
-                .WithLoggerFactory(loggerFactory)
-                .WithSampler(new ConstSampler(true))
-                .WithReporter(new RemoteReporter.Builder()
-                    .WithFlushInterval(TimeSpan.FromSeconds(5))
-                    .WithMaxQueueSize(5)
-                    .WithSender(new UdpSender(conf["Jaeger:AgentIp"], conf.GetValue<int>("Jaeger:AgentPort"), 1024 * 5)).Build())
-                .Build();
-            GlobalTracer.Register(tracer);
-            services.AddSingleton<ITracer>(tracer);
-            //添加jaeger中间件
-            services.AddSingleton<ServerInterceptor,JaegerTracingMiddleware>();
-            services.AddSingleton<ClientInterceptor, ClientJaegerTracingMiddleware>();
-        }
     }
 }

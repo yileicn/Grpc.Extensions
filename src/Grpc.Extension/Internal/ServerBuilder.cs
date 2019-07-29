@@ -11,6 +11,8 @@ using Grpc.Extension.Common;
 using Grpc.Extension.Interceptors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OpenTracing;
+using OpenTracing.Util;
 
 namespace Grpc.Extension.Internal
 {
@@ -171,6 +173,16 @@ namespace Grpc.Extension.Internal
         }
 
         /// <summary>
+        /// 有AddJaeger就使用Jaeger
+        /// </summary>
+        /// <returns></returns>
+        private void CheckUseJaeger()
+        {
+            var tracer = GrpcExtensions.ServiceProvider.GetService<ITracer>();
+            if (tracer != null) GlobalTracer.Register(tracer);
+        }
+
+        /// <summary>
         /// 构建Server
         /// </summary>
         /// <returns></returns>
@@ -187,7 +199,10 @@ namespace Grpc.Extension.Internal
             //添加服务IPAndPort
             var ipPort = NetHelper.GetIPAndPort(GrpcServerOptions.Instance.ServiceAddress);
             server.Ports.Add(new ServerPort(ipPort.Item1, ipPort.Item2, ServerCredentials.Insecure));
-            
+
+            //有AddJaeger就UseJaeger
+            this.CheckUseJaeger();
+
             return server;
         }
 
