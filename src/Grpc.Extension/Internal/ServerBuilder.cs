@@ -67,7 +67,7 @@ namespace Grpc.Extension.Internal
         }
 
         /// <summary>
-        /// 注入Grpc,Consul配制
+        /// 注入Grpc,Discovery配制
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>

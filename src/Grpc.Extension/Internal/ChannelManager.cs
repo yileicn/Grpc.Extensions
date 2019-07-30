@@ -47,12 +47,12 @@ namespace Grpc.Extension.Internal
             }
             if (config.UseDirect)
             {
-                return GetChannelCore(config.DirectEndpoint,config.DiscoveryServiceName);
+                return GetChannelCore(config.DirectEndpoint,config);
             }
             else//from discovery
             {
                 var endPoint = GetEndpoint(config.DiscoveryServiceName, config.DiscoveryUrl);
-                return GetChannelCore(endPoint,config.DiscoveryServiceName);
+                return GetChannelCore(endPoint,config);
             }
         }
 
@@ -71,7 +71,7 @@ namespace Grpc.Extension.Internal
             });
             if (healthEndpoints == null || healthEndpoints.Count == 0)
             {
-                throw new Exception($"get endpoints from consul of {serviceName} is null");
+                throw new Exception($"get endpoints from discovery of {serviceName} is null");
             }
             //只有重新拉取了健康结点才需要去关闭不健康的Channel
             if (isCache == false) ShutdownErrorChannel(healthEndpoints, serviceName);
@@ -79,32 +79,58 @@ namespace Grpc.Extension.Internal
             return _loadBalancer.SelectEndpoint(serviceName, healthEndpoints);
         }
 
-        private Channel GetChannelCore(string endpoint,string serviceName)
+        private Channel GetChannelCore(string endpoint,ChannelConfig config)
         {
-            Func<string, ChannelInfo> addFunc = key =>
-                new ChannelInfo()
-                {
-                    DiscoveryServiceName = serviceName,
-                    Channel = new Channel(key, ChannelCredentials.Insecure)
-                };
             //获取channel，不存在就添加
-            var channel = _channels.GetOrAdd(endpoint, addFunc).Channel;
+            var channel = _channels.GetOrAdd(endpoint, (key) => CreateChannel(key,config)).Channel;
             //检查channel状态
-            if (channel.State == ChannelState.Shutdown || channel.State == ChannelState.TransientFailure)
+            if (channel.State != ChannelState.Ready)
             {
                 //状态异常就关闭后重建
                 channel.ShutdownAsync();
+                _channels.TryRemove(config.DiscoveryServiceName, out var tmp);
                 //新增或者修改channel
-                return _channels.AddOrUpdate(endpoint, addFunc, (key, value) => new ChannelInfo()
-                    {
-                        DiscoveryServiceName = serviceName,
-                        Channel = new Channel(key, ChannelCredentials.Insecure)
-                    }).Channel;
+                return _channels.AddOrUpdate(endpoint, (key) => CreateChannel(key, config), (key, value) => CreateChannel(key,config)).Channel;
             }
             else
             {
                 return channel;
             }
+        }
+
+        private ChannelInfo CreateChannel(string endPoint, ChannelConfig config)
+        {
+            var channel = new Channel(endPoint, ChannelCredentials.Insecure);
+
+            var tryCount = 0;//重试计数
+            //检查channel状态
+            while (channel.State != ChannelState.Ready)
+            {
+                try
+                {
+                    channel.ConnectAsync(DateTime.UtcNow.AddSeconds(1)).Wait();
+                }
+                catch (Exception ex)
+                {
+                    tryCount++;
+                    var exeption = new Exception($"create channel for {config.DiscoveryServiceName} service failed {tryCount},status:{channel.State},endpoint:{endPoint},ex:{ex}");
+                    if (tryCount > 2)
+                    {
+                        throw exeption;
+                    }
+                    else
+                    {
+                        LoggerAccessor.Instance.LoggerError?.Invoke(exeption);
+                    }
+                    //重新获取Endpoint,故障转移
+                    if (!config.UseDirect)
+                    {
+                        endPoint = GetEndpoint(config.DiscoveryServiceName, config.DiscoveryUrl);
+                        channel = new Channel(endPoint, ChannelCredentials.Insecure);
+                    }
+                }
+            }
+            return new ChannelInfo() { DiscoveryServiceName= config.DiscoveryServiceName,Channel = channel};
         }
 
         /// <summary>

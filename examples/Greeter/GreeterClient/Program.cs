@@ -46,11 +46,19 @@ namespace GreeterClient
 
             var user = "you";
 
-            for (int i = 0; i < 10; i++)
+            try
             {
-                var reply = client.SayHello(new HelloRequest { Name = user + i.ToString() });
-                Console.WriteLine($"Greeting{i.ToString()}: {reply.Message}");
+                for (int i = 0; i < 10; i++)
+                {
+                    var reply = client.SayHello(new HelloRequest { Name = user + i.ToString() });
+                    Console.WriteLine($"Greeting{i.ToString()}: {reply.Message}");
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
