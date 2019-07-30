@@ -46,6 +46,9 @@
       <HintPath>..\..\..\packages\Grpc.Core.1.16.0\lib\net45\Grpc.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Microsoft.Extensions.Caching.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Extensions.Configuration, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Extensions.Configuration.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
     </Reference>
@@ -72,6 +75,9 @@
     </Reference>
     <Reference Include="Microsoft.Extensions.FileSystemGlobbing, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Extensions.FileSystemGlobbing.2.1.1\lib\netstandard2.0\Microsoft.Extensions.FileSystemGlobbing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Microsoft.Extensions.Options.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Primitives, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Extensions.Primitives.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>

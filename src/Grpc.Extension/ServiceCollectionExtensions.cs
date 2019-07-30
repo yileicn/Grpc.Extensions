@@ -51,6 +51,8 @@ namespace Grpc.Extension
             {
                 services.AddSingleton<ILoadBalancer, RoundLoadBalancer>();
             }
+            //添加缓存
+            services.AddMemoryCache();
             return services;
         }
 

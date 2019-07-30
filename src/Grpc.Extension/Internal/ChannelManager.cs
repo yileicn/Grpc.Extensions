@@ -6,6 +6,7 @@ using System.Linq;
 using Grpc.Extension.LoadBalancer;
 using Grpc.Extension.Model;
 using Grpc.Extension.Discovery;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Grpc.Extension.Internal
 {
@@ -17,16 +18,18 @@ namespace Grpc.Extension.Internal
         private ConcurrentDictionary<string, ChannelInfo> _channels = new ConcurrentDictionary<string, ChannelInfo>();
         private IServiceDiscovery _serviceDiscovery;
         private ILoadBalancer _loadBalancer;
+        private IMemoryCache _memoryCache;
 
         /// <summary>
         /// Channel统一管理
         /// </summary>
         /// <param name="serviceDiscovery"></param>
         /// <param name="loadBalancer"></param>
-        public ChannelManager(IServiceDiscovery serviceDiscovery, ILoadBalancer loadBalancer)
+        public ChannelManager(IServiceDiscovery serviceDiscovery, ILoadBalancer loadBalancer,IMemoryCache memoryCache)
         {
             this._serviceDiscovery = serviceDiscovery;
             this._loadBalancer = loadBalancer;
+            this._memoryCache = memoryCache;
         }
 
         internal static List<ChannelConfig> Configs { get; set; } = new List<ChannelConfig>();
@@ -56,24 +59,23 @@ namespace Grpc.Extension.Internal
         /// <summary>
         /// 根据服务名称返回服务地址
         /// </summary>
-        private string GetEndpoint(string serviceName, string consulUrl)
+        private string GetEndpoint(string serviceName, string dicoveryUrl)
         {
             //获取健康的endpoints
-            var healthEndpoints = _serviceDiscovery.GetEndpoints(serviceName, consulUrl);
+            var isCache = true;
+            var healthEndpoints = _memoryCache.GetOrCreate(serviceName, cacheEntry =>
+            {
+                isCache = false;
+                cacheEntry.SetAbsoluteExpiration(TimeSpan.FromSeconds(GrpcServerOptions.Instance.DiscoveryTTLInterval));
+                return _serviceDiscovery.GetEndpoints(serviceName, dicoveryUrl);
+            });
             if (healthEndpoints == null || healthEndpoints.Count == 0)
             {
                 throw new Exception($"get endpoints from consul of {serviceName} is null");
             }
-            //获取错误的channel
-            var errorChannel = _channels.Where(p => p.Value.DiscoveryServiceName == serviceName &&
-                                                !healthEndpoints.Contains(p.Key)).ToList();
-            //关闭并删除错误的channel
-            foreach (var channel in errorChannel)
-            {
-                channel.Value.Channel.ShutdownAsync();
-                _channels.TryRemove(channel.Key,out var tmp);
-            }
-            
+            //只有重新拉取了健康结点才需要去关闭不健康的Channel
+            if (isCache == false) ShutdownErrorChannel(healthEndpoints, serviceName);
+
             return _loadBalancer.SelectEndpoint(serviceName, healthEndpoints);
         }
 
@@ -106,11 +108,30 @@ namespace Grpc.Extension.Internal
         }
 
         /// <summary>
-        /// 关闭Channel
+        /// 关闭不健康Channel
+        /// </summary>
+        /// <param name="healthEndpoints"></param>
+        /// <param name="serviceName"></param>
+        private void ShutdownErrorChannel(List<string> healthEndpoints,string serviceName)
+        {
+            //获取错误的channel
+            var errorChannel = _channels.Where(p => p.Value.DiscoveryServiceName == serviceName &&
+                                                !healthEndpoints.Contains(p.Key)).ToList();
+            //关闭并删除错误的channel
+            foreach (var channel in errorChannel)
+            {
+                channel.Value.Channel.ShutdownAsync();
+                _channels.TryRemove(channel.Key, out var tmp);
+            }
+        }
+
+        /// <summary>
+        /// 关闭所有Channel
         /// </summary>
         public void Shutdown()
         {
             _channels.Select(q => q.Value).ToList().ForEach(q => q.Channel.ShutdownAsync().Wait());
+            _channels.Clear();
         }
     }
 }
