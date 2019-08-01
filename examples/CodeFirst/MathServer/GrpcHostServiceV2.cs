@@ -35,6 +35,7 @@ namespace MathServer
                     //options.GlobalPackage = "MathGrpc";
                     options.ProtoNameSpace = "MathGrpc";
                 })
+                .UseGrpcService()
                 .UseDashBoard()//使用DashBoard,需要使用FM.GrpcDashboard网站
                 .UseLogger(log =>//使用日志
                 {

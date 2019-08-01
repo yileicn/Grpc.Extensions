@@ -518,7 +518,7 @@
             Channel统一管理
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Internal.ChannelManager.#ctor(Grpc.Extension.Discovery.IServiceDiscovery,Grpc.Extension.LoadBalancer.ILoadBalancer)">
+        <member name="M:Grpc.Extension.Internal.ChannelManager.#ctor(Grpc.Extension.Discovery.IServiceDiscovery,Grpc.Extension.LoadBalancer.ILoadBalancer,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
             <summary>
             Channel统一管理
             </summary>
@@ -535,9 +535,16 @@
             根据服务名称返回服务地址
             </summary>
         </member>
+        <member name="M:Grpc.Extension.Internal.ChannelManager.ShutdownErrorChannel(System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            关闭不健康Channel
+            </summary>
+            <param name="healthEndpoints"></param>
+            <param name="serviceName"></param>
+        </member>
         <member name="M:Grpc.Extension.Internal.ChannelManager.Shutdown">
             <summary>
-            关闭Channel
+            关闭所有Channel
             </summary>
         </member>
         <member name="T:Grpc.Extension.Internal.CommonError">
@@ -658,7 +665,7 @@
         </member>
         <member name="M:Grpc.Extension.Internal.ServerBuilder.UseGrpcOptions(System.Action{Grpc.Extension.GrpcServerOptions})">
             <summary>
-            注入Grpc,Consul配制
+            注入Grpc,Discovery配制
             </summary>
             <param name="options"></param>
             <returns></returns>
@@ -862,6 +869,21 @@
             默认错误码
             </summary>
         </member>
+        <member name="P:Grpc.Extension.JaegerOptions.ServiceName">
+            <summary>
+            服务名
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.JaegerOptions.AgentIp">
+            <summary>
+            AgentIp
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.JaegerOptions.AgentPort">
+            <summary>
+            AgentPort
+            </summary>
+        </member>
         <member name="T:Grpc.Extension.ServiceCollectionExtensions">
             <summary>
             ServiceCollectionExtensions
@@ -886,7 +908,7 @@
         </member>
         <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddJaeger(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>
-            添加Jaeger
+            添加Jaeger和Interceptor
             </summary>
             <param name="services"></param>
             <param name="conf"></param>

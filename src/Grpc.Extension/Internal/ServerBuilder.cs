@@ -23,6 +23,7 @@ namespace Grpc.Extension.Internal
     {
         private readonly List<ServerInterceptor> _interceptors = new List<ServerInterceptor>();
         private readonly List<ServerServiceDefinition> _serviceDefinitions = new List<ServerServiceDefinition>();
+        private readonly List<IGrpcService> _grpcServices = new List<IGrpcService>();
 
         public ServerBuilder(IServiceProvider serviceProvider,
             IConfiguration conf,
@@ -30,10 +31,10 @@ namespace Grpc.Extension.Internal
             IEnumerable<IGrpcService> grpcServices)
         {
             GrpcExtensions.ServiceProvider = serviceProvider;
+            this._grpcServices.AddRange(grpcServices);
             //初始化配制,注入中间件,GrpcService
             this.InitGrpcOptions(conf)//初始化配制
-                .UseInterceptor(serverInterceptors)//注入中间件
-                .UseGrpcService(grpcServices);//注入GrpcService
+                .UseInterceptor(serverInterceptors);//注入中间件
         }
 
         /// <summary>
@@ -89,7 +90,16 @@ namespace Grpc.Extension.Internal
         }
 
         /// <summary>
-        /// 注入GrpcService
+        /// 注入IGrpcService
+        /// </summary>
+        /// <returns></returns>
+        public ServerBuilder UseGrpcService()
+        {
+            return UseGrpcService(_grpcServices);
+        }
+
+        /// <summary>
+        /// 注入IGrpcService
         /// </summary>
         /// <param name="grpcServices"></param>
         /// <returns></returns>
