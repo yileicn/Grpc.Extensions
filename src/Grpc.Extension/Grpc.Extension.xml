@@ -53,11 +53,6 @@
             GrpcService
             </summary>
         </member>
-        <member name="M:Grpc.Extension.BaseService.IGrpcService.RegisterMethod(Grpc.Core.ServerServiceDefinition.Builder)">
-            <summary>
-            注册服务方法
-            </summary>
-        </member>
         <member name="T:Grpc.Extension.BaseService.IGrpcBaseService">
             <summary>
             基础服务
@@ -564,6 +559,11 @@
             <param name="ex"></param>
             <returns></returns>
         </member>
+        <member name="F:Grpc.Extension.Internal.GrpcErrorCode.Internal">
+            <summary>
+            内部异常
+            </summary>
+        </member>
         <member name="T:Grpc.Extension.Internal.GrpcClientManager">
             <summary>
             GrpcClient，用于批量调用
@@ -593,6 +593,11 @@
         <member name="T:Grpc.Extension.Internal.NotGrpcMethodAttribute">
             <summary>
             非Grpc方法
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Internal.InternalException">
+            <summary>
+            Grpc.Extension内部异常
             </summary>
         </member>
         <member name="T:Grpc.Extension.Internal.LoggerAccessor">
@@ -677,9 +682,15 @@
             <param name="serviceDefinition"></param>
             <returns></returns>
         </member>
+        <member name="M:Grpc.Extension.Internal.ServerBuilder.UseGrpcService">
+            <summary>
+            注入IGrpcService
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Grpc.Extension.Internal.ServerBuilder.UseGrpcService(System.Collections.Generic.IEnumerable{Grpc.Extension.BaseService.IGrpcService})">
             <summary>
-            注入GrpcService
+            注入IGrpcService
             </summary>
             <param name="grpcServices"></param>
             <returns></returns>

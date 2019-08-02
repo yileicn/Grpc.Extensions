@@ -42,8 +42,7 @@ namespace Grpc.Extension.Internal
             var config = Configs?.FirstOrDefault(q => q.GrpcServiceName == grpcServiceName?.Trim());
             if (config == null)
             {
-                LoggerAccessor.Instance.LoggerError?.Invoke(new Exception($"GetChannel({grpcServiceName ?? ""}) has not exists"));
-                return null;
+                throw new InternalException(GrpcErrorCode.Internal, $"{grpcServiceName ?? ""} client has not config,please call AddGrpcClient method");
             }
             if (config.UseDirect)
             {
@@ -71,7 +70,7 @@ namespace Grpc.Extension.Internal
             });
             if (healthEndpoints == null || healthEndpoints.Count == 0)
             {
-                throw new Exception($"get endpoints from discovery of {serviceName} is null");
+                throw new InternalException(GrpcErrorCode.Internal,$"get endpoints from discovery of {serviceName} is null");
             }
             //只有重新拉取了健康结点才需要去关闭不健康的Channel
             if (isCache == false) ShutdownErrorChannel(healthEndpoints, serviceName);
@@ -113,7 +112,8 @@ namespace Grpc.Extension.Internal
                 catch (Exception ex)
                 {
                     tryCount++;
-                    var exeption = new Exception($"create channel for {config.DiscoveryServiceName} service failed {tryCount},status:{channel.State},endpoint:{endPoint},ex:{ex}");
+                    var exMsg = $"create channel for {config.DiscoveryServiceName} service failed {tryCount},status:{channel.State},endpoint:{endPoint}";
+                    var exeption = new InternalException(GrpcErrorCode.Internal, exMsg, ex);
                     if (tryCount > 2)
                     {
                         throw exeption;

@@ -64,6 +64,7 @@ namespace Grpc.Extension.Interceptors
             catch (Exception ex)
             {
                 var rpcEx = CommonError.BuildRpcException(ex);
+                rpcEx.Data.Add("Request", model);
                 model.Exception = rpcEx.ToString();
                 model.Status = "error";
                 LoggerAccessor.Instance.LoggerError?.Invoke(rpcEx);

@@ -3,8 +3,6 @@ using Grpc.Extension.Discovery;
 using Grpc.Extension.Internal;
 using Grpc.Extension.Model;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Grpc.Extension.Consul
@@ -103,7 +101,7 @@ namespace Grpc.Extension.Consul
             }
             catch (Exception ex)
             {
-                LoggerAccessor.Instance.LoggerError?.Invoke(ex);
+                LoggerAccessor.Instance.LoggerError?.Invoke(new InternalException(GrpcErrorCode.Internal, "DoTTL", ex));
 
                 /*
                  * passTTL会出现如下几种情况：
