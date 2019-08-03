@@ -38,7 +38,7 @@ namespace GreeterClient
                     log.LoggerMonitor = (msg,type) => Console.WriteLine(GetLogTypeName(type) + ":"+ msg);
                     log.LoggerError = (ex,type) => Console.WriteLine(GetLogTypeName(type) + ":" + ex);
                 })//注入GrpcClientExtensions
-                .AddSingleton<ClientInterceptor>(new ClientCallTimeout(10))//注入客户端中间件
+                .AddClientCallTimeout(10)//注入客户端中间件
                 .AddGrpcClient<Greeter.GreeterClient>(config["ConsulUrl"], "Greeter.Test");//注入grpc client
             var provider = services.BuildServiceProvider();
             

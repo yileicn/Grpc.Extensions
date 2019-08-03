@@ -146,13 +146,26 @@ namespace Grpc.Extension
         }
 
         /// <summary>
-        /// 添加客户端日志监控
+        /// 添加客户端日志监控Interceptor
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
         public static IServiceCollection AddClientMonitor(this IServiceCollection services)
         {
             services.AddSingleton<ClientInterceptor, ClientMonitorInterceptor>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// 添加客户端超时Interceptor
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="callTimeOutSecond"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddClientCallTimeout(this IServiceCollection services,double callTimeOutSecond)
+        {
+            services.AddSingleton<ClientInterceptor>(new ClientCallTimeout(callTimeOutSecond));
 
             return services;
         }

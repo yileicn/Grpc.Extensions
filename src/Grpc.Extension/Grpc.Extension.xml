@@ -367,11 +367,11 @@
             客户端超时拦截器
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Interceptors.ClientCallTimeout.#ctor(System.Int32)">
+        <member name="M:Grpc.Extension.Interceptors.ClientCallTimeout.#ctor(System.Double)">
             <summary>
             客户端超时拦截器
             </summary>
-            <param name="callTimeOut"></param>
+            <param name="callTimeOutSecond"></param>
         </member>
         <member name="M:Grpc.Extension.Interceptors.ClientCallTimeout.BlockingUnaryCall``2(``0,Grpc.Core.Interceptors.ClientInterceptorContext{``0,``1},Grpc.Core.Interceptors.Interceptor.BlockingUnaryCallContinuation{``0,``1})">
             <summary>
@@ -945,9 +945,17 @@
         </member>
         <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddClientMonitor(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>
-            添加客户端日志监控
+            添加客户端日志监控Interceptor
             </summary>
             <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddClientCallTimeout(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Double)">
+            <summary>
+            添加客户端超时Interceptor
+            </summary>
+            <param name="services"></param>
+            <param name="callTimeOutSecond"></param>
             <returns></returns>
         </member>
     </members>
