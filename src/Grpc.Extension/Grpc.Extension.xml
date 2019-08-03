@@ -605,11 +605,6 @@
             日志访问
             </summary>
         </member>
-        <member name="P:Grpc.Extension.Internal.LoggerAccessor.LoggerTrace">
-            <summary>
-            写调试日志
-            </summary>
-        </member>
         <member name="P:Grpc.Extension.Internal.LoggerAccessor.LoggerError">
             <summary>
             写异常日志
@@ -788,6 +783,21 @@
         <member name="T:Grpc.Extension.Model.ErrorModel">
             <summary>
             统一错误模型
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Model.LogType">
+            <summary>
+            日志类型
+            </summary>
+        </member>
+        <member name="F:Grpc.Extension.Model.LogType.ServerLog">
+            <summary>
+            服务端日志
+            </summary>
+        </member>
+        <member name="F:Grpc.Extension.Model.LogType.ClientLog">
+            <summary>
+            客户端日志
             </summary>
         </member>
         <member name="T:Grpc.Extension.Model.MonitorModel">

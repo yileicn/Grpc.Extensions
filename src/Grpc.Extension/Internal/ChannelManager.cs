@@ -120,7 +120,7 @@ namespace Grpc.Extension.Internal
                     }
                     else
                     {
-                        LoggerAccessor.Instance.LoggerError?.Invoke(exeption);
+                        LoggerAccessor.Instance.LoggerError?.Invoke(exeption, LogType.ClientLog);
                     }
                     //重新获取Endpoint,故障转移
                     if (!config.UseDirect)

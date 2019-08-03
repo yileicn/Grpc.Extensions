@@ -6,9 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Extension;
-using Grpc.Extension.BaseService;
-using Grpc.Extension.Interceptors;
 using Grpc.Extension.Internal;
+using Grpc.Extension.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -39,8 +38,8 @@ namespace MathServer
                 .UseDashBoard()//使用DashBoard,需要使用FM.GrpcDashboard网站
                 .UseLogger(log =>//使用日志
                 {
-                    log.LoggerMonitor = info => Console.WriteLine(info);
-                    log.LoggerError = exception => Console.WriteLine(exception);
+                    log.LoggerMonitor = (msg, type) => Console.WriteLine(GetLogTypeName(type) + ":" + msg);
+                    log.LoggerError = (ex, type) => Console.WriteLine(GetLogTypeName(type) + ":" + ex);
                 })
                 .UseProtoGenerate("proto")//生成proto
                 .Build();
@@ -48,6 +47,11 @@ namespace MathServer
             _server.StartAndRegisterService();
 
             return Task.CompletedTask;
+        }
+
+        private static string GetLogTypeName(LogType logtype)
+        {
+            return Enum.GetName(typeof(LogType), logtype);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

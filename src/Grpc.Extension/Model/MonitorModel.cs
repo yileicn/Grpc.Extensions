@@ -8,6 +8,7 @@ namespace Grpc.Extension.Model
     /// <summary>
     /// 日志监控实体
     /// </summary>
+    [Serializable]
     public class MonitorModel
     {
         public MonitorModel()

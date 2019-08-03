@@ -35,12 +35,12 @@ namespace Grpc.Extension.Interceptors
                 model.Status = "error";
                 model.ResponseTime = DateTime.Now;
                 model.Exception = CommonError.GetFlatException(ex);
-                LoggerAccessor.Instance.LoggerError?.Invoke(ex);
+                LoggerAccessor.Instance.LoggerError?.Invoke(ex, LogType.ClientLog);
                 throw ex;
             }
             finally
             {
-                LoggerAccessor.Instance.LoggerMonitor?.Invoke(model.ToJson());
+                LoggerAccessor.Instance.LoggerMonitor?.Invoke(model.ToJson(), LogType.ClientLog);
             }
         }
 
@@ -67,12 +67,12 @@ namespace Grpc.Extension.Interceptors
                 model.Status = "error";
                 model.ResponseTime = DateTime.Now;
                 model.Exception = CommonError.GetFlatException(ex);
-                LoggerAccessor.Instance.LoggerError?.Invoke(ex);
+                LoggerAccessor.Instance.LoggerError?.Invoke(ex, LogType.ClientLog);
                 throw ex;
             }
             finally
             {
-                LoggerAccessor.Instance.LoggerMonitor?.Invoke(model.ToJson());
+                LoggerAccessor.Instance.LoggerMonitor?.Invoke(model.ToJson(), LogType.ClientLog);
             }
         }
 

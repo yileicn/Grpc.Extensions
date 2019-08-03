@@ -15,7 +15,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Grpc.Core;
 using Grpc.Extension;
 using Grpc.Extension.Interceptors;
 using Grpc.Extension.Model;
@@ -36,8 +35,8 @@ namespace GreeterClient
             //使用依赖注入
             var services = new ServiceCollection()
                 .AddGrpcClientExtensions((log)=> {
-                    log.LoggerMonitor = info => Console.WriteLine(info);
-                    log.LoggerError = exception => Console.WriteLine(exception);
+                    log.LoggerMonitor = (msg,type) => Console.WriteLine(GetLogTypeName(type) + ":"+ msg);
+                    log.LoggerError = (ex,type) => Console.WriteLine(GetLogTypeName(type) + ":" + ex);
                 })//注入GrpcClientExtensions
                 .AddSingleton<ClientInterceptor>(new ClientCallTimeout(10))//注入客户端中间件
                 .AddGrpcClient<Greeter.GreeterClient>(config["ConsulUrl"], "Greeter.Test");//注入grpc client
@@ -65,6 +64,11 @@ namespace GreeterClient
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
+        }
+
+        private static string GetLogTypeName(LogType logtype)
+        {
+            return Enum.GetName(typeof(LogType), logtype);
         }
 
         public static async Task StreamTest(Greeter.GreeterClient client)
