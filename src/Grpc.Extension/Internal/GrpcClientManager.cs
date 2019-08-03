@@ -20,9 +20,11 @@ namespace Grpc.Extension.Internal
         /// <summary>
         /// GrpcClient
         /// </summary>
+        /// <param name="serviceProvider"></param>
         /// <param name="clientInterceptors"></param>
-        public GrpcClientManager(IEnumerable<ClientInterceptor> clientInterceptors)
+        public GrpcClientManager(IServiceProvider serviceProvider, IEnumerable<ClientInterceptor> clientInterceptors)
         {
+            GrpcExtensions.ServiceProvider = serviceProvider;
             this._clientInterceptors = clientInterceptors;
         }
 

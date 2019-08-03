@@ -569,10 +569,11 @@
             GrpcClient，用于批量调用
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Internal.GrpcClientManager.#ctor(System.Collections.Generic.IEnumerable{Grpc.Extension.Interceptors.ClientInterceptor})">
+        <member name="M:Grpc.Extension.Internal.GrpcClientManager.#ctor(System.IServiceProvider,System.Collections.Generic.IEnumerable{Grpc.Extension.Interceptors.ClientInterceptor})">
             <summary>
             GrpcClient
             </summary>
+            <param name="serviceProvider"></param>
             <param name="clientInterceptors"></param>
         </member>
         <member name="M:Grpc.Extension.Internal.GrpcClientManager.GetGrpcClient``1">
