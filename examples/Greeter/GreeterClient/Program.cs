@@ -35,7 +35,10 @@ namespace GreeterClient
             var config = configBuilder.SetBasePath(configPath).AddJsonFile("appsettings.json", false, true).Build();
             //使用依赖注入
             var services = new ServiceCollection()
-                .AddGrpcExtensions()//注入GrpcExtensions
+                .AddGrpcClientExtensions((log)=> {
+                    log.LoggerMonitor = info => Console.WriteLine(info);
+                    log.LoggerError = exception => Console.WriteLine(exception);
+                })//注入GrpcClientExtensions
                 .AddSingleton<ClientInterceptor>(new ClientCallTimeout(10))//注入客户端中间件
                 .AddGrpcClient<Greeter.GreeterClient>(config["ConsulUrl"], "Greeter.Test");//注入grpc client
             var provider = services.BuildServiceProvider();

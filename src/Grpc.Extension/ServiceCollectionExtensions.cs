@@ -35,24 +35,51 @@ namespace Grpc.Extension
             //添加服务端中间件
             services.AddSingleton<ServerInterceptor, MonitorInterceptor>();
             services.AddSingleton<ServerInterceptor, ThrottleInterceptor>();
+
+            //添加GrpcClient扩展
+            services.AddGrpcClientExtensions();
+
+            return services;
+        }
+
+        /// <summary>
+        /// 添加GrpcClient扩展
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="useLogger"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddGrpcClientExtensions(this IServiceCollection services, Action<LoggerAccessor> useLogger = null)
+        {
             //添加客户端中间件的CallInvoker
             services.AddSingleton<AutoChannelCallInvoker>();
             services.AddSingleton<CallInvoker, InterceptorCallInvoker>();
-            //默认使用consul服务注册,服务发现，在外面可以注入其它策略
-            if (!services.Any(p => p.ServiceType == typeof(IServiceRegister)))
-            {
-                services.AddConsulDiscovery();
-            }            
             //添加Channel的Manager
             services.AddSingleton<ChannelManager>();
             services.AddSingleton<GrpcClientManager>();
+
             //默认使用轮询负载策略，在外面可以注入其它策略
             if (!services.Any(p => p.ServiceType == typeof(ILoadBalancer)))
             {
                 services.AddSingleton<ILoadBalancer, RoundLoadBalancer>();
             }
+
+            //默认使用consul服务注册,服务发现，在外面可以注入其它策略
+            if (!services.Any(p => p.ServiceType == typeof(IServiceRegister)))
+            {
+                services.AddConsulDiscovery();
+            }
+
             //添加缓存
             services.AddMemoryCache();
+
+            //配制日志
+            if (useLogger != null)
+            {
+                //添加客户端日志监控
+                services.AddClientMonitor();
+                useLogger?.Invoke(LoggerAccessor.Instance);
+            }           
+
             return services;
         }
 
@@ -114,6 +141,18 @@ namespace Grpc.Extension
             //添加jaeger中间件
             services.AddSingleton<ServerInterceptor, JaegerTracingInterceptor>();
             services.AddSingleton<ClientInterceptor, ClientJaegerTracingInterceptor>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// 添加客户端日志监控
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddClientMonitor(this IServiceCollection services)
+        {
+            services.AddSingleton<ClientInterceptor, ClientMonitorInterceptor>();
 
             return services;
         }

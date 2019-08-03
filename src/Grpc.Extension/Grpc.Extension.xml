@@ -907,6 +907,14 @@
             <param name="services"></param>
             <returns></returns>
         </member>
+        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddGrpcClientExtensions(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Grpc.Extension.Internal.LoggerAccessor})">
+            <summary>
+            添加GrpcClient扩展
+            </summary>
+            <param name="services"></param>
+            <param name="useLogger"></param>
+            <returns></returns>
+        </member>
         <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddGrpcClient``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String)">
             <summary>
             添加GrpcClient,生成元数据
@@ -923,6 +931,13 @@
             </summary>
             <param name="services"></param>
             <param name="conf"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddClientMonitor(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            添加客户端日志监控
+            </summary>
+            <param name="services"></param>
             <returns></returns>
         </member>
     </members>
