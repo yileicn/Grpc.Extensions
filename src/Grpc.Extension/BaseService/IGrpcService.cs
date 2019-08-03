@@ -10,10 +10,7 @@ namespace Grpc.Extension.BaseService
     /// </summary>
     public interface IGrpcService
     {
-        /// <summary>
-        /// 注册服务方法
-        /// </summary>
-        void RegisterMethod(ServerServiceDefinition.Builder builder);
+
     }
 
     /// <summary>

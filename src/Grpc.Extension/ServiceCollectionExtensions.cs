@@ -12,6 +12,9 @@ using Grpc.Extension.Interceptors;
 using Grpc.Extension.LoadBalancer;
 using Grpc.Extension.Internal;
 using Grpc.Extension.Discovery;
+using Microsoft.Extensions.Logging;
+using OpenTracing;
+using Microsoft.Extensions.Configuration;
 
 namespace Grpc.Extension
 {
@@ -32,22 +35,51 @@ namespace Grpc.Extension
             //添加服务端中间件
             services.AddSingleton<ServerInterceptor, MonitorInterceptor>();
             services.AddSingleton<ServerInterceptor, ThrottleInterceptor>();
+
+            //添加GrpcClient扩展
+            services.AddGrpcClientExtensions();
+
+            return services;
+        }
+
+        /// <summary>
+        /// 添加GrpcClient扩展
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="useLogger"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddGrpcClientExtensions(this IServiceCollection services, Action<LoggerAccessor> useLogger = null)
+        {
             //添加客户端中间件的CallInvoker
             services.AddSingleton<AutoChannelCallInvoker>();
             services.AddSingleton<CallInvoker, InterceptorCallInvoker>();
-            //默认使用consul服务注册,服务发现，在外面可以注入其它策略
-            if (!services.Any(p => p.ServiceType == typeof(IServiceRegister)))
-            {
-                services.AddConsulDiscovery();
-            }            
             //添加Channel的Manager
             services.AddSingleton<ChannelManager>();
             services.AddSingleton<GrpcClientManager>();
+
             //默认使用轮询负载策略，在外面可以注入其它策略
             if (!services.Any(p => p.ServiceType == typeof(ILoadBalancer)))
             {
                 services.AddSingleton<ILoadBalancer, RoundLoadBalancer>();
             }
+
+            //默认使用consul服务注册,服务发现，在外面可以注入其它策略
+            if (!services.Any(p => p.ServiceType == typeof(IServiceRegister)))
+            {
+                services.AddConsulDiscovery();
+            }
+
+            //添加缓存
+            services.AddMemoryCache();
+
+            //配制日志
+            if (useLogger != null)
+            {
+                //添加客户端日志监控
+                services.AddClientMonitor();
+                useLogger?.Invoke(LoggerAccessor.Instance);
+            }           
+
             return services;
         }
 
@@ -70,6 +102,71 @@ namespace Grpc.Extension
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             channelConfig.GrpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
             ChannelManager.Configs.Add(channelConfig);
+            return services;
+        }
+
+        /// <summary>
+        /// 添加Jaeger和Interceptor
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="conf"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddJaeger(this IServiceCollection services, IConfiguration conf)
+        {
+            var key = "GrpcServer:Jaeger";
+            var jaegerOptions = conf.GetSection(key).Get<JaegerOptions>();
+            if (jaegerOptions == null)
+                throw new ArgumentException($"{key} Value cannot be null");
+
+            if (string.IsNullOrWhiteSpace(jaegerOptions.AgentIp))
+                throw new ArgumentException($"{key}:AgentIp Value cannot be null");
+
+            if (jaegerOptions.AgentPort == 0)
+                throw new ArgumentNullException($"{key}:AgentPort Value cannot be null");
+
+            //jaeger
+            services.AddSingleton<ITracer>(sp => {
+                var serviceName = jaegerOptions.ServiceName ?? GrpcServerOptions.Instance.DiscoveryServiceName;
+                var tracer = new Jaeger.Tracer.Builder(serviceName)
+               .WithLoggerFactory(sp.GetService<ILoggerFactory>())
+               .WithSampler(new Jaeger.Samplers.ConstSampler(true))
+               .WithReporter(new Jaeger.Reporters.RemoteReporter.Builder()
+                   .WithFlushInterval(TimeSpan.FromSeconds(5))
+                   .WithMaxQueueSize(5)
+                   .WithSender(new Jaeger.Senders.UdpSender(jaegerOptions.AgentIp, jaegerOptions.AgentPort, 1024 * 5)).Build())
+               .Build();
+                return tracer;
+            });
+           
+            //添加jaeger中间件
+            services.AddSingleton<ServerInterceptor, JaegerTracingInterceptor>();
+            services.AddSingleton<ClientInterceptor, ClientJaegerTracingInterceptor>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// 添加客户端日志监控Interceptor
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddClientMonitor(this IServiceCollection services)
+        {
+            services.AddSingleton<ClientInterceptor, ClientMonitorInterceptor>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// 添加客户端超时Interceptor
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="callTimeOutSecond"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddClientCallTimeout(this IServiceCollection services,double callTimeOutSecond)
+        {
+            services.AddSingleton<ClientInterceptor>(new ClientCallTimeout(callTimeOutSecond));
+
             return services;
         }
     }

@@ -11,6 +11,8 @@ using Grpc.Extension.Common;
 using Grpc.Extension.Interceptors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OpenTracing;
+using OpenTracing.Util;
 
 namespace Grpc.Extension.Internal
 {
@@ -21,6 +23,7 @@ namespace Grpc.Extension.Internal
     {
         private readonly List<ServerInterceptor> _interceptors = new List<ServerInterceptor>();
         private readonly List<ServerServiceDefinition> _serviceDefinitions = new List<ServerServiceDefinition>();
+        private readonly List<IGrpcService> _grpcServices = new List<IGrpcService>();
 
         public ServerBuilder(IServiceProvider serviceProvider,
             IConfiguration conf,
@@ -28,10 +31,10 @@ namespace Grpc.Extension.Internal
             IEnumerable<IGrpcService> grpcServices)
         {
             GrpcExtensions.ServiceProvider = serviceProvider;
+            this._grpcServices.AddRange(grpcServices);
             //初始化配制,注入中间件,GrpcService
             this.InitGrpcOptions(conf)//初始化配制
-                .UseInterceptor(serverInterceptors)//注入中间件
-                .UseGrpcService(grpcServices);//注入GrpcService
+                .UseInterceptor(serverInterceptors);//注入中间件
         }
 
         /// <summary>
@@ -65,7 +68,7 @@ namespace Grpc.Extension.Internal
         }
 
         /// <summary>
-        /// 注入Grpc,Consul配制
+        /// 注入Grpc,Discovery配制
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
@@ -87,7 +90,16 @@ namespace Grpc.Extension.Internal
         }
 
         /// <summary>
-        /// 注入GrpcService
+        /// 注入IGrpcService
+        /// </summary>
+        /// <returns></returns>
+        public ServerBuilder UseGrpcService()
+        {
+            return UseGrpcService(_grpcServices);
+        }
+
+        /// <summary>
+        /// 注入IGrpcService
         /// </summary>
         /// <param name="grpcServices"></param>
         /// <returns></returns>
@@ -179,6 +191,16 @@ namespace Grpc.Extension.Internal
         }
 
         /// <summary>
+        /// 有AddJaeger就使用Jaeger
+        /// </summary>
+        /// <returns></returns>
+        private void CheckUseJaeger()
+        {
+            var tracer = GrpcExtensions.ServiceProvider.GetService<ITracer>();
+            if (tracer != null) GlobalTracer.Register(tracer);
+        }
+
+        /// <summary>
         /// 构建Server
         /// </summary>
         /// <returns></returns>
@@ -195,7 +217,10 @@ namespace Grpc.Extension.Internal
             //添加服务IPAndPort
             var ipPort = NetHelper.GetIPAndPort(GrpcServerOptions.Instance.ServiceAddress);
             server.Ports.Add(new ServerPort(ipPort.Item1, ipPort.Item2, ServerCredentials.Insecure));
-            
+
+            //有AddJaeger就UseJaeger
+            this.CheckUseJaeger();
+
             return server;
         }
 

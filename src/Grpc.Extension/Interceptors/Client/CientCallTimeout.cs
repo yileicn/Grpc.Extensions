@@ -9,17 +9,17 @@ namespace Grpc.Extension.Interceptors
     /// <summary>
     /// 客户端超时拦截器
     /// </summary>
-    public class ClientCallTimeout : ClientInterceptor
+    internal class ClientCallTimeout : ClientInterceptor
     {
-        private int _callTimeOut;
+        private double _callTimeOutSecond;
 
         /// <summary>
         /// 客户端超时拦截器
         /// </summary>
-        /// <param name="callTimeOut"></param>
-        public ClientCallTimeout(int callTimeOut)
+        /// <param name="callTimeOutSecond"></param>
+        public ClientCallTimeout(double callTimeOutSecond)
         {
-            this._callTimeOut = callTimeOut;
+            this._callTimeOutSecond = callTimeOutSecond;
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Grpc.Extension.Interceptors
         {
             if (callOptions.Deadline == null)
             {
-                callOptions = callOptions.WithDeadline(DateTime.UtcNow.AddSeconds(_callTimeOut));
+                callOptions = callOptions.WithDeadline(DateTime.UtcNow.AddSeconds(_callTimeOutSecond));
             }
             return callOptions;
         }

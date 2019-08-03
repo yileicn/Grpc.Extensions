@@ -1,15 +1,6 @@
 ﻿using Grpc.Core;
-using Grpc.Core.Interceptors;
-using Grpc.Extension.Interceptors;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using Grpc.Extension.BaseService;
 using Grpc.Extension.Model;
-using Grpc.Extension.Common;
-using Grpc.Extension.Consul;
-using Grpc.Extension.Internal;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Grpc.Extension.Discovery;

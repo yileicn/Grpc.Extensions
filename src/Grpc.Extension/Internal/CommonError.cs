@@ -17,9 +17,13 @@ namespace Grpc.Extension.Internal
         /// </summary>
         public static RpcException BuildRpcException(Exception ex)
         {
-            if (ex is RpcException rpcEx)
+            if (ex is RpcException)
             {
-                return rpcEx;
+                return ex as RpcException;
+            }
+            else if (ex.InnerException is RpcException)
+            {
+                return ex.InnerException as RpcException;
             }
             //构建RpcException
             var errModel = new ErrorModel
@@ -29,7 +33,7 @@ namespace Grpc.Extension.Internal
                 Internal = GetFlatException(ex),
                 Status = (int)StatusCode.Internal
             };
-            rpcEx = new RpcException(new Status(StatusCode.Internal, errModel.ToJson()));
+            var rpcEx = new RpcException(new Status(StatusCode.Internal, errModel.ToJson()));
             rpcEx.Data.Add("ErrorCode", errModel.Code);
             return rpcEx;
         }
@@ -39,7 +43,7 @@ namespace Grpc.Extension.Internal
         /// </summary>
         /// <param name="ex"></param>
         /// <returns></returns>
-        private static string GetFlatException(Exception ex)
+        public static string GetFlatException(Exception ex)
         {
             var exception = "";
             if (ex is AggregateException aex)
@@ -60,14 +64,22 @@ namespace Grpc.Extension.Internal
         {
             try
             {
-                dynamic d = ex;
+                dynamic d = ex.InnerException == null ? ex : ex.InnerException;
                 var code = d.Code;
                 return code;
             }
             catch
             {
-                return GrpcServerOptions.Instance.DefaultErrorCode;
+                return GrpcServerOptions.Instance.DefaultErrorCode + GrpcErrorCode.Internal;
             }
         }
+    }
+
+    internal class GrpcErrorCode
+    {
+        /// <summary>
+        /// 内部异常
+        /// </summary>
+        public const int Internal = 0;
     }
 }

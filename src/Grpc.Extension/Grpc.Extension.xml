@@ -48,14 +48,19 @@
             </summary>
             <param name="callHandlers"></param>
         </member>
-        <member name="M:Grpc.Extension.BaseService.IGrpcService.RegisterMethod(Grpc.Core.ServerServiceDefinition.Builder)">
+        <member name="T:Grpc.Extension.BaseService.IGrpcService">
             <summary>
-            注册服务方法
+            GrpcService
             </summary>
         </member>
         <member name="T:Grpc.Extension.BaseService.IGrpcBaseService">
             <summary>
             基础服务
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.BaseService.MetaService">
+            <summary>
+            Grpc元数据服务
             </summary>
         </member>
         <member name="M:Grpc.Extension.BaseService.MetaService.RegisterMethod(Grpc.Core.ServerServiceDefinition.Builder)">
@@ -78,11 +83,38 @@
             服务方法调用
             </summary>
         </member>
+        <member name="T:Grpc.Extension.Common.DateTimeExtensions">
+            <summary>
+            DateTimeExtensions
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Common.DateTimeExtensions.FromUnixTimestamp(System.Int64)">
+            <summary>
+            unixtime to datetime
+            </summary>
+            <param name="unixtime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Common.DateTimeExtensions.ToUnixTimestamp(System.DateTime)">
+            <summary>
+            datetime to unixtime
+            </summary>
+            <param name="datetime"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.Common.JsonSerialization">
+            <summary>
+            JsonSerialization
+            </summary>
+        </member>
         <member name="M:Grpc.Extension.Common.JsonSerialization.ToJson(System.Object,System.String,System.Boolean,System.Boolean)">
             <summary>
             使用json序列化为字符串
             </summary>
+            <param name="input"></param>
             <param name="dateTimeFormat">默认null,即使用json.net默认的序列化机制，如："\/Date(1439335800000+0800)\/"</param>
+            <param name="ignoreNullValue"></param>
+            <param name="isIndented"></param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.Common.JsonSerialization.TryFromJson``1(System.String,System.String,System.Boolean)">
@@ -92,6 +124,7 @@
             <typeparam name="T"></typeparam>
             <param name="input"></param>
             <param name="dateTimeFormat">默认null,即使用json.net默认的序列化机制</param>
+            <param name="ignoreNullValue"></param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.Common.JsonSerialization.FromJson``1(System.String,System.String,System.Boolean)">
@@ -101,16 +134,62 @@
             <typeparam name="T"></typeparam>
             <param name="input"></param>
             <param name="dateTimeFormat">默认null,即使用json.net默认的序列化机制</param>
+            <param name="ignoreNullValue"></param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.Common.JsonSerialization.FromJson(System.String,System.Type,System.String,System.Boolean)">
             <summary>
             从序列化字符串里反序列化
             </summary>
-            <typeparam name="T"></typeparam>
             <param name="input"></param>
+            <param name="type"></param>
             <param name="dateTimeFormat">默认null,即使用json.net默认的序列化机制</param>
+            <param name="ignoreNullValue"></param>
             <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Common.ReflectorExtensions.GetPropertyValue``1(System.Object,System.String,System.Reflection.BindingFlags)">
+            <summary>
+            获取属性值
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="obj"></param>
+            <param name="name"></param>
+            <param name="bindingFlags"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Common.ReflectorExtensions.GetFieldValue``1(System.Object,System.String,System.Reflection.BindingFlags)">
+            <summary>
+            获取字段值
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="obj"></param>
+            <param name="name"></param>
+            <param name="bindingFlags"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Common.ReflectorExtensions.GetFieldValue``1(System.Type,System.String,System.Reflection.BindingFlags)">
+            <summary>
+            获取字段值
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="type"></param>
+            <param name="name"></param>
+            <param name="bindingFlags"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Common.ReflectorExtensions.GetMethodInfo(System.Type,System.String,System.Reflection.BindingFlags)">
+            <summary>
+            获取方法
+            </summary>
+            <param name="type"></param>
+            <param name="name"></param>
+            <param name="bindingFlags"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.NetHelper">
+            <summary>
+            NetHelper
+            </summary>
         </member>
         <member name="F:Grpc.Extension.NetHelper.IPSegmentRegex">
             <summary>
@@ -131,19 +210,79 @@
             <param name="serviceAddress"></param>
             <returns></returns>
         </member>
-        <member name="M:Grpc.Extension.Consul.ConsulManager.GetEndpointsFromConsul(System.String,System.String)">
+        <member name="T:Grpc.Extension.Consul.ConsulServiceDiscovery">
+            <summary>
+            Consul服务发现
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Consul.ConsulServiceDiscovery.#ctor">
+            <summary>
+            Consul服务发现
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Consul.ConsulServiceDiscovery.GetEndpoints(System.String,System.String)">
             <summary>
             从consul获取可用的节点信息
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Consul.ConsulManager.RegisterService">
+        <member name="T:Grpc.Extension.Consul.ConsulServiceRegister">
+            <summary>
+            Consul服务注册
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Consul.ConsulServiceRegister.#ctor">
+            <summary>
+            Consul服务注册
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Consul.ConsulServiceRegister.RegisterService">
             <summary>
             注册服务到consul
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Consul.ConsulManager.DeregisterService">
+        <member name="M:Grpc.Extension.Consul.ConsulServiceRegister.DeregisterService">
             <summary>
             从consul反注册
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Consul.ServiceCollectionExtensions">
+            <summary>
+            添加服务注册,服务发现
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Consul.ServiceCollectionExtensions.AddConsulDiscovery(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            添加服务注册,服务发现
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.Discovery.IServiceDiscovery">
+            <summary>
+            服务发现
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Discovery.IServiceDiscovery.GetEndpoints(System.String,System.String)">
+            <summary>
+            获取服务地址列表
+            </summary>
+            <param name="serviceName"></param>
+            <param name="discoveryUrl"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.Discovery.IServiceRegister">
+            <summary>
+            服务注册
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Discovery.IServiceRegister.RegisterService">
+            <summary>
+            注册
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Discovery.IServiceRegister.DeregisterService">
+            <summary>
+            反注册
             </summary>
         </member>
         <member name="T:Grpc.Extension.GrpcExtensions">
@@ -165,29 +304,9 @@
             <param name="server"></param>
             <returns></returns>
         </member>
-        <member name="P:Grpc.Extension.GrpcExtensionsOptions.GlobalPackage">
+        <member name="T:Grpc.Extension.Interceptors.ClientInterceptor">
             <summary>
-            grpc服务的包名
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.GrpcExtensionsOptions.GlobalService">
-            <summary>
-            grpc服务的对外服务名
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.GrpcExtensionsOptions.ProtoNameSpace">
-            <summary>
-            生成proto文件的c#命名空间
-            </summary>
-        </member>
-        <member name="F:Grpc.Extension.GrpcExtensionsOptions.GenBaseServiceProtoEnable">
-            <summary>
-            是否为基础服务生成proto文件
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.GrpcExtensionsOptions.ProtoMsgStartWithKeywords">
-            <summary>
-            proto的message可能的开头的关键字
+            客户端拦截器
             </summary>
         </member>
         <member name="M:Grpc.Extension.Interceptors.ClientInterceptor.BlockingUnaryCall``2(``0,Grpc.Core.Interceptors.ClientInterceptorContext{``0,``1},Grpc.Core.Interceptors.Interceptor.BlockingUnaryCallContinuation{``0,``1})">
@@ -243,6 +362,44 @@
             <param name="continuation"></param>
             <returns></returns>
         </member>
+        <member name="T:Grpc.Extension.Interceptors.ClientCallTimeout">
+            <summary>
+            客户端超时拦截器
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Interceptors.ClientCallTimeout.#ctor(System.Double)">
+            <summary>
+            客户端超时拦截器
+            </summary>
+            <param name="callTimeOutSecond"></param>
+        </member>
+        <member name="M:Grpc.Extension.Interceptors.ClientCallTimeout.BlockingUnaryCall``2(``0,Grpc.Core.Interceptors.ClientInterceptorContext{``0,``1},Grpc.Core.Interceptors.Interceptor.BlockingUnaryCallContinuation{``0,``1})">
+            <summary>
+            同步调用
+            </summary>
+            <typeparam name="TRequest"></typeparam>
+            <typeparam name="TResponse"></typeparam>
+            <param name="request"></param>
+            <param name="context"></param>
+            <param name="continuation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Interceptors.ClientCallTimeout.AsyncUnaryCall``2(``0,Grpc.Core.Interceptors.ClientInterceptorContext{``0,``1},Grpc.Core.Interceptors.Interceptor.AsyncUnaryCallContinuation{``0,``1})">
+            <summary>
+            异步调用
+            </summary>
+            <typeparam name="TRequest"></typeparam>
+            <typeparam name="TResponse"></typeparam>
+            <param name="request"></param>
+            <param name="context"></param>
+            <param name="continuation"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.Interceptors.ServerInterceptor">
+            <summary>
+            服务端拦截器
+            </summary>
+        </member>
         <member name="M:Grpc.Extension.Interceptors.ServerInterceptor.UnaryServerHandler``2(``0,Grpc.Core.ServerCallContext,Grpc.Core.UnaryServerMethod{``0,``1})">
             <summary>
             单请求
@@ -289,6 +446,11 @@
             <param name="continuation"></param>
             <returns></returns>
         </member>
+        <member name="T:Grpc.Extension.Interceptors.JaegerTracingInterceptor">
+            <summary>
+            JaegerTracingMiddleware
+            </summary>
+        </member>
         <member name="T:Grpc.Extension.Interceptors.MonitorInterceptor">
             <summary>
             性能监控,记录日志
@@ -306,7 +468,12 @@
         </member>
         <member name="T:Grpc.Extension.Internal.AutoChannelCallInvoker">
             <summary>
-            自动负载的CallInvoker
+            自动负载Channel的CallInvoker
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Internal.AutoChannelCallInvoker.#ctor(Grpc.Extension.Internal.ChannelManager)">
+            <summary>
+            自动负载Channel的CallInvoker
             </summary>
         </member>
         <member name="M:Grpc.Extension.Internal.AutoChannelCallInvoker.BlockingUnaryCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions,``0)">
@@ -346,6 +513,13 @@
             Channel统一管理
             </summary>
         </member>
+        <member name="M:Grpc.Extension.Internal.ChannelManager.#ctor(Grpc.Extension.Discovery.IServiceDiscovery,Grpc.Extension.LoadBalancer.ILoadBalancer,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
+            <summary>
+            Channel统一管理
+            </summary>
+            <param name="serviceDiscovery"></param>
+            <param name="loadBalancer"></param>
+        </member>
         <member name="M:Grpc.Extension.Internal.ChannelManager.GetChannel(System.String)">
             <summary>
             根据客户端代理类型获取channel
@@ -356,9 +530,16 @@
             根据服务名称返回服务地址
             </summary>
         </member>
-        <member name="T:Grpc.Extension.Internal.GrpcClientManager">
+        <member name="M:Grpc.Extension.Internal.ChannelManager.ShutdownErrorChannel(System.Collections.Generic.List{System.String},System.String)">
             <summary>
-            GrpcClient
+            关闭不健康Channel
+            </summary>
+            <param name="healthEndpoints"></param>
+            <param name="serviceName"></param>
+        </member>
+        <member name="M:Grpc.Extension.Internal.ChannelManager.Shutdown">
+            <summary>
+            关闭所有Channel
             </summary>
         </member>
         <member name="T:Grpc.Extension.Internal.CommonError">
@@ -371,6 +552,37 @@
             返回一个rpc异常到客户端
             </summary>
         </member>
+        <member name="M:Grpc.Extension.Internal.CommonError.GetFlatException(System.Exception)">
+            <summary>
+            返回一个FlatException
+            </summary>
+            <param name="ex"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Grpc.Extension.Internal.GrpcErrorCode.Internal">
+            <summary>
+            内部异常
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Internal.GrpcClientManager">
+            <summary>
+            GrpcClient，用于批量调用
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Internal.GrpcClientManager.#ctor(System.IServiceProvider,System.Collections.Generic.IEnumerable{Grpc.Extension.Interceptors.ClientInterceptor})">
+            <summary>
+            GrpcClient
+            </summary>
+            <param name="serviceProvider"></param>
+            <param name="clientInterceptors"></param>
+        </member>
+        <member name="M:Grpc.Extension.Internal.GrpcClientManager.GetGrpcClient``1">
+            <summary>
+            获取GrpcClient，用于批量调用
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
         <member name="M:Grpc.Extension.Internal.GrpcMethodHelper.AutoRegisterMethod(Grpc.Extension.BaseService.IGrpcService,Grpc.Core.ServerServiceDefinition.Builder,System.String,System.String)">
             <summary>
             自动注册服务方法
@@ -379,14 +591,19 @@
             <param name="builder"></param>
             <param name="serviceName"></param>
         </member>
+        <member name="T:Grpc.Extension.Internal.NotGrpcMethodAttribute">
+            <summary>
+            非Grpc方法
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Internal.InternalException">
+            <summary>
+            Grpc.Extension内部异常
+            </summary>
+        </member>
         <member name="T:Grpc.Extension.Internal.LoggerAccessor">
             <summary>
             日志访问
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.Internal.LoggerAccessor.LoggerTrace">
-            <summary>
-            写调试日志
             </summary>
         </member>
         <member name="P:Grpc.Extension.Internal.LoggerAccessor.LoggerError">
@@ -441,9 +658,15 @@
             <param name="action"></param>
             <returns></returns>
         </member>
-        <member name="M:Grpc.Extension.Internal.ServerBuilder.UseGrpcOptions(Grpc.Extension.GrpcServerOptions)">
+        <member name="M:Grpc.Extension.Internal.ServerBuilder.InitGrpcOptions(Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>
-            注入Grpc,Consul配制
+            从配制文件初始化
+            </summary>
+            <param name="conf"></param>
+        </member>
+        <member name="M:Grpc.Extension.Internal.ServerBuilder.UseGrpcOptions(System.Action{Grpc.Extension.GrpcServerOptions})">
+            <summary>
+            注入Grpc,Discovery配制
             </summary>
             <param name="options"></param>
             <returns></returns>
@@ -455,9 +678,15 @@
             <param name="serviceDefinition"></param>
             <returns></returns>
         </member>
+        <member name="M:Grpc.Extension.Internal.ServerBuilder.UseGrpcService">
+            <summary>
+            注入IGrpcService
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Grpc.Extension.Internal.ServerBuilder.UseGrpcService(System.Collections.Generic.IEnumerable{Grpc.Extension.BaseService.IGrpcService})">
             <summary>
-            注入GrpcService
+            注入IGrpcService
             </summary>
             <param name="grpcServices"></param>
             <returns></returns>
@@ -496,11 +725,35 @@
             <param name="action"></param>
             <returns></returns>
         </member>
+        <member name="M:Grpc.Extension.Internal.ServerBuilder.CheckUseJaeger">
+            <summary>
+            有AddJaeger就使用Jaeger
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Grpc.Extension.Internal.ServerBuilder.Build">
             <summary>
             构建Server
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.LoadBalancer.ILoadBalancer">
+            <summary>
+            负载均衡
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.LoadBalancer.ILoadBalancer.SelectEndpoint(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            选择Endpoint
+            </summary>
+            <param name="serviceName"></param>
+            <param name="endpoints"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.LoadBalancer.RandomLoadBalancer">
+            <summary>
+            随机负载
+            </summary>
         </member>
         <member name="M:Grpc.Extension.LoadBalancer.RandomLoadBalancer.SelectEndpoint(System.String,System.Collections.Generic.List{System.String})">
             <summary>
@@ -510,6 +763,11 @@
             <param name="endpoints"></param>
             <returns></returns>
         </member>
+        <member name="T:Grpc.Extension.LoadBalancer.RoundLoadBalancer">
+            <summary>
+            轮询负载
+            </summary>
+        </member>
         <member name="M:Grpc.Extension.LoadBalancer.RoundLoadBalancer.SelectEndpoint(System.String,System.Collections.Generic.List{System.String})">
             <summary>
             轮询获取Endpoint
@@ -518,9 +776,29 @@
             <param name="endpoints"></param>
             <returns></returns>
         </member>
+        <member name="T:Grpc.Extension.Model.ChannelConfig">
+            <summary>
+            ChannelConfig
+            </summary>
+        </member>
         <member name="T:Grpc.Extension.Model.ErrorModel">
             <summary>
             统一错误模型
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Model.LogType">
+            <summary>
+            日志类型
+            </summary>
+        </member>
+        <member name="F:Grpc.Extension.Model.LogType.ServerLog">
+            <summary>
+            服务端日志
+            </summary>
+        </member>
+        <member name="F:Grpc.Extension.Model.LogType.ClientLog">
+            <summary>
+            客户端日志
             </summary>
         </member>
         <member name="T:Grpc.Extension.Model.MonitorModel">
@@ -558,11 +836,94 @@
             注册到grpc的服务方法信息
             </summary>
         </member>
+        <member name="P:Grpc.Extension.GrpcExtensionsOptions.GlobalPackage">
+            <summary>
+            grpc服务的包名
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.GrpcExtensionsOptions.GlobalService">
+            <summary>
+            grpc服务的对外服务名
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.GrpcExtensionsOptions.ProtoNameSpace">
+            <summary>
+            生成proto文件的c#命名空间
+            </summary>
+        </member>
+        <member name="F:Grpc.Extension.GrpcExtensionsOptions.GenBaseServiceProtoEnable">
+            <summary>
+            是否为基础服务生成proto文件
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.GrpcExtensionsOptions.ProtoMsgStartWithKeywords">
+            <summary>
+            proto的message可能的开头的关键字
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.GrpcServerOptions.ServiceAddress">
+            <summary>
+            Grpc服务地址(192.168.*.*:)
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.GrpcServerOptions.DiscoveryUrl">
+            <summary>
+            服务注册地址(http://192.168.8.6:8500)
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.GrpcServerOptions.DiscoveryServiceName">
+            <summary>
+            服务注册名
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.GrpcServerOptions.DiscoveryTags">
+            <summary>
+            服务注册Tags
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.GrpcServerOptions.DiscoveryTTLInterval">
+            <summary>
+            服务TTL(秒)
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.GrpcServerOptions.DefaultErrorCode">
+            <summary>
+            默认错误码
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.JaegerOptions.ServiceName">
+            <summary>
+            服务名
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.JaegerOptions.AgentIp">
+            <summary>
+            AgentIp
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.JaegerOptions.AgentPort">
+            <summary>
+            AgentPort
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.ServiceCollectionExtensions">
+            <summary>
+            ServiceCollectionExtensions
+            </summary>
+        </member>
         <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddGrpcExtensions(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>
             添加Grpc扩展
             </summary>
             <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddGrpcClientExtensions(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Grpc.Extension.Internal.LoggerAccessor})">
+            <summary>
+            添加GrpcClient扩展
+            </summary>
+            <param name="services"></param>
+            <param name="useLogger"></param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddGrpcClient``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String)">
@@ -571,8 +932,31 @@
             </summary>
             <typeparam name="T"></typeparam>
             <param name="services"></param>
-            <param name="consulUrl"></param>
-            <param name="consulServiceName"></param>
+            <param name="discoveryUrl"></param>
+            <param name="discoveryServiceName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddJaeger(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            添加Jaeger和Interceptor
+            </summary>
+            <param name="services"></param>
+            <param name="conf"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddClientMonitor(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            添加客户端日志监控Interceptor
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddClientCallTimeout(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Double)">
+            <summary>
+            添加客户端超时Interceptor
+            </summary>
+            <param name="services"></param>
+            <param name="callTimeOutSecond"></param>
             <returns></returns>
         </member>
     </members>

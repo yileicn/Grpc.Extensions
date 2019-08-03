@@ -34,8 +34,8 @@ namespace GreeterServer
                 .UseDashBoard()//使用DashBoard,需要使用FM.GrpcDashboard网站
                 .UseLogger(log =>//使用日志
                 {
-                    log.LoggerMonitor = info => Console.WriteLine(info);
-                    log.LoggerError = exception => Console.WriteLine(exception);
+                    log.LoggerMonitor = (msg,type) => Console.WriteLine(msg);
+                    log.LoggerError = (ex,type) => Console.WriteLine(ex);
                 })
                 .Build();
             //启动服务并注册到consul

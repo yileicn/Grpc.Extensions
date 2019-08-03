@@ -15,7 +15,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Grpc.Core;
 using Grpc.Extension;
 using Grpc.Extension.Interceptors;
 using Grpc.Extension.Model;
@@ -35,8 +34,11 @@ namespace GreeterClient
             var config = configBuilder.SetBasePath(configPath).AddJsonFile("appsettings.json", false, true).Build();
             //使用依赖注入
             var services = new ServiceCollection()
-                .AddGrpcExtensions()//注入GrpcExtensions
-                .AddSingleton<ClientInterceptor>(new ClientCallTimeout(10))//注入客户端中间件
+                .AddGrpcClientExtensions((log)=> {
+                    log.LoggerMonitor = (msg,type) => Console.WriteLine(GetLogTypeName(type) + ":"+ msg);
+                    log.LoggerError = (ex,type) => Console.WriteLine(GetLogTypeName(type) + ":" + ex);
+                })//注入GrpcClientExtensions
+                .AddClientCallTimeout(10)//注入客户端中间件
                 .AddGrpcClient<Greeter.GreeterClient>(config["ConsulUrl"], "Greeter.Test");//注入grpc client
             var provider = services.BuildServiceProvider();
             
@@ -46,14 +48,27 @@ namespace GreeterClient
 
             var user = "you";
 
-            for (int i = 0; i < 10; i++)
+            try
             {
-                var reply = client.SayHello(new HelloRequest { Name = user + i.ToString() });
-                Console.WriteLine($"Greeting{i.ToString()}: {reply.Message}");
+                for (int i = 0; i < 10; i++)
+                {
+                    var reply = client.SayHello(new HelloRequest { Name = user + i.ToString() });
+                    Console.WriteLine($"Greeting{i.ToString()}: {reply.Message}");
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
+        }
+
+        private static string GetLogTypeName(LogType logtype)
+        {
+            return Enum.GetName(typeof(LogType), logtype);
         }
 
         public static async Task StreamTest(Greeter.GreeterClient client)
