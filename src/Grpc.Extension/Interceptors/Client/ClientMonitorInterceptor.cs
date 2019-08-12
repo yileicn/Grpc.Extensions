@@ -18,6 +18,7 @@ namespace Grpc.Extension.Interceptors
                 ClientIp = context.Host,
                 RequestUrl = context.Method.FullName,
                 RequestData = request?.ToJson(),
+                RequestHeaders = context.Options.Headers.ToDictionary(p => p.Key, p => p.Value),
                 TraceId = context.Options.Headers?.Where(p => p.Key == Consts.TraceId).FirstOrDefault()?.Value
             };
             try
@@ -52,6 +53,7 @@ namespace Grpc.Extension.Interceptors
                 ClientIp = context.Host,
                 RequestUrl = context.Method.FullName,
                 RequestData = request?.ToJson(),
+                RequestHeaders = context.Options.Headers.ToDictionary(p => p.Key, p => p.Value),
                 TraceId = context.Options.Headers?.Where(p => p.Key == Consts.TraceId).FirstOrDefault()?.Value
             };
             try

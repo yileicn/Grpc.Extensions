@@ -26,6 +26,8 @@ namespace Grpc.Extension.Model
         public string RequestUrl { get; set; }
 
         public string RequestData { get; set; }
+
+        public Dictionary<string, string> RequestHeaders { get; set; }
         /// <summary>
         /// 多层调用的追踪id
         /// </summary>

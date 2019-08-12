@@ -29,6 +29,7 @@ namespace Grpc.Extension.Interceptors
                 ClientIp = context.Peer,
                 RequestUrl = context.Method,
                 //RequestData = request?.ToJson(),
+                RequestHeaders = context.RequestHeaders.ToDictionary(p => p.Key, p => p.Value),
                 TraceId = trace.Value
             };
             if (request is TRequest)
