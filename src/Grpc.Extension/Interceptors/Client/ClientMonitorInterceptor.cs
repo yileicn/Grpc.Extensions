@@ -85,7 +85,9 @@ namespace Grpc.Extension.Interceptors
             var header = context.Options.Headers?.Where(p => p.Key == Consts.TraceId).FirstOrDefault();
             if (header == null)
             {
-                header = new Metadata.Entry(Consts.TraceId, Guid.NewGuid().ToString());
+                var serverHeader = ServerCallContextAccessor.Current?.RequestHeaders.Where(p => p.Key == Consts.TraceId).FirstOrDefault();
+                var traceId = serverHeader == null ? Guid.NewGuid().ToString() : serverHeader.Value;
+                header = new Metadata.Entry(Consts.TraceId, traceId);
                 if (context.Options.Headers == null)
                 {
                     var meta = new Metadata();

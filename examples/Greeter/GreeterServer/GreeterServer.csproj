@@ -134,8 +134,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\AppServiceProvider.cs" />
+    <Compile Include="Common\ScopeServiceProvider.cs" />
     <Compile Include="GreeterImpl.cs" />
     <Compile Include="GrpcHostServiceV2.cs" />
+    <Compile Include="Middlewares\RequestServicesMiddleware.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -155,11 +158,16 @@
       <Project>{3340e08a-22aa-4024-8d77-03b7cb5dc341}</Project>
       <Name>Grpc.Extension</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\CodeFirst\MathClient\MathClient.csproj">
+      <Project>{ee3555d8-a6ba-4340-9f56-121b24c48e0c}</Project>
+      <Name>MathClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Greeter\Greeter.csproj">
       <Project>{724dfc8c-4b57-4c3f-811c-0463be2a2829}</Project>
       <Name>Greeter</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>

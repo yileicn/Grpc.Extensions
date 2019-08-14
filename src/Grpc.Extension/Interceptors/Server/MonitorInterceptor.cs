@@ -18,6 +18,7 @@ namespace Grpc.Extension.Interceptors
         private async Task<TResponse> Monitor<TRequest, TResponse>(object request, 
             ServerCallContext context, Delegate continuation, object response = null)
         {
+            ServerCallContextAccessor.Current = context;
             var trace = context.RequestHeaders.FirstOrDefault(q => q.Key == Consts.TraceId);
             if (trace == null)
             {
@@ -82,6 +83,7 @@ namespace Grpc.Extension.Interceptors
             }
             finally
             {
+                ServerCallContextAccessor.Current = null;
                 model.ResponseTime = DateTime.Now;
                 LoggerAccessor.Instance.LoggerMonitor?.Invoke(model.ToJson());
             }

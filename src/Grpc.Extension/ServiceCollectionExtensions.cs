@@ -33,8 +33,8 @@ namespace Grpc.Extension
             //添加ServerBuilder
             services.AddSingleton<ServerBuilder>();
             //添加服务端中间件
-            services.AddSingleton<ServerInterceptor, MonitorInterceptor>();
-            services.AddSingleton<ServerInterceptor, ThrottleInterceptor>();
+            services.AddServerInterceptor<MonitorInterceptor>();
+            services.AddServerInterceptor<ThrottleInterceptor>();
 
             //添加GrpcClient扩展
             services.AddGrpcClientExtensions();
@@ -78,7 +78,7 @@ namespace Grpc.Extension
                 //添加客户端日志监控
                 services.AddClientMonitor();
                 useLogger?.Invoke(LoggerAccessor.Instance);
-            }           
+            }
 
             return services;
         }
@@ -91,7 +91,7 @@ namespace Grpc.Extension
         /// <param name="discoveryUrl"></param>
         /// <param name="discoveryServiceName"></param>
         /// <returns></returns>
-        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, string discoveryUrl,string discoveryServiceName) where T: ClientBase<T>
+        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, string discoveryUrl, string discoveryServiceName) where T : ClientBase<T>
         {
             services.AddSingleton<T>();
             var channelConfig = new ChannelConfig
@@ -137,10 +137,10 @@ namespace Grpc.Extension
                .Build();
                 return tracer;
             });
-           
+
             //添加jaeger中间件
-            services.AddSingleton<ServerInterceptor, JaegerTracingInterceptor>();
-            services.AddSingleton<ClientInterceptor, ClientJaegerTracingInterceptor>();
+            services.AddServerInterceptor<JaegerTracingInterceptor>();
+            services.AddClientInterceptor<ClientJaegerTracingInterceptor>();
 
             return services;
         }
@@ -152,7 +152,7 @@ namespace Grpc.Extension
         /// <returns></returns>
         public static IServiceCollection AddClientMonitor(this IServiceCollection services)
         {
-            services.AddSingleton<ClientInterceptor, ClientMonitorInterceptor>();
+            services.AddClientInterceptor<ClientMonitorInterceptor>();
 
             return services;
         }
@@ -163,9 +163,35 @@ namespace Grpc.Extension
         /// <param name="services"></param>
         /// <param name="callTimeOutSecond"></param>
         /// <returns></returns>
-        public static IServiceCollection AddClientCallTimeout(this IServiceCollection services,double callTimeOutSecond)
+        public static IServiceCollection AddClientCallTimeout(this IServiceCollection services, double callTimeOutSecond)
         {
             services.AddSingleton<ClientInterceptor>(new ClientCallTimeout(callTimeOutSecond));
+
+            return services;
+        }
+
+        /// <summary>
+        /// 添加服务端Interceptor
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddServerInterceptor<T>(this IServiceCollection services) where T : ServerInterceptor
+        {
+            services.AddSingleton<ServerInterceptor, T>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// 添加客户端Interceptor
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddClientInterceptor<T>(this IServiceCollection services) where T : ClientInterceptor
+        {
+            services.AddSingleton<ClientInterceptor, T>();
 
             return services;
         }

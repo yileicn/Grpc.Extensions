@@ -959,5 +959,21 @@
             <param name="callTimeOutSecond"></param>
             <returns></returns>
         </member>
+        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddServerInterceptor``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            添加服务端Interceptor
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddClientInterceptor``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            添加客户端Interceptor
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>
