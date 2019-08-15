@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MathServer</name>
+    </assembly>
+    <members>
+        <member name="T:MathServer.Middlewares.JaegerTracingMiddleware">
+            <summary>
+            JaegerTracingMiddleware
+            </summary>
+        </member>
+    </members>
+</doc>

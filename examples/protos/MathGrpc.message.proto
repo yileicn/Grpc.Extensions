@@ -3,8 +3,11 @@ option csharp_namespace = "MathGrpc";
 
 
 
+//加法请求参数
 message AddRequest {
+   //第一个数字
    int32 Num1 = 1;
+   //第二个数字
    int32 Num2 = 2;
 }
 

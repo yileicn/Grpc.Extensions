@@ -23,10 +23,11 @@ namespace MathGrpc {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChZNYXRoR3JwYy5zZXJ2aWNlLnByb3RvGhZNYXRoR3JwYy5tZXNzYWdlLnBy",
-            "b3RvMm8KCE1hdGhHcnBjEh8KA0FkZBILLkFkZFJlcXVlc3QaCy5JbnRNZXNz",
-            "YWdlEh8KA1N1YhILLlN1YlJlcXVlc3QaCy5JbnRNZXNzYWdlEiEKA1N1bRIL",
-            "LlN1bVJlcXVlc3QaCy5JbnRNZXNzYWdlKAFCC6oCCE1hdGhHcnBjYgZwcm90",
-            "bzM="));
+            "b3RvMp4BCghNYXRoR3JwYxIfCgNBZGQSCy5BZGRSZXF1ZXN0GgsuSW50TWVz",
+            "c2FnZRIfCgNTdWISCy5TdWJSZXF1ZXN0GgsuSW50TWVzc2FnZRIhCgNTdW0S",
+            "Cy5TdW1SZXF1ZXN0GgsuSW50TWVzc2FnZSgBEi0KD1N1bVNlcnZlclN0cmVh",
+            "bRILLlN1bVJlcXVlc3QaCy5JbnRNZXNzYWdlMAFCC6oCCE1hdGhHcnBjYgZw",
+            "cm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::MathGrpc.MathGrpcMessageReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null));

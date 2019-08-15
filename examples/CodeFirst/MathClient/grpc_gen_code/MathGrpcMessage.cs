@@ -40,6 +40,9 @@ namespace MathGrpc {
 
   }
   #region Messages
+  /// <summary>
+  ///加法请求参数
+  /// </summary>
   public sealed partial class AddRequest : pb::IMessage<AddRequest> {
     private static readonly pb::MessageParser<AddRequest> _parser = new pb::MessageParser<AddRequest>(() => new AddRequest());
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -76,6 +79,9 @@ namespace MathGrpc {
     /// <summary>Field number for the "Num1" field.</summary>
     public const int Num1FieldNumber = 1;
     private int num1_;
+    /// <summary>
+    ///第一个数字
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int Num1 {
       get { return num1_; }
@@ -87,6 +93,9 @@ namespace MathGrpc {
     /// <summary>Field number for the "Num2" field.</summary>
     public const int Num2FieldNumber = 2;
     private int num2_;
+    /// <summary>
+    ///第二个数字
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int Num2 {
       get { return num2_; }

@@ -38,6 +38,13 @@ namespace MathGrpc {
         __Marshaller_SumRequest,
         __Marshaller_IntMessage);
 
+    static readonly grpc::Method<global::MathGrpc.SumRequest, global::MathGrpc.IntMessage> __Method_SumServerStream = new grpc::Method<global::MathGrpc.SumRequest, global::MathGrpc.IntMessage>(
+        grpc::MethodType.ServerStreaming,
+        __ServiceName,
+        "SumServerStream",
+        __Marshaller_SumRequest,
+        __Marshaller_IntMessage);
+
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
     {
@@ -47,17 +54,47 @@ namespace MathGrpc {
     /// <summary>Base class for server-side implementations of MathGrpc</summary>
     public abstract partial class MathGrpcBase
     {
+      /// <summary>
+      ///加法
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
       public virtual global::System.Threading.Tasks.Task<global::MathGrpc.IntMessage> Add(global::MathGrpc.AddRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
 
+      /// <summary>
+      ///减法
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
       public virtual global::System.Threading.Tasks.Task<global::MathGrpc.IntMessage> Sub(global::MathGrpc.SubRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
 
+      /// <summary>
+      ///客户端流求和
+      /// </summary>
+      /// <param name="requestStream">Used for reading requests from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
       public virtual global::System.Threading.Tasks.Task<global::MathGrpc.IntMessage> Sum(grpc::IAsyncStreamReader<global::MathGrpc.SumRequest> requestStream, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      ///服务端流求和
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="responseStream">Used for sending responses back to the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>A task indicating completion of the handler.</returns>
+      public virtual global::System.Threading.Tasks.Task SumServerStream(global::MathGrpc.SumRequest request, grpc::IServerStreamWriter<global::MathGrpc.IntMessage> responseStream, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -87,45 +124,135 @@ namespace MathGrpc {
       {
       }
 
+      /// <summary>
+      ///加法
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
       public virtual global::MathGrpc.IntMessage Add(global::MathGrpc.AddRequest request, grpc::Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
       {
         return Add(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
+      /// <summary>
+      ///加法
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
       public virtual global::MathGrpc.IntMessage Add(global::MathGrpc.AddRequest request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_Add, null, options, request);
       }
+      /// <summary>
+      ///加法
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
       public virtual grpc::AsyncUnaryCall<global::MathGrpc.IntMessage> AddAsync(global::MathGrpc.AddRequest request, grpc::Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
       {
         return AddAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
+      /// <summary>
+      ///加法
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
       public virtual grpc::AsyncUnaryCall<global::MathGrpc.IntMessage> AddAsync(global::MathGrpc.AddRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_Add, null, options, request);
       }
+      /// <summary>
+      ///减法
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
       public virtual global::MathGrpc.IntMessage Sub(global::MathGrpc.SubRequest request, grpc::Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
       {
         return Sub(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
+      /// <summary>
+      ///减法
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
       public virtual global::MathGrpc.IntMessage Sub(global::MathGrpc.SubRequest request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_Sub, null, options, request);
       }
+      /// <summary>
+      ///减法
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
       public virtual grpc::AsyncUnaryCall<global::MathGrpc.IntMessage> SubAsync(global::MathGrpc.SubRequest request, grpc::Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
       {
         return SubAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
+      /// <summary>
+      ///减法
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
       public virtual grpc::AsyncUnaryCall<global::MathGrpc.IntMessage> SubAsync(global::MathGrpc.SubRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_Sub, null, options, request);
       }
+      /// <summary>
+      ///客户端流求和
+      /// </summary>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
       public virtual grpc::AsyncClientStreamingCall<global::MathGrpc.SumRequest, global::MathGrpc.IntMessage> Sum(grpc::Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
       {
         return Sum(new grpc::CallOptions(headers, deadline, cancellationToken));
       }
+      /// <summary>
+      ///客户端流求和
+      /// </summary>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
       public virtual grpc::AsyncClientStreamingCall<global::MathGrpc.SumRequest, global::MathGrpc.IntMessage> Sum(grpc::CallOptions options)
       {
         return CallInvoker.AsyncClientStreamingCall(__Method_Sum, null, options);
+      }
+      /// <summary>
+      ///服务端流求和
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      public virtual grpc::AsyncServerStreamingCall<global::MathGrpc.IntMessage> SumServerStream(global::MathGrpc.SumRequest request, grpc::Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
+      {
+        return SumServerStream(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      ///服务端流求和
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      public virtual grpc::AsyncServerStreamingCall<global::MathGrpc.IntMessage> SumServerStream(global::MathGrpc.SumRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncServerStreamingCall(__Method_SumServerStream, null, options, request);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       protected override MathGrpcClient NewInstance(ClientBaseConfiguration configuration)
@@ -141,7 +268,8 @@ namespace MathGrpc {
       return grpc::ServerServiceDefinition.CreateBuilder()
           .AddMethod(__Method_Add, serviceImpl.Add)
           .AddMethod(__Method_Sub, serviceImpl.Sub)
-          .AddMethod(__Method_Sum, serviceImpl.Sum).Build();
+          .AddMethod(__Method_Sum, serviceImpl.Sum)
+          .AddMethod(__Method_SumServerStream, serviceImpl.SumServerStream).Build();
     }
 
   }

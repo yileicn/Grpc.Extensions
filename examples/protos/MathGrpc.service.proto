@@ -4,10 +4,16 @@ import "MathGrpc.message.proto";
 
 
 service MathGrpc {
-
+   //加法
    rpc Add(AddRequest) returns(IntMessage);
 
+   //减法
    rpc Sub(SubRequest) returns(IntMessage);
 
+   //客户端流求和
    rpc Sum(stream SumRequest) returns(IntMessage);
+
+   //服务端流求和
+   rpc SumServerStream(SumRequest) returns(stream IntMessage);
+
 }

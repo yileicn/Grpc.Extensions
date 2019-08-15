@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Math</name>
+    </assembly>
+    <members>
+        <member name="M:Math.MathGrpc.Add(Math.Model.AddRequest,Grpc.Core.ServerCallContext)">
+            <summary>
+            加法
+            </summary>
+            <param name="request"></param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Math.MathGrpc.Sub(Math.Model.SubRequest,Grpc.Core.ServerCallContext)">
+            <summary>
+            减法
+            </summary>
+            <param name="request"></param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Math.MathGrpc.Sum(Grpc.Core.IAsyncStreamReader{Math.Model.SumRequest},Grpc.Core.ServerCallContext)">
+            <summary>
+            客户端流求和
+            </summary>
+            <param name="request"></param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Math.MathGrpc.SumServerStream(Math.Model.SumRequest,Grpc.Core.IServerStreamWriter{Math.IntMessage},Grpc.Core.ServerCallContext)">
+            <summary>
+            服务端流求和
+            </summary>
+            <param name="request"></param>
+            <param name="responseStream"></param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Math.Model.AddRequest">
+            <summary>
+            加法请求参数
+            </summary>
+        </member>
+        <member name="P:Math.Model.AddRequest.Num1">
+            <summary>
+            第一个数字
+            </summary>
+        </member>
+        <member name="P:Math.Model.AddRequest.Num2">
+            <summary>
+            第二个数字
+            </summary>
+        </member>
+    </members>
+</doc>
