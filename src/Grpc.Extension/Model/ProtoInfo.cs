@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Grpc.Extension.Model
 {
-    public class ProtoInfo
+    internal class ProtoInfo
     {
         /// <summary>
         /// grpc服务方法信息 用于生成proto文件
@@ -16,7 +16,7 @@ namespace Grpc.Extension.Model
     /// <summary>
     /// 注册到grpc的服务方法信息
     /// </summary>
-    public class ProtoMethodInfo
+    internal class ProtoMethodInfo
     {
         public string ServiceName { get; set; }
 

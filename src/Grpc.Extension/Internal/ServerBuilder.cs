@@ -124,11 +124,12 @@ namespace Grpc.Extension.Internal
         /// <summary>
         /// CodeFirst生成proto文件
         /// </summary>
-        /// <param name="dir"></param>
+        /// <param name="dir">生成目录</param>
+        /// <param name="spiltProto">是否拆分service和message协议</param>
         /// <returns></returns>
-        public ServerBuilder UseProtoGenerate(string dir)
+        public ServerBuilder UseProtoGenerate(string dir,bool spiltProto = true)
         {
-            ProtoGenerator.Gen(dir);
+            ProtoGenerator.Gen(dir, spiltProto);
             return this;
         }
 

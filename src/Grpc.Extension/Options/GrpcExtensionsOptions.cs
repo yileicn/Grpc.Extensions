@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Grpc.Extension
 {
+    /// <summary>
+    /// GrpcServerOptions
+    /// </summary>
     public class GrpcExtensionsOptions
     {
         private static Lazy<GrpcExtensionsOptions> instance = new Lazy<GrpcExtensionsOptions>(() => new GrpcExtensionsOptions(), true);
@@ -22,6 +25,10 @@ namespace Grpc.Extension
         /// </summary>
         public string GlobalService { get; set; }
         /// <summary>
+        /// 是否输出响应内容
+        /// </summary>
+        public bool GlobalSaveResponseEnable { get; set; } = false;
+        /// <summary>
         /// 生成proto文件的c#命名空间
         /// </summary>
         public string ProtoNameSpace { get; set; }
@@ -30,12 +37,8 @@ namespace Grpc.Extension
         /// </summary>
         public bool GenBaseServiceProtoEnable = false;
         /// <summary>
-        /// proto的message可能的开头的关键字
+        /// 生成Json对象时排除前缀
         /// </summary>
-        public List<string> ProtoMsgStartWithKeywords { get; set; } = new List<string> { "message", "enum" };
-
-        public bool GlobalSaveResponseEnable { get; set; } = false;
-
-        public List<string> FillPropExcludePrefixs { get; set; } = new List<string> { "Google." };
+        internal List<string> FillPropExcludePrefixs { get; set; } = new List<string> { "Google." };
     }
 }

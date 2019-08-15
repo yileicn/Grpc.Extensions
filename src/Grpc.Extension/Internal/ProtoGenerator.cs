@@ -8,8 +8,13 @@ using System.Text;
 
 namespace Grpc.Extension.Internal
 {
-    internal class ProtoGenerator
+    internal static class ProtoGenerator
     {
+        /// <summary>
+        /// proto的message可能的开头的关键字
+        /// </summary>
+        private static List<string> protoMsgStartWithKeywords { get; set; } = new List<string> { "message", "enum" };
+
         /// <summary>
         /// 添加proto
         /// </summary>
@@ -17,7 +22,8 @@ namespace Grpc.Extension.Internal
         {
             if (!ProtoMethodInfo.Protos.ContainsKey(entityName))
             {
-                ProtoMethodInfo.Protos.TryAdd(entityName, ProtoGenerator.FilterHead(Serializer.GetProto<TEntity>(ProtoBuf.Meta.ProtoSyntax.Proto3)));
+                var msg = Serializer.GetProto<TEntity>(ProtoBuf.Meta.ProtoSyntax.Proto3);
+                ProtoMethodInfo.Protos.TryAdd(entityName, msg.FilterHead().AddMessageComment<TEntity>());
             }
         }
         /// <summary>
@@ -32,7 +38,7 @@ namespace Grpc.Extension.Internal
         /// <summary>
         /// 过滤头部 只保留message部分
         /// </summary>
-        internal static string FilterHead(string proto)
+        internal static string FilterHead(this string proto)
         {
             var lines = new List<string>();
             using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(proto)))
@@ -42,7 +48,7 @@ namespace Grpc.Extension.Internal
                 while (sr.Peek() > 0)
                 {
                     var line = sr.ReadLine();
-                    if (GrpcExtensionsOptions.Instance.ProtoMsgStartWithKeywords.Any(q => line.StartsWith(q)))
+                    if (protoMsgStartWithKeywords.Any(q => line.StartsWith(q)))
                     {
                         readEnable = true;
                     }
@@ -57,55 +63,54 @@ namespace Grpc.Extension.Internal
         /// <summary>
         /// 生成grpc的message的proto内容
         /// </summary>
-        private static string GenGrpcMessageProto(string pkgName, List<string> msgProtos)
+        private static string GenGrpcMessageProto(string pkgName, List<string> msgProtos, bool spiltProto)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("syntax = \"proto3\";");
-            if (!string.IsNullOrWhiteSpace(GrpcExtensionsOptions.Instance.ProtoNameSpace))
+            if (spiltProto)
             {
-                sb.AppendLine("option csharp_namespace = \"" + GrpcExtensionsOptions.Instance.ProtoNameSpace.Trim() + "\";");
-            }
-            if (!string.IsNullOrWhiteSpace(pkgName))
-            {
-                sb.AppendLine($"package {pkgName.Trim()};");
+                sb.AppendLine("syntax = \"proto3\";");
+                if (!string.IsNullOrWhiteSpace(GrpcExtensionsOptions.Instance.ProtoNameSpace))
+                {
+                    sb.AppendLine("option csharp_namespace = \"" + GrpcExtensionsOptions.Instance.ProtoNameSpace.Trim() + "\";");
+                }
+                if (!string.IsNullOrWhiteSpace(pkgName))
+                {
+                    sb.AppendLine($"package {pkgName.Trim()};");
+                }
             }
             sb.AppendLine();
             sb.AppendLine(Environment.NewLine);
 
+            //过滤重复的message
             var sbMsg = new StringBuilder();
             foreach (var proto in msgProtos)
             {
-                sbMsg.Append(proto);
-                sbMsg.AppendLine(Environment.NewLine);
+                sbMsg.AppendLine(proto);
             }
             var msg = sbMsg.ToString();
             var msgMapProtos = new Dictionary<string, List<string>>();
             using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(msg)))
             using (var sr = new StreamReader(ms))
             {
-                bool readEnable = false;
                 var msgName = "";
                 var lines = new List<string>();
                 while (sr.Peek() > 0)
                 {
                     var line = sr.ReadLine();
-                    if (GrpcExtensionsOptions.Instance.ProtoMsgStartWithKeywords.Any(q => line.StartsWith(q)))
+                    if (protoMsgStartWithKeywords.Any(q => line.StartsWith(q)))
                     {
-                        readEnable = true;
                         msgName = line.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)[1];
-                        lines = new List<string>();
                     }
-                    if (readEnable)
-                    {
-                        lines.Add(line);
-                    }
+
+                    lines.Add(line);
+
                     if (line.StartsWith("}"))
                     {
-                        readEnable = false;
                         if (!msgMapProtos.ContainsKey(msgName))
                         {
                             msgMapProtos.Add(msgName, lines.Select(q => q).ToList());
                         }
+                        lines.Clear();
                     }
                 }
             }
@@ -116,7 +121,7 @@ namespace Grpc.Extension.Internal
         /// <summary>
         /// 生成grpc的service的proto内容
         /// </summary>
-        private static string GenGrpcServiceProto(string msgProtoFile, string pkgName, string srvName, List<ProtoMethodInfo> methodInfo)
+        private static string GenGrpcServiceProto(string msgProtoName, string pkgName, string srvName, List<ProtoMethodInfo> methodInfo, bool spiltProto)
         {
             var sb = new StringBuilder();
             sb.AppendLine("syntax = \"proto3\";");
@@ -128,7 +133,10 @@ namespace Grpc.Extension.Internal
             {
                 sb.AppendLine($"package {pkgName.Trim()};");
             }
-            sb.AppendLine(string.Format("import \"{0}\";", msgProtoFile));
+            if (spiltProto)
+            {
+                sb.AppendLine(string.Format("import \"{0}\";", msgProtoName));
+            }
             sb.AppendLine(Environment.NewLine);
             sb.AppendLine("service " + srvName + " {");
 
@@ -151,7 +159,8 @@ namespace Grpc.Extension.Internal
                         responseName = "stream " + responseName;
                         break;
                 }
-                sb.AppendLine(Environment.NewLine + string.Format(template, q.MethodName, requestName, responseName) + ";");
+                ProtoCommentGenerator.AddServiceComment(q,sb);
+                sb.AppendLine(string.Format(template, q.MethodName, requestName, responseName) + ";" + Environment.NewLine);
             });
 
             sb.AppendLine("}");
@@ -160,7 +169,7 @@ namespace Grpc.Extension.Internal
         /// <summary>
         /// 生成proto文件
         /// </summary>
-        public static void Gen(string dir)
+        public static void Gen(string dir,bool spiltProto)
         {
             if (ProtoInfo.Methods == null || ProtoInfo.Methods.Count == 0) return;
             if (!Directory.Exists(dir))
@@ -177,12 +186,8 @@ namespace Grpc.Extension.Internal
 
                 #region message
                 var protoName = grp.Key;
-                var msgProto = $"{protoName}.message.proto";
-                var protoPath = Path.Combine(dir, msgProto);
-                if (File.Exists(protoPath))
-                {
-                    File.Delete(protoPath);
-                }
+                var msgProtoName = $"{protoName}{(spiltProto ? ".message":"")}.proto";
+                var msgProtoPath = Path.Combine(dir, msgProtoName);
                 var msgProtos = new List<string>();
                 var rqNames = grp.ToList().Select(q => q.RequestName).ToList();
                 var rsNames = grp.ToList().Select(q => q.ResponseName).ToList();
@@ -191,21 +196,35 @@ namespace Grpc.Extension.Internal
                 {
                     msgProtos.Add(GetProto(n));
                 }
-                var msgProtoContent = GenGrpcMessageProto(pkg, msgProtos);
-                File.AppendAllText(protoPath, msgProtoContent);
+                var msgProtoContent = GenGrpcMessageProto(pkg, msgProtos, spiltProto);
                 #endregion
 
                 #region service
-                var srvProto = $"{protoName}.service.proto";
-                protoPath = Path.Combine(dir, srvProto);
-                if (File.Exists(protoPath))
-                {
-                    File.Delete(protoPath);
-                }
+                var srvProtoName = $"{protoName}{(spiltProto ? ".service":"")}.proto";
+                var srvProtoPath = Path.Combine(dir, srvProtoName);
                 var methodInfos = grp.ToList();
-                var srvProtoContent = GenGrpcServiceProto(msgProto, pkg, srv, methodInfos);
-                File.AppendAllText(protoPath, srvProtoContent);
+                var srvProtoContent = GenGrpcServiceProto(msgProtoName, pkg, srv, methodInfos, spiltProto);
                 #endregion
+
+                //是否拆分message和service协议
+                if (spiltProto)
+                {
+                    //写message协议文件
+                    if (File.Exists(msgProtoPath)) File.Delete(msgProtoPath);
+                    File.AppendAllText(msgProtoPath, msgProtoContent);
+                    //写service协议文件
+                    if (File.Exists(srvProtoPath)) File.Delete(srvProtoPath);
+                    File.AppendAllText(srvProtoPath, srvProtoContent);
+
+                }
+                else
+                {
+                    var protoPath = Path.Combine(dir, $"{protoName}.proto");
+                    //写协议文件
+                    if (File.Exists(protoPath)) File.Delete(protoPath);
+                    File.AppendAllText(protoPath, srvProtoContent);
+                    File.AppendAllText(protoPath, msgProtoContent);
+                }
             }
         }
     }

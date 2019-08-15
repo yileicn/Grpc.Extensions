@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Grpc.Extension
 {
+    /// <summary>
+    /// GrpcServerOptions
+    /// </summary>
     public class GrpcServerOptions
     {
         private static readonly GrpcServerOptions _instance = new GrpcServerOptions();

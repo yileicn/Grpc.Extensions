@@ -616,6 +616,42 @@
             写监控日志
             </summary>
         </member>
+        <member name="M:Grpc.Extension.Internal.ProtoCommentGenerator.GetComments(System.String[],System.String)">
+            <summary>
+            获取注释集合
+            </summary>
+            <param name="types"></param>
+            <param name="fullName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Internal.ProtoCommentGenerator.GetComment(System.String,System.String)">
+            <summary>
+            获取注释
+            </summary>
+            <param name="type"></param>
+            <param name="fullName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Internal.ProtoCommentGenerator.AddMessageComment``1(System.String)">
+            <summary>
+            给Message加入注释
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <param name="proto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Internal.ProtoCommentGenerator.AddServiceComment(Grpc.Extension.Model.ProtoMethodInfo,System.Text.StringBuilder)">
+            <summary>
+            给Service加入注释
+            </summary>
+            <param name="proto"></param>
+            <param name="sb"></param>
+        </member>
+        <member name="P:Grpc.Extension.Internal.ProtoGenerator.protoMsgStartWithKeywords">
+            <summary>
+            proto的message可能的开头的关键字
+            </summary>
+        </member>
         <member name="M:Grpc.Extension.Internal.ProtoGenerator.AddProto``1(System.String)">
             <summary>
             添加proto
@@ -631,17 +667,17 @@
             过滤头部 只保留message部分
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Internal.ProtoGenerator.GenGrpcMessageProto(System.String,System.Collections.Generic.List{System.String})">
+        <member name="M:Grpc.Extension.Internal.ProtoGenerator.GenGrpcMessageProto(System.String,System.Collections.Generic.List{System.String},System.Boolean)">
             <summary>
             生成grpc的message的proto内容
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Internal.ProtoGenerator.GenGrpcServiceProto(System.String,System.String,System.String,System.Collections.Generic.List{Grpc.Extension.Model.ProtoMethodInfo})">
+        <member name="M:Grpc.Extension.Internal.ProtoGenerator.GenGrpcServiceProto(System.String,System.String,System.String,System.Collections.Generic.List{Grpc.Extension.Model.ProtoMethodInfo},System.Boolean)">
             <summary>
             生成grpc的service的proto内容
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Internal.ProtoGenerator.Gen(System.String)">
+        <member name="M:Grpc.Extension.Internal.ProtoGenerator.Gen(System.String,System.Boolean)">
             <summary>
             生成proto文件
             </summary>
@@ -691,11 +727,12 @@
             <param name="grpcServices"></param>
             <returns></returns>
         </member>
-        <member name="M:Grpc.Extension.Internal.ServerBuilder.UseProtoGenerate(System.String)">
+        <member name="M:Grpc.Extension.Internal.ServerBuilder.UseProtoGenerate(System.String,System.Boolean)">
             <summary>
             CodeFirst生成proto文件
             </summary>
-            <param name="dir"></param>
+            <param name="dir">生成目录</param>
+            <param name="spiltProto">是否拆分service和message协议</param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.Internal.ServerBuilder.UseDashBoard">
@@ -836,6 +873,11 @@
             注册到grpc的服务方法信息
             </summary>
         </member>
+        <member name="T:Grpc.Extension.GrpcExtensionsOptions">
+            <summary>
+            GrpcServerOptions
+            </summary>
+        </member>
         <member name="P:Grpc.Extension.GrpcExtensionsOptions.GlobalPackage">
             <summary>
             grpc服务的包名
@@ -844,6 +886,11 @@
         <member name="P:Grpc.Extension.GrpcExtensionsOptions.GlobalService">
             <summary>
             grpc服务的对外服务名
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.GrpcExtensionsOptions.GlobalSaveResponseEnable">
+            <summary>
+            是否输出响应内容
             </summary>
         </member>
         <member name="P:Grpc.Extension.GrpcExtensionsOptions.ProtoNameSpace">
@@ -856,9 +903,14 @@
             是否为基础服务生成proto文件
             </summary>
         </member>
-        <member name="P:Grpc.Extension.GrpcExtensionsOptions.ProtoMsgStartWithKeywords">
+        <member name="P:Grpc.Extension.GrpcExtensionsOptions.FillPropExcludePrefixs">
             <summary>
-            proto的message可能的开头的关键字
+            生成Json对象时排除前缀
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.GrpcServerOptions">
+            <summary>
+            GrpcServerOptions
             </summary>
         </member>
         <member name="P:Grpc.Extension.GrpcServerOptions.ServiceAddress">
@@ -889,6 +941,11 @@
         <member name="P:Grpc.Extension.GrpcServerOptions.DefaultErrorCode">
             <summary>
             默认错误码
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.JaegerOptions">
+            <summary>
+            JaegerOptions
             </summary>
         </member>
         <member name="P:Grpc.Extension.JaegerOptions.ServiceName">

@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Grpc.Extension
 {
+    /// <summary>
+    /// JaegerOptions
+    /// </summary>
     public class JaegerOptions
     {
         /// <summary>
