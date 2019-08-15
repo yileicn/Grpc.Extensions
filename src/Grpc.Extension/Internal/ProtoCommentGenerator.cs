@@ -24,13 +24,17 @@ namespace Grpc.Extension.Internal
                 if (xe.Element("assembly") == null || xe.Element("members") == null) continue;
                 foreach (var item in xe.Element("members").Elements())
                 {
-                    var name = item.Attribute("name").Value;
-                    xmlComments.Add(new XmlCommentInfo()
+                    var name = item.Attribute("name")?.Value;
+                    var nameArr = name?.Split(':');
+                    if (name != null && nameArr.Length > 1)
                     {
-                        FullName = name.Split(':')[1],
-                        Type = name.Split(':')[0],
-                        Summary = item.Element("summary").Value.TrimStart('\n', ' ').TrimEnd('\n', ' ')
-                    });
+                        xmlComments.Add(new XmlCommentInfo()
+                        {
+                            FullName = nameArr[1],
+                            Type = nameArr[0],
+                            Summary = item.Element("summary")?.Value?.Trim()
+                        });
+                    }
                 }
             }
         }

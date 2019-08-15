@@ -873,6 +873,21 @@
             注册到grpc的服务方法信息
             </summary>
         </member>
+        <member name="P:Grpc.Extension.Model.XmlCommentInfo.FullName">
+            <summary>
+            FullName(Math.MathGrpc.Add(Math.Model.AddRequest,Grpc.Core.ServerCallContext))
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Model.XmlCommentInfo.Type">
+            <summary>
+            Type(T:类，M:方法，P:属性，F:字段，E:事件）
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Model.XmlCommentInfo.Summary">
+            <summary>
+            Summary(注释)
+            </summary>
+        </member>
         <member name="T:Grpc.Extension.GrpcExtensionsOptions">
             <summary>
             GrpcServerOptions
