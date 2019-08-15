@@ -15,6 +15,9 @@ namespace Grpc.Extension.Internal
         private static readonly MethodInfo buildMethod;
         // ReSharper disable once InconsistentNaming
         private static readonly MethodInfo unaryAddMethod;
+        private static readonly MethodInfo clientStreamingAddMethod;
+        private static readonly MethodInfo serverStreamingAddMethod;
+        private static readonly MethodInfo duplexStreamingAddMethod;
 
         // ReSharper disable once IdentifierTypo
         static GrpcMethodHelper()
@@ -28,7 +31,18 @@ namespace Grpc.Extension.Internal
                 if (parameters[1].ParameterType.Name.Contains("UnaryServerMethod"))
                 {
                     unaryAddMethod = method;
-                    break;
+                }
+                else if (parameters[1].ParameterType.Name.Contains("ClientStreamingServerMethod"))
+                {
+                    clientStreamingAddMethod = method;
+                }
+                else if (parameters[1].ParameterType.Name.Contains("ServerStreamingServerMethod"))
+                {
+                    serverStreamingAddMethod = method;
+                }
+                else if (parameters[1].ParameterType.Name.Contains("DuplexStreamingServerMethod"))
+                {
+                    duplexStreamingAddMethod = method;
                 }
             }
         }
@@ -44,21 +58,54 @@ namespace Grpc.Extension.Internal
             var methods = srv.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
             foreach (var method in methods)
             {
-                if (method.ReturnType == typeof(void) || method.ReturnType.BaseType != typeof(Task)) continue;
+                if (!method.ReturnType.Name.StartsWith("Task")) continue;
                 var parameters = method.GetParameters();
-                if (parameters.Length != 2 || parameters[1].ParameterType != typeof(ServerCallContext) ||
+                if (parameters[parameters.Length-1].ParameterType != typeof(ServerCallContext) ||
                     method.CustomAttributes.Any(x => x.AttributeType == typeof(NotGrpcMethodAttribute))) continue;
 
                 Type inputType = parameters[0].ParameterType;
-                Type outputType = method.ReturnType.GenericTypeArguments[0];
+                Type inputType2 = parameters[1].ParameterType;
+                Type outputType = method.ReturnType.IsGenericType ? method.ReturnType.GenericTypeArguments[0] : method.ReturnType;
 
-                var buildMethodResult = buildMethod.MakeGenericMethod(inputType, outputType)
-                    .Invoke(null, new object[] { srv, method.Name, package, serviceName, MethodType.Unary });
+                var addMethod = unaryAddMethod;
+                var serverMethodType = typeof(UnaryServerMethod<,>);
+                var methodType = MethodType.Unary;
+                var reallyInputType = inputType;
+                var reallyOutputType = outputType;
 
-                Delegate unaryDelegate = method.CreateDelegate(typeof(UnaryServerMethod<,>)
-                    .MakeGenericType(inputType, outputType), method.IsStatic ? null : srv);
-
-                unaryAddMethod.MakeGenericMethod(inputType, outputType).Invoke(builder, new[] { buildMethodResult, unaryDelegate });
+                //非一元方法
+                if ((inputType.IsGenericType || inputType2.IsGenericType))
+                {
+                    if (inputType.Name == "IAsyncStreamReader`1")
+                    {
+                        reallyInputType = inputType.GenericTypeArguments[0];
+                        if (inputType2.Name == "IServerStreamWriter`1")//双向流
+                        {
+                            addMethod = duplexStreamingAddMethod;
+                            methodType = MethodType.DuplexStreaming;
+                            serverMethodType = typeof(DuplexStreamingServerMethod<,>);
+                            reallyOutputType = inputType2.GenericTypeArguments[0];
+                        }
+                        else//客户端流
+                        {
+                            addMethod = clientStreamingAddMethod;
+                            methodType = MethodType.ClientStreaming;
+                            serverMethodType = typeof(ClientStreamingServerMethod<,>);
+                        }
+                    }
+                    else if (inputType2.Name == "IServerStreamWriter`1")//服务端流
+                    {
+                        addMethod = serverStreamingAddMethod;
+                        methodType = MethodType.ServerStreaming;
+                        serverMethodType = typeof(ServerStreamingServerMethod<,>);
+                        reallyOutputType = inputType2.GenericTypeArguments[0];
+                    }
+                }
+                var buildMethodResult = buildMethod.MakeGenericMethod(reallyInputType, reallyOutputType)
+                    .Invoke(null, new object[] { srv, method.Name, package, serviceName, methodType });
+                Delegate serverMethodDelegate = method.CreateDelegate(serverMethodType
+                .MakeGenericType(reallyInputType, reallyOutputType), method.IsStatic ? null : srv);
+                addMethod.MakeGenericMethod(reallyInputType, reallyOutputType).Invoke(builder, new[] { buildMethodResult, serverMethodDelegate });
             }
         }
     }
