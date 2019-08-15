@@ -59,7 +59,7 @@ namespace Grpc.Extension.Interceptors
                 }
                 else
                 {
-                    await (continuation.DynamicInvoke(request, context) as Task);
+                    await (continuation.DynamicInvoke(request, response, context) as Task);
                     return default(TResponse);
                 }
             }
