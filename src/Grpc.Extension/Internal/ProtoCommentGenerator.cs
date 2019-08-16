@@ -7,21 +7,27 @@ using System.Text;
 using System.Xml.Linq;
 using Grpc.Extension.Common;
 using System.Reflection;
+using ProtoBuf;
 
 namespace Grpc.Extension.Internal
 {
     internal static class ProtoCommentGenerator
     {
+        //Xml文档注释
         static List<XmlCommentInfo> xmlComments = new List<XmlCommentInfo>();
+        //ProtoType
+        static List<Type> protoTypes;
         static ProtoCommentGenerator()
         {
             //加载注释xml文件
             var files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.xml");
+            var assembliyNames = new List<string>();
             foreach (var file in files)
             {
                 var xe = XElement.Load(file);
                 //检查是否为注释xml文件
                 if (xe.Element("assembly") == null || xe.Element("members") == null) continue;
+                assembliyNames.Add(xe.Element("assembly").Value);
                 foreach (var item in xe.Element("members").Elements())
                 {
                     var name = item.Attribute("name")?.Value;
@@ -37,6 +43,10 @@ namespace Grpc.Extension.Internal
                     }
                 }
             }
+
+            //初始化protoTypes
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(p => assembliyNames.Contains(p.GetName().Name));
+            protoTypes = assemblies.SelectMany(p => p.GetTypes().Where(t => t.GetCustomAttribute<ProtoContractAttribute>() != null)).ToList();
         }
 
         /// <summary>
@@ -69,7 +79,7 @@ namespace Grpc.Extension.Internal
         /// <returns></returns>
         public static string AddMessageComment<TEntity>(this string proto)
         {
-            var dicComment = ProtoCommentGenerator.GetComments(new string[] { "T","P" }, typeof(TEntity).FullName);
+            var dicComment = new Dictionary<string,string>();
 
             var lines = new List<string>();
             using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(proto)))
@@ -82,6 +92,11 @@ namespace Grpc.Extension.Internal
                     if (lineArr.Length > 1)
                     {
                         var typeName = lineArr[1];
+                        if (ProtoGenerator.protoMsgStartWithKeywords.Any(q => line.StartsWith(q)))
+                        {
+                            var fullName = GetProtoTypeFullName<TEntity>(typeName);
+                            if(!string.IsNullOrEmpty(fullName)) dicComment = GetComments(new string[] { "T", "P","F" }, fullName);
+                        }
                         var comment = dicComment.FirstOrDefault(p => p.Key.EndsWith("." + typeName)).Value;
                         if (!string.IsNullOrWhiteSpace(comment))
                         {
@@ -108,6 +123,21 @@ namespace Grpc.Extension.Internal
         {
             var arr = comment.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
             return string.Join(Environment.NewLine, arr.Select(p => $"{prefix}//{p.TrimStart()}"));
+        }
+
+        /// <summary>
+        /// 根据名字获取ProtoType的FullName
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private static string GetProtoTypeFullName<TEntity>(string name)
+        {
+            //判断TEntity是否就是要获取的类型
+            if (typeof(TEntity).Name == name) return typeof(TEntity).FullName;
+            //从protoTypes里获取
+            var type = protoTypes.Where(t => t.Name == name).FirstOrDefault();
+            return type?.FullName;
         }
 
         /// <summary>

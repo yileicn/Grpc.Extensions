@@ -640,6 +640,14 @@
             <param name="proto"></param>
             <returns></returns>
         </member>
+        <member name="M:Grpc.Extension.Internal.ProtoCommentGenerator.GetProtoTypeFullName``1(System.String)">
+            <summary>
+            根据名字获取ProtoType的FullName
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
         <member name="M:Grpc.Extension.Internal.ProtoCommentGenerator.AddServiceComment(Grpc.Extension.Model.ProtoMethodInfo,System.Text.StringBuilder)">
             <summary>
             给Service加入注释

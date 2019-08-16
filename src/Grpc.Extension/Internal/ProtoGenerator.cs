@@ -13,7 +13,7 @@ namespace Grpc.Extension.Internal
         /// <summary>
         /// proto的message可能的开头的关键字
         /// </summary>
-        private static List<string> protoMsgStartWithKeywords { get; set; } = new List<string> { "message", "enum" };
+        internal static List<string> protoMsgStartWithKeywords { get; set; } = new List<string> { "message", "enum" };
 
         /// <summary>
         /// 添加proto
