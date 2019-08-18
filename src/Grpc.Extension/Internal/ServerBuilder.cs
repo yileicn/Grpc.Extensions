@@ -129,7 +129,9 @@ namespace Grpc.Extension.Internal
         /// <returns></returns>
         public ServerBuilder UseProtoGenerate(string dir,bool spiltProto = true)
         {
+#if DEBUG
             ProtoGenerator.Gen(dir, spiltProto);
+#endif
             return this;
         }
 

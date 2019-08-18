@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.3.1</Version>
+    <Version>1.3.2</Version>
     <Description>一个基于GRPC的简单微服务框架
 1.服务注册和发现
 2.服务自动负载均衡
@@ -15,12 +15,12 @@
     <Product>Grpc.Extensions</Product>
     <Company />
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <AssemblyVersion>1.3.1.0</AssemblyVersion>
-    <FileVersion>1.3.1.0</FileVersion>
+    <AssemblyVersion>1.3.2.0</AssemblyVersion>
+    <FileVersion>1.3.2.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>E:\Code\git\FollowmeNew\Grpc\Grpc.Extesions\src\Grpc.Extension\Grpc.Extension.xml</DocumentationFile>
+    <DocumentationFile>\Grpc.Extension.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
