@@ -3,11 +3,25 @@
 
 ## 功能
 - 服务注册和发现
-- 服务自动负载均衡(轮询，随机)
-- 服务端中件间(性能监控[日志],全局错误处理,手动熔断)
-- 客户端中件间(认证，超时时间设置)
-- Grpc DashBoard(Http远程调用，手动熔断，日志输出控制)
+	- 默认使用Consul实现
+	- 实现IServiceDiscovery,IServiceRegister可扩展
+- 服务自动负载均衡
+	- 默认使用轮询实现,可切换随机算法
+	- 实现ILoadBalancer可扩展
+- 服务端中件间
+	- 性能监控[日志,分布式调用链],全局错误处理,手动熔断
+	- 实现ServerInterceptor可扩展
+- 客户端中件间
+	- 性能监控[日志,分布式调用链],超时时间设置
+	- 实现ClientInterceptor可扩展
+- Grpc DashBoard
+	- Http远程调用,手动熔断,日志输出控制
+- Grpc ProtoFirst
+	- 通过Proto生成代码和注释
 - Grpc CodeFirst
+	- 通过代码生成proto和注释(GrpcMethod自动注册)
+	- 代码更干净且方便扩展，例如可以在ProtoMessage上打验证特性来统一处理验证逻辑等
+	- 更方便拆分GrpcService到多个类，而不是使用partial class
 
 ## 待完善
 - 使用Polly实现重试，降级，熔断
