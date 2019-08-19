@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Grpc.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -44,6 +45,11 @@ namespace Grpc.Extension
         /// 默认错误码
         /// </summary>
         public int DefaultErrorCode { get; set; } = 1;
+
+        /// <summary>
+        /// ChannelOption
+        /// </summary>
+        public IEnumerable<ChannelOption> ChannelOptions { get; set; }
 
         #region 兼容老版本
         /*

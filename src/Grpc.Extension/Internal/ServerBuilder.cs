@@ -201,7 +201,7 @@ namespace Grpc.Extension.Internal
         /// <returns></returns>
         public Server Build()
         {
-            Server server = new Server();
+            Server server = new Server(GrpcServerOptions.Instance.ChannelOptions);
             //使用拦截器
             var serviceDefinitions = ApplyInterceptor(_serviceDefinitions, _interceptors);
             //添加服务定义

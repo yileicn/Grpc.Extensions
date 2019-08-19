@@ -13,7 +13,7 @@ namespace Grpc.Extension.Internal
     /// <summary>
     /// Channel统一管理
     /// </summary>
-    internal class ChannelManager
+    internal class ChannelPool
     {
         private ConcurrentDictionary<string, ChannelInfo> _channels = new ConcurrentDictionary<string, ChannelInfo>();
         private IServiceDiscovery _serviceDiscovery;
@@ -25,7 +25,7 @@ namespace Grpc.Extension.Internal
         /// </summary>
         /// <param name="serviceDiscovery"></param>
         /// <param name="loadBalancer"></param>
-        public ChannelManager(IServiceDiscovery serviceDiscovery, ILoadBalancer loadBalancer,IMemoryCache memoryCache)
+        public ChannelPool(IServiceDiscovery serviceDiscovery, ILoadBalancer loadBalancer,IMemoryCache memoryCache)
         {
             this._serviceDiscovery = serviceDiscovery;
             this._loadBalancer = loadBalancer;
@@ -99,7 +99,7 @@ namespace Grpc.Extension.Internal
 
         private ChannelInfo CreateChannel(string endPoint, ChannelConfig config)
         {
-            var channel = new Channel(endPoint, ChannelCredentials.Insecure);
+            var channel = new Channel(endPoint, ChannelCredentials.Insecure, config.ChannelOptions);
 
             var tryCount = 0;//重试计数
             //检查channel状态

@@ -35,7 +35,7 @@ namespace Grpc.Extension.Internal
         /// <returns></returns>
         public T GetGrpcClient<T>() where T : ClientBase<T>
         {
-            var channelManager = GrpcExtensions.ServiceProvider.GetService<ChannelManager>();
+            var channelManager = GrpcExtensions.ServiceProvider.GetService<ChannelPool>();
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             var grpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
 

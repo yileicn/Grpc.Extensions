@@ -12,12 +12,12 @@ namespace Grpc.Extension.Internal
     /// </summary>
     internal class AutoChannelCallInvoker : CallInvoker
     {
-        private ChannelManager _channelManager;
+        private ChannelPool _channelManager;
 
         /// <summary>
         /// 自动负载Channel的CallInvoker
         /// </summary>
-        public AutoChannelCallInvoker(ChannelManager channelManager)
+        public AutoChannelCallInvoker(ChannelPool channelManager)
         {
             this._channelManager = channelManager;
         }

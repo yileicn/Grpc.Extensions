@@ -54,7 +54,7 @@ namespace Grpc.Extension
             services.AddSingleton<AutoChannelCallInvoker>();
             services.AddSingleton<CallInvoker, InterceptorCallInvoker>();
             //添加Channel的Manager
-            services.AddSingleton<ChannelManager>();
+            services.AddSingleton<ChannelPool>();
             services.AddSingleton<GrpcClientManager>();
 
             //默认使用轮询负载策略，在外面可以注入其它策略
@@ -88,20 +88,22 @@ namespace Grpc.Extension
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="services"></param>
-        /// <param name="discoveryUrl"></param>
-        /// <param name="discoveryServiceName"></param>
+        /// <param name="discoveryUrl">Discovery的服务器地址</param>
+        /// <param name="discoveryServiceName">Discovery上客户端服务名字</param>
+        /// <param name="channelOptions">ChannelOption</param>
         /// <returns></returns>
-        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, string discoveryUrl, string discoveryServiceName) where T : ClientBase<T>
+        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, string discoveryUrl, string discoveryServiceName, IEnumerable<ChannelOption> channelOptions = null) where T : ClientBase<T>
         {
             services.AddSingleton<T>();
             var channelConfig = new ChannelConfig
             {
                 DiscoveryUrl = discoveryUrl,
-                DiscoveryServiceName = discoveryServiceName
+                DiscoveryServiceName = discoveryServiceName,
+                ChannelOptions = channelOptions
             };
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             channelConfig.GrpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
-            ChannelManager.Configs.Add(channelConfig);
+            ChannelPool.Configs.Add(channelConfig);
             return services;
         }
 
