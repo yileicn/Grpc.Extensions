@@ -88,16 +88,17 @@ namespace Grpc.Extension.Internal
                 while (sr.Peek() > 0)
                 {
                     var line = sr.ReadLine();
-                    var lineArr = line.Split(new char[]{ ' '},StringSplitOptions.RemoveEmptyEntries);
+                    var lineArr = line.Split(new string[]{ " ", "repeated" },StringSplitOptions.RemoveEmptyEntries);
                     if (lineArr.Length > 1)
                     {
-                        var typeName = lineArr[1];
+                        var typeName = lineArr[1];//message和enum后的类型名
                         if (ProtoGenerator.protoMsgStartWithKeywords.Any(q => line.StartsWith(q)))
                         {
                             var fullName = GetProtoTypeFullName<TEntity>(typeName);
                             if(!string.IsNullOrEmpty(fullName)) dicComment = GetComments(new string[] { "T", "P","F" }, fullName);
                         }
-                        var comment = dicComment.FirstOrDefault(p => p.Key.EndsWith("." + typeName)).Value;
+                        var propertyName = lineArr[1];//属性名
+                        var comment = dicComment.FirstOrDefault(p => p.Key.EndsWith("." + propertyName)).Value;
                         if (!string.IsNullOrWhiteSpace(comment))
                         {
                             if (line.EndsWith(";"))
