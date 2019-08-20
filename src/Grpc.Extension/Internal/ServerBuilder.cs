@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
@@ -129,9 +130,9 @@ namespace Grpc.Extension.Internal
         /// <returns></returns>
         public ServerBuilder UseProtoGenerate(string dir,bool spiltProto = true)
         {
-#if DEBUG
-            ProtoGenerator.Gen(dir, spiltProto);
-#endif
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                ProtoGenerator.Gen(dir, spiltProto);
+
             return this;
         }
 

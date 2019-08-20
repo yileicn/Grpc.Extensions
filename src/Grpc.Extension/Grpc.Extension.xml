@@ -471,7 +471,7 @@
             自动负载Channel的CallInvoker
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Internal.AutoChannelCallInvoker.#ctor(Grpc.Extension.Internal.ChannelManager)">
+        <member name="M:Grpc.Extension.Internal.AutoChannelCallInvoker.#ctor(Grpc.Extension.Internal.ChannelPool)">
             <summary>
             自动负载Channel的CallInvoker
             </summary>
@@ -508,36 +508,36 @@
         <member name="M:Grpc.Extension.Internal.AutoChannelCallInvoker.CreateCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions)">
             <summary>Creates call invocation details for given method.</summary>
         </member>
-        <member name="T:Grpc.Extension.Internal.ChannelManager">
+        <member name="T:Grpc.Extension.Internal.ChannelPool">
             <summary>
             Channel统一管理
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Internal.ChannelManager.#ctor(Grpc.Extension.Discovery.IServiceDiscovery,Grpc.Extension.LoadBalancer.ILoadBalancer,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
+        <member name="M:Grpc.Extension.Internal.ChannelPool.#ctor(Grpc.Extension.Discovery.IServiceDiscovery,Grpc.Extension.LoadBalancer.ILoadBalancer,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
             <summary>
             Channel统一管理
             </summary>
             <param name="serviceDiscovery"></param>
             <param name="loadBalancer"></param>
         </member>
-        <member name="M:Grpc.Extension.Internal.ChannelManager.GetChannel(System.String)">
+        <member name="M:Grpc.Extension.Internal.ChannelPool.GetChannel(System.String)">
             <summary>
             根据客户端代理类型获取channel
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Internal.ChannelManager.GetEndpoint(System.String,System.String)">
+        <member name="M:Grpc.Extension.Internal.ChannelPool.GetEndpoint(System.String,System.String)">
             <summary>
             根据服务名称返回服务地址
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Internal.ChannelManager.ShutdownErrorChannel(System.Collections.Generic.List{System.String},System.String)">
+        <member name="M:Grpc.Extension.Internal.ChannelPool.ShutdownErrorChannel(System.Collections.Generic.List{System.String},System.String)">
             <summary>
             关闭不健康Channel
             </summary>
             <param name="healthEndpoints"></param>
             <param name="serviceName"></param>
         </member>
-        <member name="M:Grpc.Extension.Internal.ChannelManager.Shutdown">
+        <member name="M:Grpc.Extension.Internal.ChannelPool.Shutdown">
             <summary>
             关闭所有Channel
             </summary>
@@ -826,6 +826,36 @@
             ChannelConfig
             </summary>
         </member>
+        <member name="P:Grpc.Extension.Model.ChannelConfig.DiscoveryUrl">
+            <summary>
+            Discovery的服务器地址
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Model.ChannelConfig.DiscoveryServiceName">
+            <summary>
+            Discovery上客户端服务名字
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Model.ChannelConfig.DirectEndpoint">
+            <summary>
+            直接服务地址，不用服务现
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Model.ChannelConfig.UseDirect">
+            <summary>
+            是否使用直接服务地址
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Model.ChannelConfig.ChannelOptions">
+            <summary>
+            ChannelOption
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Model.ChannelConfig.GrpcServiceName">
+            <summary>
+            GrpcServiceName
+            </summary>
+        </member>
         <member name="T:Grpc.Extension.Model.ErrorModel">
             <summary>
             统一错误模型
@@ -966,6 +996,11 @@
             默认错误码
             </summary>
         </member>
+        <member name="P:Grpc.Extension.GrpcServerOptions.ChannelOptions">
+            <summary>
+            ChannelOption
+            </summary>
+        </member>
         <member name="T:Grpc.Extension.JaegerOptions">
             <summary>
             JaegerOptions
@@ -1006,14 +1041,15 @@
             <param name="useLogger"></param>
             <returns></returns>
         </member>
-        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddGrpcClient``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String)">
+        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddGrpcClient``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String,System.Collections.Generic.IEnumerable{Grpc.Core.ChannelOption})">
             <summary>
             添加GrpcClient,生成元数据
             </summary>
             <typeparam name="T"></typeparam>
             <param name="services"></param>
-            <param name="discoveryUrl"></param>
-            <param name="discoveryServiceName"></param>
+            <param name="discoveryUrl">Discovery的服务器地址</param>
+            <param name="discoveryServiceName">Discovery上客户端服务名字</param>
+            <param name="channelOptions">ChannelOption</param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddJaeger(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
