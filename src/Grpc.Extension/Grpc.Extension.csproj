@@ -20,11 +20,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>\Grpc.Extension.xml</DocumentationFile>
+    <DocumentationFile>Grpc.Extension.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>\Grpc.Extension.xml</DocumentationFile>
+    <DocumentationFile>Grpc.Extension.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
