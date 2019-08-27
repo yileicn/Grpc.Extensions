@@ -44,7 +44,7 @@
         </member>
         <member name="M:Grpc.Extension.BaseService.GrpcServiceExtension.BuildMeta(System.Collections.IDictionary)">
             <summary>
-            生成Grpc元数据信息
+            生成Grpc元数据信息(1.19以前可以反射处理)
             </summary>
             <param name="callHandlers"></param>
         </member>

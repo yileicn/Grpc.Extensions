@@ -11,13 +11,6 @@ namespace Math
 {
     public class MathGrpc : IGrpcService
     {
-        public void RegisterMethod(ServerServiceDefinition.Builder builder)
-        {
-            builder.AddMethod(this.BuildMethod<AddRequest, IntMessage>("Add", null), Add);
-            builder.AddMethod(this.BuildMethod<SubRequest, IntMessage>("Sub", null), Sub);
-            builder.AddMethod(this.BuildMethod<SumRequest, IntMessage>("Sum", null,mType: MethodType.ClientStreaming), Sum);
-        }
-
         /// <summary>
         /// 加法
         /// </summary>

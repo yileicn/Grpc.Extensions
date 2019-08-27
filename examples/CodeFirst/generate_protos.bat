@@ -34,7 +34,7 @@ setlocal
 @rem enter this directory
 cd /d %~dp0
 
-set TOOLS_PATH=..\..\packages\Grpc.Tools.1.2.2\tools\windows_x86
+set TOOLS_PATH=%GRPC_TOOLS%\1.19.0\tools\windows_x86
 
 %TOOLS_PATH%\protoc.exe -I ../protos --csharp_out MathClient/grpc_gen_code ../protos/MathGrpc.service.proto ../protos/MathGrpc.message.proto --grpc_out MathClient/grpc_gen_code --plugin=protoc-gen-grpc=%TOOLS_PATH%\grpc_csharp_plugin.exe
 

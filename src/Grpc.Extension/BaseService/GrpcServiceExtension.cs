@@ -58,7 +58,7 @@ namespace Grpc.Extension.BaseService
         }
 
         /// <summary>
-        /// 生成Grpc元数据信息
+        /// 生成Grpc元数据信息(1.19以前可以反射处理)
         /// </summary>
         /// <param name="callHandlers"></param>
         public static void BuildMeta(IDictionary callHandlers)
