@@ -185,7 +185,7 @@ namespace Grpc.Extension.Internal
                 var srv = arr.Length == 2 ? arr[1] : arr[0];
 
                 #region message
-                var protoName = grp.Key;
+                var protoName = srv;//grp.Key;
                 var msgProtoName = $"{protoName}{(spiltProto ? ".message":"")}.proto";
                 var msgProtoPath = Path.Combine(dir, msgProtoName);
                 var msgProtos = new List<string>();

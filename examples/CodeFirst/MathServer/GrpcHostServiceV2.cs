@@ -31,7 +31,7 @@ namespace MathServer
             //构建Server
             _server = _serverBuilder
                 .UseOptions(options => {
-                    //options.GlobalPackage = "MathGrpc";
+                    options.GlobalPackage = "math";
                     options.ProtoNameSpace = "MathGrpc";
                 })
                 .UseGrpcService()
