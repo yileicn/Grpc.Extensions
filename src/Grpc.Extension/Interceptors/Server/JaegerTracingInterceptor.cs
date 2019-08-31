@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Jaeger;
 using Grpc.Extension.Common;
+using Grpc.Extension.Abstract;
 
 namespace Grpc.Extension.Interceptors
 {
@@ -13,10 +14,9 @@ namespace Grpc.Extension.Interceptors
     /// </summary>
     internal class JaegerTracingInterceptor : ServerInterceptor
     {
-        public const string jaegerKey = "jaeger";
         public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request, ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
         {
-            var header = context.RequestHeaders.Where(p => p.Key == jaegerKey).FirstOrDefault();
+            var header = context.RequestHeaders.Where(p => p.Key == Consts.OpenTraceId).FirstOrDefault();
             var spanBuilder = GlobalTracer.Instance.BuildSpan(context.Method).WithTag("Request", request?.ToJson() ?? "");
             if(header != null)
             {

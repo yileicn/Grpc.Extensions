@@ -2,8 +2,10 @@
 using System;
 using Grpc.Extension.Model;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Grpc.Extension.Discovery;
+using Grpc.Extension.Common.Internal;
+using Grpc.Extension.Common;
+using Grpc.Extension.Abstract.Model;
+using Grpc.Extension.Abstract.Discovery;
 
 namespace Grpc.Extension
 {
@@ -12,8 +14,6 @@ namespace Grpc.Extension
     /// </summary>
     public static class GrpcExtensions
     {
-        internal static IServiceProvider ServiceProvider { get; set; }
-
         #region 服务端扩展
 
         /// <summary>
@@ -34,13 +34,16 @@ namespace Grpc.Extension
                 
                 //检查服务注册配制
                 if (string.IsNullOrWhiteSpace(GrpcServerOptions.Instance.DiscoveryUrl))
-                    throw new ArgumentException("DiscoveryUrl is null");
+                    throw new ArgumentException("GrpcServer:DiscoveryUrl is null");
                 if (string.IsNullOrWhiteSpace(GrpcServerOptions.Instance.DiscoveryServiceName))
-                    throw new ArgumentException("DiscoveryServiceName is null");
+                    throw new ArgumentException("GrpcServer:DiscoveryServiceName is null");
 
                 //服务注册
-                var serviceRegister = ServiceProvider.GetService<IServiceRegister>();
-                serviceRegister.RegisterService();
+                var serviceRegister = ServiceProviderAccessor.GetService<IServiceRegister>();
+                var registerModel = GrpcServerOptions.Instance.ToJson().FromJson<ServiceRegisterModel>();
+                registerModel.ServiceIp = ipAndPort.Host;
+                registerModel.ServicePort = ipAndPort.BoundPort;
+                serviceRegister.RegisterService(registerModel);
             }
             return server;
         }
@@ -53,7 +56,7 @@ namespace Grpc.Extension
         public static Server StopAndDeRegisterService(this Server server)
         {
             //服务反注册
-            var serviceRegister = ServiceProvider.GetService<IServiceRegister>();
+            var serviceRegister = ServiceProviderAccessor.GetService<IServiceRegister>();
             serviceRegister.DeregisterService();
             server.ShutdownAsync().Wait();
             

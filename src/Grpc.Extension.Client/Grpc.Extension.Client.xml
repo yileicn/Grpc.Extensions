@@ -1,0 +1,381 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Grpc.Extension.Client</name>
+    </assembly>
+    <members>
+        <member name="T:Grpc.Extension.Client.GrpcClientApp">
+            <summary>
+            GrpcClient启动类
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.GrpcClientApp.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            GrpcClientApp
+            </summary>
+            <param name="conf"></param>
+        </member>
+        <member name="M:Grpc.Extension.Client.GrpcClientApp.InitGrpcOption">
+            <summary>
+            从配制文件初始化
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.GrpcClientApp.UseGrpcOptions(System.Action{Grpc.Extension.Client.GrpcClientOptions})">
+            <summary>
+            注入Grpc,Discovery配制
+            </summary>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.GrpcClientApp.UseLogger(System.Action{Grpc.Extension.Abstract.LoggerAccessor})">
+            <summary>
+            配制日志
+            </summary>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.GrpcClientApp.Run">
+            <summary>
+            启动
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Client.GrpcClientManager">
+            <summary>
+            GrpcClient，用于批量调用
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.GrpcClientManager.#ctor(System.IServiceProvider,System.Collections.Generic.IEnumerable{Grpc.Extension.Client.Interceptors.ClientInterceptor})">
+            <summary>
+            GrpcClient
+            </summary>
+            <param name="serviceProvider"></param>
+            <param name="clientInterceptors"></param>
+        </member>
+        <member name="M:Grpc.Extension.Client.GrpcClientManager.GetGrpcClient``1">
+            <summary>
+            获取GrpcClient，用于批量调用
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.Client.Interceptors.ClientInterceptor">
+            <summary>
+            客户端拦截器
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Interceptors.ClientInterceptor.BlockingUnaryCall``2(``0,Grpc.Core.Interceptors.ClientInterceptorContext{``0,``1},Grpc.Core.Interceptors.Interceptor.BlockingUnaryCallContinuation{``0,``1})">
+            <summary>
+            同步调用
+            </summary>
+            <typeparam name="TRequest"></typeparam>
+            <typeparam name="TResponse"></typeparam>
+            <param name="request"></param>
+            <param name="context"></param>
+            <param name="continuation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.Interceptors.ClientInterceptor.AsyncUnaryCall``2(``0,Grpc.Core.Interceptors.ClientInterceptorContext{``0,``1},Grpc.Core.Interceptors.Interceptor.AsyncUnaryCallContinuation{``0,``1})">
+            <summary>
+            异步调用
+            </summary>
+            <typeparam name="TRequest"></typeparam>
+            <typeparam name="TResponse"></typeparam>
+            <param name="request"></param>
+            <param name="context"></param>
+            <param name="continuation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.Interceptors.ClientInterceptor.AsyncClientStreamingCall``2(Grpc.Core.Interceptors.ClientInterceptorContext{``0,``1},Grpc.Core.Interceptors.Interceptor.AsyncClientStreamingCallContinuation{``0,``1})">
+            <summary>
+            异步客户端流请求
+            </summary>
+            <typeparam name="TRequest"></typeparam>
+            <typeparam name="TResponse"></typeparam>
+            <param name="context"></param>
+            <param name="continuation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.Interceptors.ClientInterceptor.AsyncServerStreamingCall``2(``0,Grpc.Core.Interceptors.ClientInterceptorContext{``0,``1},Grpc.Core.Interceptors.Interceptor.AsyncServerStreamingCallContinuation{``0,``1})">
+            <summary>
+            异步服务端流返回
+            </summary>
+            <typeparam name="TRequest"></typeparam>
+            <typeparam name="TResponse"></typeparam>
+            <param name="request"></param>
+            <param name="context"></param>
+            <param name="continuation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.Interceptors.ClientInterceptor.AsyncDuplexStreamingCall``2(Grpc.Core.Interceptors.ClientInterceptorContext{``0,``1},Grpc.Core.Interceptors.Interceptor.AsyncDuplexStreamingCallContinuation{``0,``1})">
+            <summary>
+            异步双向流
+            </summary>
+            <typeparam name="TRequest"></typeparam>
+            <typeparam name="TResponse"></typeparam>
+            <param name="context"></param>
+            <param name="continuation"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.Client.Interceptors.ClientCallTimeout">
+            <summary>
+            客户端超时拦截器
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Interceptors.ClientCallTimeout.#ctor(System.Double)">
+            <summary>
+            客户端超时拦截器
+            </summary>
+            <param name="callTimeOutSecond"></param>
+        </member>
+        <member name="M:Grpc.Extension.Client.Interceptors.ClientCallTimeout.BlockingUnaryCall``2(``0,Grpc.Core.Interceptors.ClientInterceptorContext{``0,``1},Grpc.Core.Interceptors.Interceptor.BlockingUnaryCallContinuation{``0,``1})">
+            <summary>
+            同步调用
+            </summary>
+            <typeparam name="TRequest"></typeparam>
+            <typeparam name="TResponse"></typeparam>
+            <param name="request"></param>
+            <param name="context"></param>
+            <param name="continuation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.Interceptors.ClientCallTimeout.AsyncUnaryCall``2(``0,Grpc.Core.Interceptors.ClientInterceptorContext{``0,``1},Grpc.Core.Interceptors.Interceptor.AsyncUnaryCallContinuation{``0,``1})">
+            <summary>
+            异步调用
+            </summary>
+            <typeparam name="TRequest"></typeparam>
+            <typeparam name="TResponse"></typeparam>
+            <param name="request"></param>
+            <param name="context"></param>
+            <param name="continuation"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.Client.Interceptors.InterceptorCallInvoker">
+            <summary>
+            客户端中间件的CallInvoker
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Client.Internal.AutoChannelCallInvoker">
+            <summary>
+            自动负载Channel的CallInvoker
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.AutoChannelCallInvoker.#ctor(Grpc.Extension.Client.Internal.ChannelPool)">
+            <summary>
+            自动负载Channel的CallInvoker
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.AutoChannelCallInvoker.BlockingUnaryCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions,``0)">
+            <summary>
+            Invokes a simple remote call in a blocking fashion.
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.AutoChannelCallInvoker.AsyncUnaryCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions,``0)">
+            <summary>
+            Invokes a simple remote call asynchronously.
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.AutoChannelCallInvoker.AsyncServerStreamingCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions,``0)">
+            <summary>
+            Invokes a server streaming call asynchronously.
+            In server streaming scenario, client sends on request and server responds with a stream of responses.
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.AutoChannelCallInvoker.AsyncClientStreamingCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions)">
+            <summary>
+            Invokes a client streaming call asynchronously.
+            In client streaming scenario, client sends a stream of requests and server responds with a single response.
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.AutoChannelCallInvoker.AsyncDuplexStreamingCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions)">
+            <summary>
+            Invokes a duplex streaming call asynchronously.
+            In duplex streaming scenario, client sends a stream of requests and server responds with a stream of responses.
+            The response stream is completely independent and both side can be sending messages at the same time.
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.AutoChannelCallInvoker.CreateCall``2(Grpc.Core.Method{``0,``1},System.String,Grpc.Core.CallOptions)">
+            <summary>Creates call invocation details for given method.</summary>
+        </member>
+        <member name="T:Grpc.Extension.Client.Internal.ChannelPool">
+            <summary>
+            Channel统一管理
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.ChannelPool.#ctor(Grpc.Extension.Abstract.Discovery.IServiceDiscovery,Grpc.Extension.Abstract.ILoadBalancer,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
+            <summary>
+            Channel统一管理
+            </summary>
+            <param name="serviceDiscovery"></param>
+            <param name="loadBalancer"></param>
+            <param name="memoryCache"></param>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.ChannelPool.GetChannel(System.String)">
+            <summary>
+            根据客户端代理类型获取channel
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.ChannelPool.GetEndpoint(System.String,System.String,System.String)">
+            <summary>
+            根据服务名称返回服务地址
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.ChannelPool.ShutdownErrorChannel(System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            关闭不健康Channel
+            </summary>
+            <param name="healthEndpoints"></param>
+            <param name="serviceName"></param>
+        </member>
+        <member name="M:Grpc.Extension.Client.Internal.ChannelPool.Shutdown">
+            <summary>
+            关闭所有Channel
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Client.LoadBalancer.RandomLoadBalancer">
+            <summary>
+            随机负载
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.LoadBalancer.RandomLoadBalancer.SelectEndpoint(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            随机获取Endpoint
+            </summary>
+            <param name="serviceName"></param>
+            <param name="endpoints"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.Client.LoadBalancer.RoundLoadBalancer">
+            <summary>
+            轮询负载
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.LoadBalancer.RoundLoadBalancer.SelectEndpoint(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            轮询获取Endpoint
+            </summary>
+            <param name="serviceName"></param>
+            <param name="endpoints"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.Client.Model.ChannelConfig">
+            <summary>
+            ChannelConfig
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.Model.ChannelConfig.DiscoveryUrl">
+            <summary>
+            Discovery的服务器地址(http://192.168.8.6:8500)
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.Model.ChannelConfig.DiscoveryServiceName">
+            <summary>
+            Discovery上客户端服务名字
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.Model.ChannelConfig.DirectEndpoint">
+            <summary>
+            直接服务地址，不用服务现
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.Model.ChannelConfig.UseDirect">
+            <summary>
+            是否使用直接服务地址
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.Model.ChannelConfig.DiscoveryServiceTag">
+            <summary>
+            Discovery上客户端服务Tag(可用于版本标记)
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.Model.ChannelConfig.ChannelOptions">
+            <summary>
+            ChannelOption
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.Model.ChannelConfig.GrpcServiceName">
+            <summary>
+            GrpcServiceName
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Client.GrpcClientOptions">
+            <summary>
+            GrpcClientOptions
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.GrpcClientOptions.Instance">
+            <summary>
+            Instance
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.GrpcClientOptions.DiscoveryUrl">
+            <summary>
+            服务发现地址(http://192.168.8.6:8500)
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.GrpcClientOptions.ServiceAddressCacheTime">
+            <summary>
+            服务地址缓存时间(秒)
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.GrpcClientOptions.DefaultErrorCode">
+            <summary>
+            默认错误码
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Client.ServiceCollectionExtensions">
+            <summary>
+            ServiceCollectionExtensions
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClientExtensions(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Grpc.Extension.Abstract.LoggerAccessor})">
+            <summary>
+            添加GrpcClient扩展
+            </summary>
+            <param name="services"></param>
+            <param name="useLogger"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClient``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String,System.Collections.Generic.IEnumerable{Grpc.Core.ChannelOption})">
+            <summary>
+            添加GrpcClient,生成元数据
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="services"></param>
+            <param name="discoveryServiceName">Discovery上客户端服务名字</param>
+            <param name="discoveryUrl">Discovery的服务器地址</param>
+            <param name="channelOptions">ChannelOption</param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddClientMonitor(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            添加客户端日志监控Interceptor
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddClientCallTimeout(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Double)">
+            <summary>
+            添加客户端超时Interceptor
+            </summary>
+            <param name="services"></param>
+            <param name="callTimeOutSecond"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddClientJaeger(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            添加客户端Jaeger Interceptor
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddClientInterceptor``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            添加客户端Interceptor
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

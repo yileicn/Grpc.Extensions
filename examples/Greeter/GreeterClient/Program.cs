@@ -15,9 +15,8 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Grpc.Extension;
-using Grpc.Extension.Interceptors;
-using Grpc.Extension.Model;
+using Grpc.Extension.Abstract.Model;
+using Grpc.Extension.Client;
 using Helloworld;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,14 +33,20 @@ namespace GreeterClient
             var config = configBuilder.SetBasePath(configPath).AddJsonFile("appsettings.json", false, true).Build();
             //使用依赖注入
             var services = new ServiceCollection()
-                .AddGrpcClientExtensions((log)=> {
-                    log.LoggerMonitor = (msg,type) => Console.WriteLine(GetLogTypeName(type) + ":"+ msg);
-                    log.LoggerError = (ex,type) => Console.WriteLine(GetLogTypeName(type) + ":" + ex);
-                })//注入GrpcClientExtensions
+                .AddGrpcClientExtensions()//注入GrpcClientExtensions
                 .AddClientCallTimeout(10)//注入客户端中间件
-                .AddGrpcClient<Greeter.GreeterClient>(config["ConsulUrl"], "Greeter.Test");//注入grpc client
+                .AddGrpcClient<Greeter.GreeterClient>("Greeter.Test");//注入grpc client
+            //注入配制
+            services.AddSingleton<IConfiguration>(config);
             var provider = services.BuildServiceProvider();
-            
+            //配制GrpcClientApp
+            var clientApp = provider.GetService<GrpcClientApp>();
+            clientApp.UseLogger((log) =>
+                {
+                    log.LoggerMonitor = (msg, type) => Console.WriteLine(GetLogTypeName(type) + ":" + msg);
+                    log.LoggerError = (ex, type) => Console.WriteLine(GetLogTypeName(type) + ":" + ex);
+                }).Run();
+
             //从容器获取client
             var client = provider.GetService<Greeter.GreeterClient>();
             //StreamTest(client).Wait();

@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.4.0</Version>
+    <PackageId>FM.Grpc.Extensions.Discovery</PackageId>
+    <Authors>RabbitYi</Authors>
+    <Description>默认使用Consul实现服务注册和服务发现</Description>
+    <PackageProjectUrl>https://github.com/yileicn/Grpc.Extensions/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yileicn/Grpc.Extensions/</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>grpc,dashboard,consul,micorservice,opentracing,polly</PackageTags>
+    <Product>Grpc.Extension.Discovery</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Consul" Version="0.7.2.6" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Grpc.Extension.Abstract\Grpc.Extension.Abstract.csproj" />
+  </ItemGroup>
+
+</Project>

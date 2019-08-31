@@ -1,7 +1,6 @@
 using Grpc.Core;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
-using Grpc.Core.Interceptors;
 using Grpc.Extension.Interceptors;
 using GreeterServer.Common;
 

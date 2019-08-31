@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Grpc.Extension.Model
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    public class InfoRS
+    internal class InfoRS
     {
         [ProtoMember(1)]
         public string IpAndPort { get; set; }
@@ -17,7 +17,7 @@ namespace Grpc.Extension.Model
     }
 
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    public class MethodInfo
+    internal class MethodInfo
     {
         public string Name { get; set; }
 

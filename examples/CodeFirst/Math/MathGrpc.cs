@@ -1,10 +1,7 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Utils;
-using Grpc.Extension.BaseService;
+using Grpc.Extension.Abstract;
 using Math.Model;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Math

@@ -3,7 +3,7 @@
 namespace Grpc.Extension.Model
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    public class MethodInvokeRS
+    internal class MethodInvokeRS
     {
         public string ResponseJson { get; set; }
     }

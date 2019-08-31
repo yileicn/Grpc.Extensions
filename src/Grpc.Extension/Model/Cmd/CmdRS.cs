@@ -3,7 +3,7 @@
 namespace Grpc.Extension.Model
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    public class CmdRS
+    internal class CmdRS
     {
         [ProtoMember(1)]
         public bool Result { get; set; }

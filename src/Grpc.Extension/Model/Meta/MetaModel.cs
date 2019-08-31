@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Grpc.Extension.Model
 {
-    public class MetaModel
+    internal class MetaModel
     {
         public static string Ip { get; set; }
 
@@ -15,7 +15,7 @@ namespace Grpc.Extension.Model
         public static List<MetaMethodModel> Methods { get; set; } = new List<MetaMethodModel>();
     }
 
-    public class MetaMethodModel
+    internal class MetaMethodModel
     {
         public string FullName { get; set; }
 

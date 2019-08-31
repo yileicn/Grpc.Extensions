@@ -3,7 +3,7 @@
 namespace Grpc.Extension.Model
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    public class AddDelSaveResponseEnableRQ
+    internal class AddDelSaveResponseEnableRQ
     {
         [ProtoMember(1)]
         public string MethodName { get; set; }

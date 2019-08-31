@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Grpc.Core;
-using Grpc.Extension.Model;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Extension.Common;
 using Grpc.Extension.Internal;
+using Grpc.Extension.Abstract;
+using Grpc.Extension.Abstract.Model;
+using Grpc.Extension.Common.Internal;
 
 namespace Grpc.Extension.Interceptors
 {
@@ -53,7 +54,7 @@ namespace Grpc.Extension.Interceptors
                     var result = await (continuation.DynamicInvoke(request, context) as Task<TResponse>);
                     model.Status = "ok";
 
-                    model.ResponseData = MonitorManager.Instance.SaveResponseMethodEnable(context.Method) ? result?.ToJson() : Consts.NotResponseMsg;
+                    model.ResponseData = MonitorManager.Instance.SaveResponseMethodEnable(context.Method) ? result?.ToJson() : ServerConsts.NotResponseMsg;
 
                     return result;
                 }

@@ -1,0 +1,307 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Grpc.Extension.Abstract</name>
+    </assembly>
+    <members>
+        <member name="T:Grpc.Extension.Abstract.Discovery.IServiceDiscovery">
+            <summary>
+            服务发现
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Abstract.Discovery.IServiceDiscovery.GetEndpoints(System.String,System.String,System.String)">
+            <summary>
+            获取服务地址列表
+            </summary>
+            <param name="serviceName"></param>
+            <param name="discoveryUrl"></param>
+            <param name="serviceTag"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.Discovery.IServiceRegister">
+            <summary>
+            服务注册
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Abstract.Discovery.IServiceRegister.RegisterService(Grpc.Extension.Abstract.Model.ServiceRegisterModel)">
+            <summary>
+            服务注册
+            </summary>
+            <param name="model"></param>
+        </member>
+        <member name="M:Grpc.Extension.Abstract.Discovery.IServiceRegister.DeregisterService">
+            <summary>
+            服务反注册
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.IGrpcService">
+            <summary>
+            GrpcService
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.ILoadBalancer">
+            <summary>
+            负载均衡
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Abstract.ILoadBalancer.SelectEndpoint(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            选择Endpoint
+            </summary>
+            <param name="serviceName"></param>
+            <param name="endpoints"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.InternalException">
+            <summary>
+            Grpc.Extension内部异常
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Abstract.InternalException.#ctor(System.Int32)">
+            <summary>
+            InternalException
+            </summary>
+            <param name="code"></param>
+        </member>
+        <member name="M:Grpc.Extension.Abstract.InternalException.#ctor(System.Int32,System.String)">
+            <summary>
+            InternalException
+            </summary>
+            <param name="code"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:Grpc.Extension.Abstract.InternalException.#ctor(System.Int32,System.String,System.Exception)">
+            <summary>
+            InternalException
+            </summary>
+            <param name="code"></param>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Grpc.Extension.Abstract.InternalException.SetCode(System.Int32)">
+            <summary>
+            SetCode
+            </summary>
+            <param name="code"></param>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.LoggerAccessor">
+            <summary>
+            日志访问
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.LoggerAccessor.LoggerErrorAction">
+            <summary>
+            LoggerError
+            </summary>
+            <param name="ex"></param>
+            <param name="logType"></param>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.LoggerAccessor.LoggerMonitorAction">
+            <summary>
+            LoggerMonitor
+            </summary>
+            <param name="msg"></param>
+            <param name="logType"></param>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.LoggerAccessor.Instance">
+            <summary>
+            Instance
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.LoggerAccessor.LoggerError">
+            <summary>
+            写异常日志
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.LoggerAccessor.LoggerMonitor">
+            <summary>
+            写监控日志
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.Consts">
+            <summary>
+            Consts
+            </summary>
+        </member>
+        <member name="F:Grpc.Extension.Abstract.Consts.TraceId">
+            <summary>
+            TraceId
+            </summary>
+        </member>
+        <member name="F:Grpc.Extension.Abstract.Consts.OpenTraceId">
+            <summary>
+            OpenTraceId
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.Model.ErrorModel">
+            <summary>
+            统一错误模型
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.ErrorModel.Code">
+            <summary>
+            错误码
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.ErrorModel.Status">
+            <summary>
+            状态
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.ErrorModel.Detail">
+            <summary>
+            Exception.Message
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.ErrorModel.Internal">
+            <summary>
+            FlatException
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.ErrorModel.Content">
+            <summary>
+            备用
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.Model.GrpcErrorCode">
+            <summary>
+            GrpcErrorCode
+            </summary>
+        </member>
+        <member name="F:Grpc.Extension.Abstract.Model.GrpcErrorCode.DefaultErrorCode">
+            <summary>
+            默认错误码
+            </summary>
+        </member>
+        <member name="F:Grpc.Extension.Abstract.Model.GrpcErrorCode.Internal">
+            <summary>
+            内部异常
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.Model.LogType">
+            <summary>
+            日志类型
+            </summary>
+        </member>
+        <member name="F:Grpc.Extension.Abstract.Model.LogType.ServerLog">
+            <summary>
+            服务端日志
+            </summary>
+        </member>
+        <member name="F:Grpc.Extension.Abstract.Model.LogType.ClientLog">
+            <summary>
+            客户端日志
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.Model.MonitorModel">
+            <summary>
+            日志监控实体
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.Abstract.Model.MonitorModel.#ctor">
+            <summary>
+            MonitorModel
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.RequestId">
+            <summary>
+            请求Id
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.ClientIp">
+            <summary>
+            客户端Ip
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.RequestTime">
+            <summary>
+            请求时间
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.RequestUrl">
+            <summary>
+            请求Url
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.RequestData">
+            <summary>
+            请求参数
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.RequestHeaders">
+            <summary>
+            请求头
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.TraceId">
+            <summary>
+            多层调用的追踪id
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.Status">
+            <summary>
+            ok | error
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.ResponseTime">
+            <summary>
+            响应时间
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.ResponseData">
+            <summary>
+            响应数据
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.Exception">
+            <summary>
+            异常信息
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.TotalElapsed">
+            <summary>
+            总耗时
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.MonitorModel.Items">
+            <summary>
+            访问上下信息的预留属性
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.Model.ServiceRegisterModel">
+            <summary>
+            服务注册模型
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.ServiceRegisterModel.ServiceIp">
+            <summary>
+            Grpc服务Ip
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.ServiceRegisterModel.ServicePort">
+            <summary>
+            Grpc服务Port
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.ServiceRegisterModel.DiscoveryUrl">
+            <summary>
+            服务注册地址(http://192.168.8.6:8500)
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.ServiceRegisterModel.DiscoveryServiceName">
+            <summary>
+            服务注册名
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.ServiceRegisterModel.DiscoveryServiceTags">
+            <summary>
+            服务注册Tags
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Abstract.Model.ServiceRegisterModel.DiscoveryTTLInterval">
+            <summary>
+            服务TTL(秒)
+            </summary>
+        </member>
+    </members>
+</doc>

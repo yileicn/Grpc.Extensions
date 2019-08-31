@@ -7,22 +7,23 @@ using Grpc.Extension.Model;
 using System.Linq;
 using Grpc.Extension.Common;
 using Grpc.Extension.Internal;
+using Grpc.Extension.Abstract;
 
 namespace Grpc.Extension.BaseService
 {
     /// <summary>
     /// Grpc元数据服务
     /// </summary>
-    public class MetaService : IGrpcBaseService
+    internal class MetaService : IGrpcBaseService
     {
         /// <summary>
         /// 注册grpc服务方法
         /// </summary>
         public void RegisterMethod(ServerServiceDefinition.Builder builder)
         {
-            builder.AddMethod(this.BuildMethod<InfoRQ, InfoRS>("Info", "grpc", Consts.BaseServiceName), Info);
-            builder.AddMethod(this.BuildMethod<MethodInfoRQ, MethodInfoRS>("MethodInfo", "grpc", Consts.BaseServiceName), MethodInfo);
-            builder.AddMethod(this.BuildMethod<MethodInvokeRQ, MethodInvokeRS>("MethodInvoke", "grpc", Consts.BaseServiceName), MethodInvoke);
+            builder.AddMethod(this.BuildMethod<InfoRQ, InfoRS>("Info", "grpc", ServerConsts.BaseServiceName), Info);
+            builder.AddMethod(this.BuildMethod<MethodInfoRQ, MethodInfoRS>("MethodInfo", "grpc", ServerConsts.BaseServiceName), MethodInfo);
+            builder.AddMethod(this.BuildMethod<MethodInvokeRQ, MethodInvokeRS>("MethodInvoke", "grpc", ServerConsts.BaseServiceName), MethodInvoke);
 
         }
         /// <summary>
