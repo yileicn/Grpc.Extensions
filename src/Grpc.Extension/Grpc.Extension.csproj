@@ -10,7 +10,7 @@
 4.客户端中件间(认证，超时时间设置)
 5.DashBoard(远程调用，手动熔断，日志输出控制)</Description>
     <Authors>RabbitYi</Authors>
-    <RepositoryUrl>https://github.com/yileicn/Grpc.Extesions/</RepositoryUrl>
+    <RepositoryUrl>https://github.com/yileicn/Grpc.Extensions/</RepositoryUrl>
     <PackageId>FM.Grpc.Extensions</PackageId>
     <Product>Grpc.Extensions</Product>
     <Company />
