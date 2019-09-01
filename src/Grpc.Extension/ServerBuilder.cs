@@ -27,7 +27,6 @@ namespace Grpc.Extension
         private readonly List<ServerInterceptor> _interceptors = new List<ServerInterceptor>();
         private readonly List<ServerServiceDefinition> _serviceDefinitions = new List<ServerServiceDefinition>();
         private readonly List<IGrpcService> _grpcServices = new List<IGrpcService>();
-        private IEnumerable<ChannelOption> _channelOptions;
 
         /// <summary>
         /// ServerBuilder
@@ -226,17 +225,6 @@ namespace Grpc.Extension
         }
 
         /// <summary>
-        /// 配制ChannelOptions
-        /// </summary>
-        /// <param name="channelOptions"></param>
-        /// <returns></returns>
-        public ServerBuilder UseChannelOptions(IEnumerable<ChannelOption> channelOptions)
-        {
-            _channelOptions = channelOptions;
-            return this;
-        }
-
-        /// <summary>
         /// 构建Server
         /// </summary>
         /// <returns></returns>
@@ -246,7 +234,7 @@ namespace Grpc.Extension
             if (string.IsNullOrWhiteSpace(GrpcServerOptions.Instance.ServiceAddress))
                 throw new ArgumentException(@"GrpcServer:ServiceAddress is null");
 
-            Server server = new Server(_channelOptions);
+            Server server = new Server(GrpcServerOptions.Instance.ChannelOptions);
             //使用拦截器
             var serviceDefinitions = ApplyInterceptor(_serviceDefinitions, _interceptors);
             //添加服务定义

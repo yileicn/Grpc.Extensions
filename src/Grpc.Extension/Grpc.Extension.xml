@@ -356,6 +356,11 @@
             默认错误码
             </summary>
         </member>
+        <member name="P:Grpc.Extension.GrpcServerOptions.ChannelOptions">
+            <summary>
+            ChannelOption
+            </summary>
+        </member>
         <member name="T:Grpc.Extension.JaegerOptions">
             <summary>
             JaegerOptions
@@ -469,13 +474,6 @@
             <summary>
             有AddJaeger就使用Jaeger
             </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Grpc.Extension.ServerBuilder.UseChannelOptions(System.Collections.Generic.IEnumerable{Grpc.Core.ChannelOption})">
-            <summary>
-            配制ChannelOptions
-            </summary>
-            <param name="channelOptions"></param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.ServerBuilder.Build">

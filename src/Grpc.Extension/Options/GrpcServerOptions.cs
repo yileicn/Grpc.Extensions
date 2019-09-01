@@ -1,4 +1,5 @@
-﻿using Grpc.Extension.Abstract.Model;
+﻿using Grpc.Core;
+using Grpc.Extension.Abstract.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -49,6 +50,11 @@ namespace Grpc.Extension
             get { return GrpcErrorCode.DefaultErrorCode; }
             set { GrpcErrorCode.DefaultErrorCode = value; }
         }
+
+        /// <summary>
+        /// ChannelOption
+        /// </summary>
+        public IEnumerable<ChannelOption> ChannelOptions { get; set; }
     }
 
 }
