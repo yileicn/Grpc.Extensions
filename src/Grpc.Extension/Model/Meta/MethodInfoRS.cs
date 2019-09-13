@@ -3,7 +3,7 @@
 namespace Grpc.Extension.Model
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    public class MethodInfoRS
+    internal class MethodInfoRS
     {
         [ProtoMember(1)]
         public string RequestJson { get; set; }

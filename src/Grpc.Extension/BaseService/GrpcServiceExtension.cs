@@ -7,13 +7,14 @@ using System.Text;
 using Grpc.Extension.Common;
 using Grpc.Extension.Model;
 using Grpc.Extension.Internal;
+using Grpc.Extension.Abstract;
 
 namespace Grpc.Extension.BaseService
 {
     /// <summary>
     /// GrpcServiceExtension
     /// </summary>
-    public static class GrpcServiceExtension
+    internal static class GrpcServiceExtension
     {
         /// <summary>
         /// 生成Grpc方法（CodeFirst方式，用于生成BaseService）

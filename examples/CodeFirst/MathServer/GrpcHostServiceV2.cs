@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Extension;
-using Grpc.Extension.Internal;
-using Grpc.Extension.Model;
+using Grpc.Extension.Abstract.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 

@@ -33,8 +33,8 @@
     <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AspectCore.Extensions.Reflection, Version=1.0.1.0, Culture=neutral, PublicKeyToken=2ab7daa5defcf11f, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\AspectCore.Extensions.Reflection.1.0.1\lib\net45\AspectCore.Extensions.Reflection.dll</HintPath>
+    <Reference Include="AspectCore.Extensions.Reflection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=2ab7daa5defcf11f, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\AspectCore.Extensions.Reflection.1.1.0\lib\net45\AspectCore.Extensions.Reflection.dll</HintPath>
     </Reference>
     <Reference Include="Consul, Version=0.7.2.6, Culture=neutral, PublicKeyToken=20a6ad9a81df1d95, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Consul.0.7.2.6\lib\net45\Consul.dll</HintPath>
@@ -60,6 +60,9 @@
     </Reference>
     <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Extensions.Configuration.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Microsoft.Extensions.Configuration.Binder.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Configuration.FileExtensions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Extensions.Configuration.FileExtensions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.FileExtensions.dll</HintPath>
@@ -120,9 +123,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Grpc.Extension\Grpc.Extension.csproj">
-      <Project>{3340E08A-22AA-4024-8D77-03B7CB5DC341}</Project>
-      <Name>Grpc.Extension</Name>
+    <ProjectReference Include="..\..\..\src\Grpc.Extension.Abstract\Grpc.Extension.Abstract.csproj">
+      <Project>{abcd8408-7bed-431f-bbc2-e880dc597eb5}</Project>
+      <Name>Grpc.Extension.Abstract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Grpc.Extension.Client\Grpc.Extension.Client.csproj">
+      <Project>{0f3671e3-7843-48d5-abf0-b5237cc56b45}</Project>
+      <Name>Grpc.Extension.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\Greeter\Greeter.csproj">
       <Project>{724DFC8C-4B57-4C3F-811C-0463BE2A2829}</Project>
@@ -132,9 +139,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="config\appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="config\hostsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

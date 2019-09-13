@@ -1,6 +1,5 @@
 using Grpc.Core;
 using Grpc.Core.Interceptors;
-using Grpc.Extension.Interceptors;
 using Grpc.Extension.Common;
 using OpenTracing.Util;
 using System;
@@ -8,6 +7,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using Jaeger;
 using OpenTracing;
+using Grpc.Extension.Client.Interceptors;
+using Grpc.Extension.Interceptors;
 
 namespace MathServer.Middlewares
 {

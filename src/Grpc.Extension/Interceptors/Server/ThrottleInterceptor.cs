@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ServiceModel.Channels;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Grpc.Core;
-using Grpc.Core.Interceptors;
+using Grpc.Extension.Abstract;
 using Grpc.Extension.Internal;
 
 namespace Grpc.Extension.Interceptors
@@ -21,7 +17,7 @@ namespace Grpc.Extension.Interceptors
             {
                 throw new RpcException(new Status(
                     StatusCode.Cancelled,
-                    Newtonsoft.Json.JsonConvert.SerializeObject(new { Code = 503, Detail = Consts.ThrottledMsg })));
+                    Newtonsoft.Json.JsonConvert.SerializeObject(new { Code = 503, Detail = ServerConsts.ThrottledMsg })));
             }
             return await continuation(request, context);
         }
@@ -33,7 +29,7 @@ namespace Grpc.Extension.Interceptors
             {
                 throw new RpcException(new Status(
                     StatusCode.Cancelled,
-                    Newtonsoft.Json.JsonConvert.SerializeObject(new { Code = 503, Detail = Consts.ThrottledMsg })));
+                    Newtonsoft.Json.JsonConvert.SerializeObject(new { Code = 503, Detail = ServerConsts.ThrottledMsg })));
             }
             return await continuation(requestStream, context);
         }
@@ -44,7 +40,7 @@ namespace Grpc.Extension.Interceptors
             {
                 throw new RpcException(new Status(
                     StatusCode.Cancelled,
-                    Newtonsoft.Json.JsonConvert.SerializeObject(new { Code = 503, Detail = Consts.ThrottledMsg })));
+                    Newtonsoft.Json.JsonConvert.SerializeObject(new { Code = 503, Detail = ServerConsts.ThrottledMsg })));
             }
             await continuation(request, responseStream, context);
         }
@@ -55,7 +51,7 @@ namespace Grpc.Extension.Interceptors
             {
                 throw new RpcException(new Status(
                     StatusCode.Cancelled,
-                    Newtonsoft.Json.JsonConvert.SerializeObject(new { Code = 503, Detail = Consts.ThrottledMsg })));
+                    Newtonsoft.Json.JsonConvert.SerializeObject(new { Code = 503, Detail = ServerConsts.ThrottledMsg })));
             }
             await continuation(requestStream, responseStream, context);
         }

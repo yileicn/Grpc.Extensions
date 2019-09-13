@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Grpc.Extension.Abstract.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -32,9 +33,9 @@ namespace Grpc.Extension
         public string DiscoveryServiceName { get; set; }
 
         /// <summary>
-        /// 服务注册Tags
+        /// 服务注册Tags(可用于版本标记)
         /// </summary>
-        public string DiscoveryTags { get; set; }
+        public string DiscoveryServiceTags { get; set; }
 
         /// <summary>
         /// 服务TTL(秒)
@@ -44,41 +45,16 @@ namespace Grpc.Extension
         /// <summary>
         /// 默认错误码
         /// </summary>
-        public int DefaultErrorCode { get; set; } = 1;
+        public int DefaultErrorCode
+        {
+            get { return GrpcErrorCode.DefaultErrorCode; }
+            set { GrpcErrorCode.DefaultErrorCode = value; }
+        }
 
         /// <summary>
         /// ChannelOption
         /// </summary>
         public IEnumerable<ChannelOption> ChannelOptions { get; set; }
-
-        #region 兼容老版本
-        /*
-        /// <summary>
-        /// 服务注册地址(http://192.168.8.6:8500)
-        /// </summary>
-        [Obsolete("已过期，请使用DiscoveryUrl")]
-        public string ConsulUrl { get; set; }
-
-        /// <summary>
-        /// 服务注册名
-        /// </summary>
-        [Obsolete("已过期，请使用DiscoveryServiceName")]
-        public string ConsulServiceName { get; set; }
-
-        internal void InitCompatible()
-        {
-            if (!string.IsNullOrWhiteSpace(ConsulUrl) && string.IsNullOrWhiteSpace(DiscoveryUrl))
-            {
-                DiscoveryUrl = ConsulUrl;
-            }
-
-            if (!string.IsNullOrWhiteSpace(ConsulServiceName) && string.IsNullOrWhiteSpace(DiscoveryServiceName))
-            {
-                DiscoveryServiceName = ConsulServiceName;
-            }
-        }
-        */
-        #endregion
     }
 
 }

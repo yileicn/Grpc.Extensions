@@ -3,7 +3,7 @@
 namespace Grpc.Extension.Model
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    public class AddDelThrottleRQ
+    internal class AddDelThrottleRQ
     {
         [ProtoMember(1)]
         public string MethodName { get; set; }

@@ -3,8 +3,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Grpc.Core;
+using Grpc.Extension.Abstract;
 using Grpc.Extension.BaseService;
-using Grpc.Extension.Common;
 
 namespace Grpc.Extension.Internal
 {
@@ -52,6 +52,7 @@ namespace Grpc.Extension.Internal
         /// </summary>
         /// <param name="srv"></param>
         /// <param name="builder"></param>
+        /// <param name="package"></param>
         /// <param name="serviceName"></param>
         public static void AutoRegisterMethod(IGrpcService srv, ServerServiceDefinition.Builder builder, string package = null, string serviceName = null)
         {

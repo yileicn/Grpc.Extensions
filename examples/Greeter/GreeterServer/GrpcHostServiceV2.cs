@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Extension;
-using Grpc.Extension.Interceptors;
-using Grpc.Extension.Internal;
 using Helloworld;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;

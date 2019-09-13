@@ -17,7 +17,7 @@ using System.IO;
 using GreeterServer.Common;
 using GreeterServer.Middlewares;
 using Grpc.Extension;
-using Grpc.Extension.Interceptors;
+using Grpc.Extension.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -55,7 +55,7 @@ namespace GreeterServer
                     services.AddGrpcExtensions(); //×¢ÈëGrpcExtensions
                     services.AddServerInterceptor<RequestServicesMiddleware>();
                     services.AddClientMonitor();
-                    services.AddGrpcClient<MathGrpc.MathGrpc.MathGrpcClient>(ctx.Configuration["GrpcServer:ConsulUrl"], "Math.Test");
+                    services.AddGrpcClient<MathGrpc.MathGrpc.MathGrpcClient>("Math.Test");
                     services.AddHostedService<GrpcHostServiceV2>();
                 });
             return host.Build();

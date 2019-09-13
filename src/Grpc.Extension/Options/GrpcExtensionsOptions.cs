@@ -1,5 +1,4 @@
-﻿using Grpc.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Grpc.Extension
