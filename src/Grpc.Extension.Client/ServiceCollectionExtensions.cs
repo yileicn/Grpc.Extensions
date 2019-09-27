@@ -25,9 +25,8 @@ namespace Grpc.Extension.Client
         /// 添加GrpcClient扩展
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="useLogger"></param>
         /// <returns></returns>
-        public static IServiceCollection AddGrpcClientExtensions(this IServiceCollection services, Action<LoggerAccessor> useLogger = null)
+        public static IServiceCollection AddGrpcClientExtensions(this IServiceCollection services)
         {
             //GrpcClientApp
             services.AddSingleton<GrpcClientApp>();
@@ -52,14 +51,6 @@ namespace Grpc.Extension.Client
 
             //添加缓存
             services.AddMemoryCache();
-
-            //配制日志
-            if (useLogger != null)
-            {
-                //添加客户端日志监控
-                services.AddClientMonitor();
-                useLogger?.Invoke(LoggerAccessor.Instance);
-            }
 
             return services;
         }

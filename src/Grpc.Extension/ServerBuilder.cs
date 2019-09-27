@@ -14,6 +14,7 @@ using Grpc.Extension.Interceptors;
 using Grpc.Extension.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OpenTracing;
 using OpenTracing.Util;
 
@@ -27,6 +28,7 @@ namespace Grpc.Extension
         private readonly List<ServerInterceptor> _interceptors = new List<ServerInterceptor>();
         private readonly List<ServerServiceDefinition> _serviceDefinitions = new List<ServerServiceDefinition>();
         private readonly List<IGrpcService> _grpcServices = new List<IGrpcService>();
+        private readonly ILoggerFactory _loggerFactory;
 
         /// <summary>
         /// ServerBuilder
@@ -35,17 +37,22 @@ namespace Grpc.Extension
         /// <param name="conf"></param>
         /// <param name="serverInterceptors"></param>
         /// <param name="grpcServices"></param>
+        /// <param name="loggerFactory"></param>
         public ServerBuilder(IServiceProvider serviceProvider,
             IConfiguration conf,
             IEnumerable<ServerInterceptor> serverInterceptors,
-            IEnumerable<IGrpcService> grpcServices)
+            IEnumerable<IGrpcService> grpcServices,
+            ILoggerFactory loggerFactory)
         {
             ServiceProviderAccessor.ServiceProvider = serviceProvider;
             this._grpcServices.AddRange(grpcServices);
 
+            this._loggerFactory = loggerFactory;
+
             //初始化配制,注入中间件,GrpcService
             this.InitGrpcOptions(conf)//初始化配制
-                .UseInterceptor(serverInterceptors);//注入中间件
+                .UseInterceptor(serverInterceptors)//注入中间件
+                .UseLoggerFactory();//使用LoggerFactory
         }
 
         /// <summary>
@@ -204,7 +211,22 @@ namespace Grpc.Extension
         }
 
         /// <summary>
-        /// 配制日志
+        /// 使用LoggerFactory
+        /// </summary>
+        /// <returns></returns>
+        private ServerBuilder UseLoggerFactory()
+        {
+            var _logger = _loggerFactory.CreateLogger<ServerBuilder>();
+            var _loggerAccess = _loggerFactory.CreateLogger("grpc.access");
+
+            LoggerAccessor.Instance.LoggerError = (ex, type) => _logger.LogError(ex.ToString());
+            LoggerAccessor.Instance.LoggerMonitor = (msg, type) => _loggerAccess.LogInformation(msg);
+
+            return this;
+        }
+
+        /// <summary>
+        /// 配制日志(默认使用LoggerFactory,可覆盖)
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>

@@ -31,6 +31,9 @@ namespace MathServer
                     conf.SetBasePath(configPath);
                     conf.AddJsonFile("appsettings.json", false, true);
                 })
+                .ConfigureLogging((ctx, log) => {
+                    log.AddConsole();
+                })
                 .ConfigureServices((ctx, services) =>
                 {
                     //grpc
