@@ -144,6 +144,7 @@
     <Compile Include="Middlewares\RequestServicesMiddleware.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Startup.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -164,6 +165,10 @@
     <ProjectReference Include="..\..\..\src\Grpc.Extension.Client\Grpc.Extension.Client.csproj">
       <Project>{0f3671e3-7843-48d5-abf0-b5237cc56b45}</Project>
       <Name>Grpc.Extension.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Grpc.Extension.Common\Grpc.Extension.Common.csproj">
+      <Project>{be4e2e14-f62a-42d7-a2a4-a6629bac6e73}</Project>
+      <Name>Grpc.Extension.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\src\Grpc.Extension\Grpc.Extension.csproj">
       <Project>{3340e08a-22aa-4024-8d77-03b7cb5dc341}</Project>
