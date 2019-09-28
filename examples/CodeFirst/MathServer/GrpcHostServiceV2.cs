@@ -32,10 +32,10 @@ namespace MathServer
                 })
                 .UseGrpcService()
                 .UseDashBoard()//使用DashBoard,需要使用FM.GrpcDashboard网站
-                //.UseLogger(log =>//使用日志(默认使用LoggerFactory,手动覆盖)
+                //.UseLogger(log =>//使用日志(默认使用LoggerFactory)
                 //{
-                //    log.LoggerMonitor = (msg, type) => Console.WriteLine(GetLogTypeName(type) + ":" + msg);
-                //    log.LoggerError = (ex, type) => Console.WriteLine(GetLogTypeName(type) + ":" + ex);
+                //    log.LoggerMonitor += (msg, type) => Console.WriteLine(GetLogTypeName(type) + ":" + msg);
+                //    log.LoggerError += (ex, type) => Console.WriteLine(GetLogTypeName(type) + ":" + ex);
                 //})
                 .UseProtoGenerate("proto")//生成proto
                 .Build();

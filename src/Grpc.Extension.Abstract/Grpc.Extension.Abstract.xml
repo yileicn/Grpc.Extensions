@@ -108,15 +108,29 @@
             Instance
             </summary>
         </member>
-        <member name="P:Grpc.Extension.Abstract.LoggerAccessor.LoggerError">
+        <member name="E:Grpc.Extension.Abstract.LoggerAccessor.LoggerError">
             <summary>
             写异常日志
             </summary>
         </member>
-        <member name="P:Grpc.Extension.Abstract.LoggerAccessor.LoggerMonitor">
+        <member name="M:Grpc.Extension.Abstract.LoggerAccessor.OnLoggerError(System.Exception,Grpc.Extension.Abstract.Model.LogType)">
+            <summary>
+            触发写异常日志
+            </summary>
+            <param name="ex"></param>
+            <param name="logType"></param>
+        </member>
+        <member name="E:Grpc.Extension.Abstract.LoggerAccessor.LoggerMonitor">
             <summary>
             写监控日志
             </summary>
+        </member>
+        <member name="M:Grpc.Extension.Abstract.LoggerAccessor.OnLoggerMonitor(System.String,Grpc.Extension.Abstract.Model.LogType)">
+            <summary>
+            触发写监控日志
+            </summary>
+            <param name="msg"></param>
+            <param name="logType"></param>
         </member>
         <member name="T:Grpc.Extension.Abstract.Consts">
             <summary>

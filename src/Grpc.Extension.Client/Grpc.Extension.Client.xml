@@ -9,11 +9,12 @@
             GrpcClient启动类
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Client.GrpcClientApp.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+        <member name="M:Grpc.Extension.Client.GrpcClientApp.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILoggerFactory)">
             <summary>
             GrpcClientApp
             </summary>
             <param name="conf"></param>
+            <param name="loggerFactory"></param>
         </member>
         <member name="M:Grpc.Extension.Client.GrpcClientApp.InitGrpcOption">
             <summary>
@@ -36,7 +37,7 @@
         </member>
         <member name="M:Grpc.Extension.Client.GrpcClientApp.UseLogger(System.Action{Grpc.Extension.Abstract.LoggerAccessor})">
             <summary>
-            配制日志(默认使用LoggerFactory,可覆盖)
+            配制日志(默认使用LoggerFactory)
             </summary>
             <param name="action"></param>
             <returns></returns>

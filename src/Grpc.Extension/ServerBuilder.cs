@@ -219,14 +219,14 @@ namespace Grpc.Extension
             var _logger = _loggerFactory.CreateLogger<ServerBuilder>();
             var _loggerAccess = _loggerFactory.CreateLogger("grpc.access");
 
-            LoggerAccessor.Instance.LoggerError = (ex, type) => _logger.LogError(ex.ToString());
-            LoggerAccessor.Instance.LoggerMonitor = (msg, type) => _loggerAccess.LogInformation(msg);
+            LoggerAccessor.Instance.LoggerError += (ex, type) => _logger.LogError(ex.ToString());
+            LoggerAccessor.Instance.LoggerMonitor += (msg, type) => _loggerAccess.LogInformation(msg);
 
             return this;
         }
 
         /// <summary>
-        /// 配制日志(默认使用LoggerFactory,可覆盖)
+        /// 配制日志(默认使用LoggerFactory)
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>

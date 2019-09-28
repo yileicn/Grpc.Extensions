@@ -472,7 +472,7 @@
         </member>
         <member name="M:Grpc.Extension.ServerBuilder.UseLogger(System.Action{Grpc.Extension.Abstract.LoggerAccessor})">
             <summary>
-            配制日志(默认使用LoggerFactory,可覆盖)
+            配制日志(默认使用LoggerFactory)
             </summary>
             <param name="action"></param>
             <returns></returns>
