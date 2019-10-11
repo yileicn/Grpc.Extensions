@@ -40,6 +40,9 @@ namespace Grpc.Extension
 
                 //服务注册
                 var serviceRegister = ServiceProviderAccessor.GetService<IServiceRegister>();
+                Console.WriteLine($"use {serviceRegister.GetType().Name} register");
+                Console.WriteLine($"    DiscoveryUrl:{GrpcServerOptions.Instance.DiscoveryUrl}");
+                Console.WriteLine($"    ServiceName:{GrpcServerOptions.Instance.DiscoveryServiceName}");
                 var registerModel = GrpcServerOptions.Instance.ToJson().FromJson<ServiceRegisterModel>();
                 registerModel.ServiceIp = ipAndPort.Host;
                 registerModel.ServicePort = ipAndPort.BoundPort;

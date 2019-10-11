@@ -100,7 +100,7 @@ namespace Grpc.Extension.Discovery.Consul
             }
             catch (Exception ex)
             {
-                LoggerAccessor.Instance.LoggerError?.Invoke(new InternalException(GrpcErrorCode.Internal, "DoTTL", ex));
+                LoggerAccessor.Instance.OnLoggerError(new InternalException(GrpcErrorCode.Internal, "DoTTL", ex));
 
                 /*
                  * passTTL会出现如下几种情况：

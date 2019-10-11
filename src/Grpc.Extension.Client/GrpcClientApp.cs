@@ -1,5 +1,6 @@
 ﻿using Grpc.Extension.Abstract;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Grpc.Extension.Client
@@ -10,24 +11,28 @@ namespace Grpc.Extension.Client
     public class GrpcClientApp
     {
         private IConfiguration _conf;
+        private readonly ILoggerFactory _loggerFactory;
 
         /// <summary>
         /// GrpcClientApp
         /// </summary>
         /// <param name="conf"></param>
-        public GrpcClientApp(IConfiguration conf)
+        /// <param name="loggerFactory"></param>
+        public GrpcClientApp(IConfiguration conf, ILoggerFactory loggerFactory)
         {
             _conf = conf;
+            _loggerFactory = loggerFactory;
 
-            //初始化配制
-            this.InitGrpcOption();
+            this.InitGrpcOption()//初始化配制
+                .UseLoggerFactory();//使用LoggerFactory
+
         }
 
         /// <summary>
         /// 从配制文件初始化
         /// </summary>
         /// <returns></returns>
-        private void InitGrpcOption()
+        private GrpcClientApp InitGrpcOption()
         {
             //初始化GrpcClientOption
             var clientConfig = _conf.GetSection("GrpcClient").Get<GrpcClientOptions>();
@@ -39,6 +44,8 @@ namespace Grpc.Extension.Client
                 clientOptions.ServiceAddressCacheTime = clientConfig.ServiceAddressCacheTime;
                 clientOptions.DefaultErrorCode = clientConfig.DefaultErrorCode;
             }
+
+            return this;
         }
 
         /// <summary>
@@ -53,7 +60,22 @@ namespace Grpc.Extension.Client
         }
 
         /// <summary>
-        /// 配制日志
+        /// 使用LoggerFactory
+        /// </summary>
+        /// <returns></returns>
+        private GrpcClientApp UseLoggerFactory()
+        {
+            var _logger = _loggerFactory.CreateLogger<GrpcClientApp>();
+            var _loggerAccess = _loggerFactory.CreateLogger("grpc.access");
+
+            LoggerAccessor.Instance.LoggerError += (ex, type) => _logger.LogError(ex.ToString());
+            LoggerAccessor.Instance.LoggerMonitor += (msg, type) => _loggerAccess.LogInformation(msg);
+
+            return this;
+        }
+
+        /// <summary>
+        /// 配制日志(默认使用LoggerFactory)
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>

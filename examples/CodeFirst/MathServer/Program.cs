@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using Grpc.Extension;
+using Grpc.Extension.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -31,13 +31,10 @@ namespace MathServer
                     conf.SetBasePath(configPath);
                     conf.AddJsonFile("appsettings.json", false, true);
                 })
-                .ConfigureServices((ctx, services) =>
-                {
-                    //grpc
-                    services.AddGrpc();
-                    //jaeger
-                    services.AddJaeger(ctx.Configuration);
-                });
+                .ConfigureLogging((ctx, log) => {
+                    log.AddConsole();
+                })
+                .UseStartup<Startup>();
             return host.Build();
         }
     }

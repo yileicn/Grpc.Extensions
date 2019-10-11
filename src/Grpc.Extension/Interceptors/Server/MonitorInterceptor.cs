@@ -79,14 +79,14 @@ namespace Grpc.Extension.Interceptors
                 }
                 model.Exception = rpcEx.ToString();
                 model.Status = "error";
-                LoggerAccessor.Instance.LoggerError?.Invoke(rpcEx);
+                LoggerAccessor.Instance.OnLoggerError(rpcEx);
                 throw rpcEx;
             }
             finally
             {
                 ServerCallContextAccessor.Current = null;
                 model.ResponseTime = DateTime.Now;
-                LoggerAccessor.Instance.LoggerMonitor?.Invoke(model.ToJson());
+                LoggerAccessor.Instance.OnLoggerMonitor(model.ToJson());
             }
         }
 

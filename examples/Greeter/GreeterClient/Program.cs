@@ -41,10 +41,12 @@ namespace GreeterClient
             var provider = services.BuildServiceProvider();
             //配制GrpcClientApp
             var clientApp = provider.GetService<GrpcClientApp>();
-            clientApp.UseLogger((log) =>
+            clientApp.
+                //使用日志(默认使用LoggerFactory)
+                UseLogger((log) =>
                 {
-                    log.LoggerMonitor = (msg, type) => Console.WriteLine(GetLogTypeName(type) + ":" + msg);
-                    log.LoggerError = (ex, type) => Console.WriteLine(GetLogTypeName(type) + ":" + ex);
+                    log.LoggerMonitor += (msg, type) => Console.WriteLine(GetLogTypeName(type) + ":" + msg);
+                    log.LoggerError += (ex, type) => Console.WriteLine(GetLogTypeName(type) + ":" + ex);
                 }).Run();
 
             //从容器获取client

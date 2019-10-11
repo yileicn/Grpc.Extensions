@@ -9,11 +9,12 @@
             GrpcClient启动类
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Client.GrpcClientApp.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+        <member name="M:Grpc.Extension.Client.GrpcClientApp.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILoggerFactory)">
             <summary>
             GrpcClientApp
             </summary>
             <param name="conf"></param>
+            <param name="loggerFactory"></param>
         </member>
         <member name="M:Grpc.Extension.Client.GrpcClientApp.InitGrpcOption">
             <summary>
@@ -28,9 +29,15 @@
             <param name="options"></param>
             <returns></returns>
         </member>
+        <member name="M:Grpc.Extension.Client.GrpcClientApp.UseLoggerFactory">
+            <summary>
+            使用LoggerFactory
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Grpc.Extension.Client.GrpcClientApp.UseLogger(System.Action{Grpc.Extension.Abstract.LoggerAccessor})">
             <summary>
-            配制日志
+            配制日志(默认使用LoggerFactory)
             </summary>
             <param name="action"></param>
             <returns></returns>
@@ -328,12 +335,11 @@
             ServiceCollectionExtensions
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClientExtensions(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Grpc.Extension.Abstract.LoggerAccessor})">
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClientExtensions(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>
             添加GrpcClient扩展
             </summary>
             <param name="services"></param>
-            <param name="useLogger"></param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClient``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String,System.Collections.Generic.IEnumerable{Grpc.Core.ChannelOption})">

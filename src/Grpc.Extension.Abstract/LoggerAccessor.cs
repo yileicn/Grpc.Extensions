@@ -37,11 +37,31 @@ namespace Grpc.Extension.Abstract
         /// <summary>
         /// 写异常日志
         /// </summary>
-        public LoggerErrorAction LoggerError { get; set; }
+        public event LoggerErrorAction LoggerError;
+
+        /// <summary>
+        /// 触发写异常日志
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <param name="logType"></param>
+        public void OnLoggerError(Exception ex, LogType logType = LogType.ServerLog)
+        {
+            LoggerError?.Invoke(ex, logType);
+        }
 
         /// <summary>
         /// 写监控日志
         /// </summary>
-        public LoggerMonitorAction LoggerMonitor { get; set; }
+        public event LoggerMonitorAction LoggerMonitor;
+
+        /// <summary>
+        /// 触发写监控日志
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="logType"></param>
+        public void OnLoggerMonitor(string msg, LogType logType = LogType.ServerLog)
+        {
+            LoggerMonitor?.Invoke(msg, logType);
+        }
     }
 }

@@ -386,7 +386,7 @@
             ServerBuilder
             </summary>
         </member>
-        <member name="M:Grpc.Extension.ServerBuilder.#ctor(System.IServiceProvider,Microsoft.Extensions.Configuration.IConfiguration,System.Collections.Generic.IEnumerable{Grpc.Extension.Interceptors.ServerInterceptor},System.Collections.Generic.IEnumerable{Grpc.Extension.Abstract.IGrpcService})">
+        <member name="M:Grpc.Extension.ServerBuilder.#ctor(System.IServiceProvider,Microsoft.Extensions.Configuration.IConfiguration,System.Collections.Generic.IEnumerable{Grpc.Extension.Interceptors.ServerInterceptor},System.Collections.Generic.IEnumerable{Grpc.Extension.Abstract.IGrpcService},Microsoft.Extensions.Logging.ILoggerFactory)">
             <summary>
             ServerBuilder
             </summary>
@@ -394,6 +394,7 @@
             <param name="conf"></param>
             <param name="serverInterceptors"></param>
             <param name="grpcServices"></param>
+            <param name="loggerFactory"></param>
         </member>
         <member name="M:Grpc.Extension.ServerBuilder.UseOptions(System.Action{Grpc.Extension.GrpcExtensionsOptions})">
             <summary>
@@ -463,9 +464,15 @@
             <param name="interceptors"></param>
             <returns></returns>
         </member>
+        <member name="M:Grpc.Extension.ServerBuilder.UseLoggerFactory">
+            <summary>
+            使用LoggerFactory
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Grpc.Extension.ServerBuilder.UseLogger(System.Action{Grpc.Extension.Abstract.LoggerAccessor})">
             <summary>
-            配制日志
+            配制日志(默认使用LoggerFactory)
             </summary>
             <param name="action"></param>
             <returns></returns>
