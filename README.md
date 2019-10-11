@@ -1,12 +1,12 @@
 ## Grpc.Extesions
-一个基于GRPC的简单微服务框架 
+一个基于GRPC的简单微服务框架
 
 ## 功能
 - 服务注册和发现
-	- 默认使用Consul实现
-	- 实现IServiceDiscovery,IServiceRegister可扩展
+    - 默认使用Consul实现
+    - 实现IServiceDiscovery,IServiceRegister可扩展
 - 服务自动负载均衡
-	- 默认使用轮询实现,可切换随机算法
+    - 默认使用轮询实现,可切换随机算法
 	- 实现ILoadBalancer可扩展
 - 服务端中件间
 	- 性能监控[日志,分布式调用链],全局错误处理,手动熔断
@@ -22,6 +22,17 @@
 	- 通过代码生成proto和注释(GrpcMethod自动注册)
 	- 代码更干净且方便扩展，例如可以在ProtoMessage上打验证特性来统一处理验证逻辑等
 	- 更方便拆分GrpcService到多个类，而不是使用partial class
+
+### NuGet Package
+- [Grpc.Extensions](https://www.nuget.org/packages/FM.Grpc.Extensions/)
+- [Grpc.Extensions.Client](https://www.nuget.org/packages/FM.Grpc.Extensions.Client/)
+- [Grpc.Extensions.Discovery](https://www.nuget.org/packages/FM.Grpc.Extensions.Discovery/)
+
+### Documentation
+- [Grpc ProtoFirst Demo](https://github.com/yileicn/Grpc.Extensions/tree/master/examples/Greeter)
+- [Grpc CodeFirst Demo](https://github.com/yileicn/Grpc.Extensions/tree/master/examples/CodeFirst)
+
+
 
 ## 待完善
 - 使用Polly实现重试，降级，熔断
