@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 
 namespace Grpc.Extension.Common
 {
@@ -63,11 +65,23 @@ namespace Grpc.Extension.Common
             var ip = NetHelper.GetIp(ipPort[0]);
             //解析port
             var port = 0;
-            if (ipPort.Length == 2)
-            {
-                int.TryParse(ipPort[1], out port);
-            }
+            if (ipPort.Length == 2) int.TryParse(ipPort[1], out port);
+            //随机端口
+            if (port == 0) port = GetAvailablePort();
             return Tuple.Create(ip, port);
+        }
+
+        /// <summary>
+        /// 获取可用端口
+        /// </summary>
+        /// <returns></returns>
+        public static int GetAvailablePort()
+        {
+            TcpListener l = new TcpListener(IPAddress.Loopback, 0);
+            l.Start();
+            int port = ((IPEndPoint)l.LocalEndpoint).Port;
+            l.Stop();
+            return port;
         }
     }
 }
