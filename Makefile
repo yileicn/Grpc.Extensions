@@ -3,11 +3,11 @@ NUGET_ADDR_PROD = https://api.nuget.org/v3/index.json
 NUGET_FILES=`ls ./nupkgs/*.nupkg`
 
 build:clean 
-	-dotnet pack ./src/Grpc.Extension.Abstract/Grpc.Extension.Abstract.csproj -c Release -o ./../../nupkgs
-	-dotnet pack ./src/Grpc.Extension.Discovery/Grpc.Extension.Discovery.csproj -c Release -o ./../../nupkgs
-	-dotnet pack ./src/Grpc.Extension.Common/Grpc.Extension.Common.csproj -c Release -o ./../../nupkgs
-	-dotnet pack ./src/Grpc.Extension.Client/Grpc.Extension.Client.csproj -c Release -o ./../../nupkgs
-	-dotnet pack ./src/Grpc.Extension/Grpc.Extension.csproj -c Release -o ./../../nupkgs
+	-dotnet pack ./src/Grpc.Extension.Abstract/Grpc.Extension.Abstract.csproj -c Release -o ./nupkgs
+	-dotnet pack ./src/Grpc.Extension.Discovery/Grpc.Extension.Discovery.csproj -c Release -o ./nupkgs
+	-dotnet pack ./src/Grpc.Extension.Common/Grpc.Extension.Common.csproj -c Release -o ./nupkgs
+	-dotnet pack ./src/Grpc.Extension.Client/Grpc.Extension.Client.csproj -c Release -o ./nupkgs
+	-dotnet pack ./src/Grpc.Extension/Grpc.Extension.csproj -c Release -o ./nupkgs
 
 push-dev:build
 	#method one
