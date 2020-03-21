@@ -20,6 +20,8 @@ using Grpc.Extension.Client;
 using Helloworld;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace GreeterClient
 {
@@ -29,16 +31,19 @@ namespace GreeterClient
         {
             //使用配制文件
             var configPath = Path.Combine(AppContext.BaseDirectory, "config");
-            var configBuilder = new ConfigurationBuilder();
-            var config = configBuilder.SetBasePath(configPath).AddJsonFile("appsettings.json", false, true).Build();
-            //使用依赖注入
-            var services = new ServiceCollection()
-                .AddGrpcClientExtensions()//注入GrpcClientExtensions
-                .AddClientCallTimeout(10)//注入客户端中间件
-                .AddGrpcClient<Greeter.GreeterClient>("Greeter.Test");//注入grpc client
-            //注入配制
-            services.AddSingleton<IConfiguration>(config);
-            var provider = services.BuildServiceProvider();
+            var host = new HostBuilder()
+                .ConfigureAppConfiguration((ctx, conf) =>
+                {
+                    conf.SetBasePath(configPath);
+                    conf.AddJsonFile("appsettings.json", false, true);
+                })
+                .ConfigureServices((ctx, services)=> {
+                    services.AddGrpcClientExtensions(ctx.Configuration);//注入GrpcClientExtensions
+                    services.AddGrpcClient<Greeter.GreeterClient>("Greeter.Test");//注入grpc client
+                })
+                .Build();
+               
+            var provider = host.Services;
             //配制GrpcClientApp
             var clientApp = provider.GetService<GrpcClientApp>();
             clientApp.

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Math
 {
+    /// <summary>
+    /// MathGrpc
+    /// </summary>
     public class MathGrpc : IGrpcService
     {
         /// <summary>

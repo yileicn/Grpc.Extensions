@@ -16,9 +16,8 @@ namespace MathServer
         public void ConfigureServices(IServiceCollection services)
         {
             //grpc
-            services.AddGrpc();
-            //jaeger
-            services.AddJaeger(_conf);
+            services.AddGrpcExtensions<Startup>(_conf); //注入GrpcExtensions
+            services.AddHostedService<GrpcHostServiceV2>();
         }
     }
 }

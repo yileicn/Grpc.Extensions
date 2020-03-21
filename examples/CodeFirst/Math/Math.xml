@@ -4,6 +4,11 @@
         <name>Math</name>
     </assembly>
     <members>
+        <member name="T:Math.MathGrpc">
+            <summary>
+            MathGrpc
+            </summary>
+        </member>
         <member name="M:Math.MathGrpc.Add(Math.Model.AddRequest,Grpc.Core.ServerCallContext)">
             <summary>
             加法

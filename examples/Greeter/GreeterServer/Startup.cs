@@ -17,9 +17,8 @@ namespace GreeterServer
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddGrpcExtensions(); //注入GrpcExtensions
+            services.AddGrpcExtensions<Startup>(_conf); //注入GrpcExtensions
             services.AddServerInterceptor<RequestServicesMiddleware>();
-            services.AddClientMonitor();
             services.AddGrpcClient<MathGrpc.MathGrpc.MathGrpcClient>("Math.Test");
             services.AddHostedService<GrpcHostServiceV2>();
         }
