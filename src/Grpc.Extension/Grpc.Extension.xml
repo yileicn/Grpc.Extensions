@@ -261,6 +261,21 @@
             生成proto文件
             </summary>
         </member>
+        <member name="T:Grpc.Extension.Model.MethodInvokeRQ">
+            <summary>
+            MethodInvokeRQ
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Model.MethodInvokeRQ.FullName">
+            <summary>
+            GrpcMethod FullName
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Model.MethodInvokeRQ.RequestJson">
+            <summary>
+            RequestJson
+            </summary>
+        </member>
         <member name="P:Grpc.Extension.Model.ProtoInfo.Methods">
             <summary>
             grpc服务方法信息 用于生成proto文件
@@ -361,24 +376,14 @@
             ChannelOption
             </summary>
         </member>
-        <member name="T:Grpc.Extension.JaegerOptions">
+        <member name="P:Grpc.Extension.GrpcServerOptions.Jaeger">
             <summary>
             JaegerOptions
             </summary>
         </member>
-        <member name="P:Grpc.Extension.JaegerOptions.ServiceName">
+        <member name="P:Grpc.Extension.GrpcServerOptions.GrpcCallTimeOut">
             <summary>
-            服务名
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.JaegerOptions.AgentIp">
-            <summary>
-            AgentIp
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.JaegerOptions.AgentPort">
-            <summary>
-            AgentPort
+            Grpc客户端调用超时时间(单位:秒)
             </summary>
         </member>
         <member name="T:Grpc.Extension.ServerBuilder">
@@ -477,9 +482,9 @@
             <param name="action"></param>
             <returns></returns>
         </member>
-        <member name="M:Grpc.Extension.ServerBuilder.CheckUseJaeger">
+        <member name="M:Grpc.Extension.ServerBuilder.UseJaeger">
             <summary>
-            有AddJaeger就使用Jaeger
+            有Jaeger配制就使用Jaeger
             </summary>
             <returns></returns>
         </member>
@@ -494,11 +499,13 @@
             ServiceCollectionExtensions
             </summary>
         </member>
-        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddGrpcExtensions(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+        <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddGrpcExtensions``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>
             添加Grpc扩展
             </summary>
+            <typeparam name="TStartup"></typeparam>
             <param name="services"></param>
+            <param name="conf"></param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.ServiceCollectionExtensions.AddJaeger(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">

@@ -26,7 +26,7 @@ namespace Grpc.Extension.Client
         /// <param name="clientInterceptors"></param>
         public GrpcClientManager(IServiceProvider serviceProvider, IEnumerable<ClientInterceptor> clientInterceptors)
         {
-            ServiceProviderAccessor.ServiceProvider = serviceProvider;
+            ServiceProviderAccessor.SetServiceProvider(serviceProvider);
             this._clientInterceptors = clientInterceptors;
         }
 
@@ -37,7 +37,7 @@ namespace Grpc.Extension.Client
         /// <returns></returns>
         public T GetGrpcClient<T>() where T : ClientBase<T>
         {
-            var channelManager = ServiceProviderAccessor.ServiceProvider.GetService<ChannelPool>();
+            var channelManager = ServiceProviderAccessor.GetService<ChannelPool>();
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             var grpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
 

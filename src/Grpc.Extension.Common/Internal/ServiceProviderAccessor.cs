@@ -10,7 +10,12 @@ namespace Grpc.Extension.Common.Internal
     /// </summary>
     public class ServiceProviderAccessor
     {
-        public static IServiceProvider ServiceProvider { get; set; }
+        public static IServiceProvider ServiceProvider { get; private set; }
+
+        public static void SetServiceProvider(IServiceProvider sp)
+        {
+            ServiceProvider = sp;
+        }
 
         public static T GetService<T>()
         {

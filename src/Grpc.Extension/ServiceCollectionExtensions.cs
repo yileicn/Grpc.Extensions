@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using OpenTracing;
 using Microsoft.Extensions.Configuration;
 using Grpc.Extension.Client;
+using Grpc.Extension.Abstract;
 
 namespace Grpc.Extension
 {
@@ -17,18 +18,28 @@ namespace Grpc.Extension
         /// <summary>
         /// 添加Grpc扩展
         /// </summary>
+        /// <typeparam name="TStartup"></typeparam>
         /// <param name="services"></param>
+        /// <param name="conf"></param>
         /// <returns></returns>
-        public static IServiceCollection AddGrpcExtensions(this IServiceCollection services)
+        public static IServiceCollection AddGrpcExtensions<TStartup>(this IServiceCollection services, IConfiguration conf)
         {
+            //添加IGrpService
+            services.Scan(scan => scan
+                .FromAssemblyOf<TStartup>()
+                    .AddClasses(classes => classes.AssignableTo<IGrpcService>())
+                        .AsImplementedInterfaces()
+                        .WithSingletonLifetime());
             //添加ServerBuilder
             services.AddSingleton<ServerBuilder>();
             //添加服务端中间件
             services.AddServerInterceptor<MonitorInterceptor>();
             services.AddServerInterceptor<ThrottleInterceptor>();
+            //Jaeger
+            services.AddJaeger(conf);
 
             //添加GrpcClient扩展
-            services.AddGrpcClientExtensions();
+            services.AddGrpcClientExtensions(conf);
 
             return services;
         }
@@ -44,18 +55,13 @@ namespace Grpc.Extension
         {
             var key = "GrpcServer:Jaeger";
             var jaegerOptions = conf.GetSection(key).Get<JaegerOptions>();
-            if (jaegerOptions == null)
-                throw new ArgumentException($"{key} Value cannot be null");
-
-            if (string.IsNullOrWhiteSpace(jaegerOptions.AgentIp))
-                throw new ArgumentException($"{key}:AgentIp Value cannot be null");
-
-            if (jaegerOptions.AgentPort == 0)
-                throw new ArgumentNullException($"{key}:AgentPort Value cannot be null");
+            if (jaegerOptions == null || jaegerOptions.Enable == false)
+                return services;
 
             //jaeger
             services.AddSingleton<ITracer>(sp => {
-                var serviceName = jaegerOptions.ServiceName ?? GrpcServerOptions.Instance.DiscoveryServiceName;
+                var options = GrpcServerOptions.Instance.Jaeger;
+                var serviceName = options.ServiceName;
                 var tracer = new Jaeger.Tracer.Builder(serviceName)
                .WithLoggerFactory(sp.GetService<ILoggerFactory>())
                .WithSampler(new Jaeger.Samplers.ConstSampler(true))
@@ -66,10 +72,8 @@ namespace Grpc.Extension
                .Build();
                 return tracer;
             });
-
             //添加jaeger中间件
             services.AddServerInterceptor<JaegerTracingInterceptor>();
-            services.AddClientJaeger();
 
             return services;
         }

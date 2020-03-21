@@ -9,10 +9,11 @@
             GrpcClient启动类
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Client.GrpcClientApp.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILoggerFactory)">
+        <member name="M:Grpc.Extension.Client.GrpcClientApp.#ctor(System.IServiceProvider,Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILoggerFactory)">
             <summary>
             GrpcClientApp
             </summary>
+            <param name="serviceProvider"></param>
             <param name="conf"></param>
             <param name="loggerFactory"></param>
         </member>
@@ -41,6 +42,11 @@
             </summary>
             <param name="action"></param>
             <returns></returns>
+        </member>
+        <member name="M:Grpc.Extension.Client.GrpcClientApp.UseJaeger">
+            <summary>
+            有Jaeger配制就使用Jaeger
+            </summary>
         </member>
         <member name="M:Grpc.Extension.Client.GrpcClientApp.Run">
             <summary>
@@ -330,16 +336,27 @@
             默认错误码
             </summary>
         </member>
+        <member name="P:Grpc.Extension.Client.GrpcClientOptions.Jaeger">
+            <summary>
+            JaegerOptions
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.Client.GrpcClientOptions.GrpcCallTimeOut">
+            <summary>
+            Grpc客户端调用超时时间(单位:秒)
+            </summary>
+        </member>
         <member name="T:Grpc.Extension.Client.ServiceCollectionExtensions">
             <summary>
             ServiceCollectionExtensions
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClientExtensions(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClientExtensions(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>
             添加GrpcClient扩展
             </summary>
             <param name="services"></param>
+            <param name="conf"></param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClient``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String,System.Collections.Generic.IEnumerable{Grpc.Core.ChannelOption})">
@@ -360,19 +377,19 @@
             <param name="services"></param>
             <returns></returns>
         </member>
-        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddClientCallTimeout(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Double)">
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddClientCallTimeout(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>
             添加客户端超时Interceptor
             </summary>
             <param name="services"></param>
-            <param name="callTimeOutSecond"></param>
             <returns></returns>
         </member>
-        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddClientJaeger(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddClientJaeger(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>
-            添加客户端Jaeger Interceptor
+            添加Jaeger
             </summary>
             <param name="services"></param>
+            <param name="conf"></param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddClientInterceptor``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
@@ -381,6 +398,37 @@
             </summary>
             <typeparam name="T"></typeparam>
             <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.JaegerOptions">
+            <summary>
+            JaegerOptions
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.JaegerOptions.Enable">
+            <summary>
+            是否启用Jaeger
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.JaegerOptions.ServiceName">
+            <summary>
+            服务名
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.JaegerOptions.AgentIp">
+            <summary>
+            AgentIp
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.JaegerOptions.AgentPort">
+            <summary>
+            AgentPort
+            </summary>
+        </member>
+        <member name="M:Grpc.Extension.JaegerOptions.CheckConfig">
+            <summary>
+            检查参数配制
+            </summary>
             <returns></returns>
         </member>
     </members>

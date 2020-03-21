@@ -13,7 +13,6 @@ using Grpc.Extension.Common.Internal;
 using Grpc.Extension.Interceptors;
 using Grpc.Extension.Internal;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OpenTracing;
 using OpenTracing.Util;
@@ -44,7 +43,7 @@ namespace Grpc.Extension
             IEnumerable<IGrpcService> grpcServices,
             ILoggerFactory loggerFactory)
         {
-            ServiceProviderAccessor.ServiceProvider = serviceProvider;
+            ServiceProviderAccessor.SetServiceProvider(serviceProvider);
             this._grpcServices.AddRange(grpcServices);
 
             this._loggerFactory = loggerFactory;
@@ -52,7 +51,8 @@ namespace Grpc.Extension
             //初始化配制,注入中间件,GrpcService
             this.InitGrpcOptions(conf)//初始化配制
                 .UseInterceptor(serverInterceptors)//注入中间件
-                .UseLoggerFactory();//使用LoggerFactory
+                .UseLoggerFactory()//使用LoggerFactory
+                .UseJaeger();
         }
 
         /// <summary>
@@ -83,12 +83,22 @@ namespace Grpc.Extension
             //错误码配制
             if(int.TryParse(grpcServer["DefaultErrorCode"], out int defaultErrorCode))
                 serverOptions.DefaultErrorCode = defaultErrorCode;
+            //Jaeger配置
+            serverOptions.Jaeger = grpcServer.GetSection("Jaeger").Get<JaegerOptions>();
+            if (serverOptions.Jaeger != null && string.IsNullOrWhiteSpace(serverOptions.Jaeger.ServiceName))
+                serverOptions.Jaeger.ServiceName = serverOptions.DiscoveryServiceName;
+
+            //Grpc调用超时时间配置
+            if (double.TryParse(grpcServer["GrpcCallTimeOut"], out double grpcCallTimeOut))
+                serverOptions.GrpcCallTimeOut = grpcCallTimeOut;
 
             #region 默认的客户端配制
 
             var clientOptions = GrpcClientOptions.Instance;
             clientOptions.DiscoveryUrl = serverOptions.DiscoveryUrl;
             clientOptions.DefaultErrorCode = serverOptions.DefaultErrorCode;
+            clientOptions.Jaeger = serverOptions.Jaeger;
+            clientOptions.GrpcCallTimeOut = serverOptions.GrpcCallTimeOut;
 
             #endregion
 
@@ -237,13 +247,17 @@ namespace Grpc.Extension
         }
 
         /// <summary>
-        /// 有AddJaeger就使用Jaeger
+        /// 有Jaeger配制就使用Jaeger
         /// </summary>
         /// <returns></returns>
-        private void CheckUseJaeger()
+        private void UseJaeger()
         {
-            var tracer = ServiceProviderAccessor.ServiceProvider.GetService<ITracer>();
-            if (tracer != null) GlobalTracer.Register(tracer);
+            var jaeger = GrpcServerOptions.Instance.Jaeger;
+            if (jaeger?.CheckConfig() == true)
+            {
+                var tracer = ServiceProviderAccessor.GetService<ITracer>();
+                if (tracer != null) GlobalTracer.Register(tracer);
+            }
         }
 
         /// <summary>
@@ -267,9 +281,6 @@ namespace Grpc.Extension
             //添加服务IPAndPort
             var ipPort = NetHelper.GetIPAndPort(GrpcServerOptions.Instance.ServiceAddress);
             server.Ports.Add(new ServerPort(ipPort.Item1, ipPort.Item2, ServerCredentials.Insecure));
-
-            //有AddJaeger就UseJaeger
-            this.CheckUseJaeger();
 
             return server;
         }

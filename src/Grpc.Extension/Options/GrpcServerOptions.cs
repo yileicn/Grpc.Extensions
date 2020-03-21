@@ -55,6 +55,16 @@ namespace Grpc.Extension
         /// ChannelOption
         /// </summary>
         public IEnumerable<ChannelOption> ChannelOptions { get; set; }
+
+        /// <summary>
+        /// JaegerOptions
+        /// </summary>
+        public JaegerOptions Jaeger { get; set; }
+
+        /// <summary>
+        /// Grpc客户端调用超时时间(单位:秒)
+        /// </summary>
+        public double GrpcCallTimeOut { get; set; } = 10;
     }
 
 }

@@ -7,7 +7,10 @@ using Grpc.Extension.Client.LoadBalancer;
 using Grpc.Extension.Client.Model;
 using Grpc.Extension.Common;
 using Grpc.Extension.Discovery;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using OpenTracing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,8 +28,9 @@ namespace Grpc.Extension.Client
         /// 添加GrpcClient扩展
         /// </summary>
         /// <param name="services"></param>
+        /// <param name="conf"></param>
         /// <returns></returns>
-        public static IServiceCollection AddGrpcClientExtensions(this IServiceCollection services)
+        public static IServiceCollection AddGrpcClientExtensions(this IServiceCollection services, IConfiguration conf)
         {
             //GrpcClientApp
             services.AddSingleton<GrpcClientApp>();
@@ -51,6 +55,11 @@ namespace Grpc.Extension.Client
 
             //添加缓存
             services.AddMemoryCache();
+            //添加客户端中间件
+            services.AddClientCallTimeout();
+            services.AddClientMonitor();
+            //Jaeger
+            services.AddClientJaeger(conf);
 
             return services;
         }
@@ -84,7 +93,7 @@ namespace Grpc.Extension.Client
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddClientMonitor(this IServiceCollection services)
+        private static IServiceCollection AddClientMonitor(this IServiceCollection services)
         {
             services.AddClientInterceptor<ClientMonitorInterceptor>();
 
@@ -95,26 +104,52 @@ namespace Grpc.Extension.Client
         /// 添加客户端超时Interceptor
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="callTimeOutSecond"></param>
         /// <returns></returns>
-        public static IServiceCollection AddClientCallTimeout(this IServiceCollection services, double callTimeOutSecond)
+        private static IServiceCollection AddClientCallTimeout(this IServiceCollection services)
         {
-            services.AddSingleton<ClientInterceptor>(new ClientCallTimeout(callTimeOutSecond));
-
+            services.AddSingleton<ClientInterceptor>(sp => 
+            {
+                return new ClientCallTimeout(GrpcClientOptions.Instance.GrpcCallTimeOut);
+            });
             return services;
         }
 
         /// <summary>
-        /// 添加客户端Jaeger Interceptor
+        /// 添加Jaeger
         /// </summary>
         /// <param name="services"></param>
+        /// <param name="conf"></param>
         /// <returns></returns>
-        public static IServiceCollection AddClientJaeger(this IServiceCollection services)
+        public static IServiceCollection AddClientJaeger(this IServiceCollection services, IConfiguration conf)
         {
+            //读取Jaeger配制
+            var key = conf["GrpcServer:ServiceAddress"] != null ? "GrpcServer" : "GrpcClient";
+            var jaegerOptions = conf.GetSection($"{key}:Jaeger").Get<JaegerOptions>();
+            if (jaegerOptions == null || jaegerOptions.Enable == false)
+                return services;
+
+            //jaeger
+            if (!services.Any(p => p.ServiceType == typeof(ITracer)))
+            {
+                services.AddSingleton<ITracer>(sp =>
+                {
+                    var options = GrpcClientOptions.Instance.Jaeger;
+                    var tracer = new Jaeger.Tracer.Builder(options.ServiceName)
+                    .WithLoggerFactory(sp.GetService<ILoggerFactory>())
+                    .WithSampler(new Jaeger.Samplers.ConstSampler(true))
+                    .WithReporter(new Jaeger.Reporters.RemoteReporter.Builder()
+                        .WithFlushInterval(TimeSpan.FromSeconds(5))
+                        .WithMaxQueueSize(5)
+                        .WithSender(new Jaeger.Senders.UdpSender(jaegerOptions.AgentIp, jaegerOptions.AgentPort, 1024 * 5)).Build())
+                    .Build();
+                    return tracer;
+                });
+            }                
+            //添加jaeger中间件
             services.AddClientInterceptor<ClientJaegerTracingInterceptor>();
 
             return services;
-        }
+        } 
 
         /// <summary>
         /// 添加客户端Interceptor

@@ -1,6 +1,9 @@
 ﻿using Grpc.Extension.Abstract;
+using Grpc.Extension.Common.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using OpenTracing;
+using OpenTracing.Util;
 using System;
 
 namespace Grpc.Extension.Client
@@ -16,15 +19,18 @@ namespace Grpc.Extension.Client
         /// <summary>
         /// GrpcClientApp
         /// </summary>
+        /// <param name="serviceProvider"></param>
         /// <param name="conf"></param>
         /// <param name="loggerFactory"></param>
-        public GrpcClientApp(IConfiguration conf, ILoggerFactory loggerFactory)
+        public GrpcClientApp(IServiceProvider serviceProvider, IConfiguration conf, ILoggerFactory loggerFactory)
         {
+            ServiceProviderAccessor.SetServiceProvider(serviceProvider);
             _conf = conf;
             _loggerFactory = loggerFactory;
 
             this.InitGrpcOption()//初始化配制
-                .UseLoggerFactory();//使用LoggerFactory
+                .UseLoggerFactory()//使用LoggerFactory
+                .UseJaeger();
 
         }
 
@@ -43,6 +49,8 @@ namespace Grpc.Extension.Client
                 clientOptions.DiscoveryUrl = clientConfig.DiscoveryUrl;
                 clientOptions.ServiceAddressCacheTime = clientConfig.ServiceAddressCacheTime;
                 clientOptions.DefaultErrorCode = clientConfig.DefaultErrorCode;
+                clientOptions.Jaeger = clientConfig.Jaeger;
+                clientOptions.GrpcCallTimeOut = clientConfig.GrpcCallTimeOut;
             }
 
             return this;
@@ -83,6 +91,19 @@ namespace Grpc.Extension.Client
         {
             action(LoggerAccessor.Instance);
             return this;
+        }
+
+        /// <summary>
+        /// 有Jaeger配制就使用Jaeger
+        /// </summary>
+        private void UseJaeger()
+        {
+            var jaeger = GrpcClientOptions.Instance.Jaeger;
+            if (jaeger?.CheckConfig() == true)
+            {
+                var tracer = ServiceProviderAccessor.GetService<ITracer>();
+                if (tracer != null) GlobalTracer.Register(tracer);
+            }
         }
 
         /// <summary>
