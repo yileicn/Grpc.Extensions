@@ -1,16 +1,15 @@
-﻿using Grpc.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Grpc.Extension.Internal
+namespace Grpc.Extension.BaseService
 {
-    internal class ThrottleManager
+    public class ThrottleManager
     {
         private static readonly object sync = new object();
         private List<string> throttleMethods = new List<string>();
         private static Lazy<ThrottleManager> instance = new Lazy<ThrottleManager>(() => new ThrottleManager(), true);
-        internal static ThrottleManager Instance => instance.Value;
+        public static ThrottleManager Instance => instance.Value;
 
         public void Add(string fullName)
         {

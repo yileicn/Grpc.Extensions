@@ -4,90 +4,6 @@
         <name>Grpc.Extension</name>
     </assembly>
     <members>
-        <member name="T:Grpc.Extension.BaseService.CmdService">
-            <summary>
-            执行命令的服务
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.BaseService.CmdService.RegisterMethod(Grpc.Core.ServerServiceDefinition.Builder)">
-            <summary>
-            注册服务方法
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.BaseService.CmdService.AddDelThrottle(Grpc.Extension.Model.AddDelThrottleRQ,Grpc.Core.ServerCallContext)">
-            <summary>
-            添加删除截流的method
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.BaseService.CmdService.AddDelSaveResponseEnable(Grpc.Extension.Model.AddDelSaveResponseEnableRQ,Grpc.Core.ServerCallContext)">
-            <summary>
-            添加删除是否允许保存响应的method
-            </summary>
-        </member>
-        <member name="T:Grpc.Extension.BaseService.GrpcServiceExtension">
-            <summary>
-            GrpcServiceExtension
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.BaseService.GrpcServiceExtension.BuildMethod``2(Grpc.Extension.Abstract.IGrpcService,System.String,System.String,System.String,Grpc.Core.MethodType)">
-            <summary>
-            生成Grpc方法（CodeFirst方式，用于生成BaseService）
-            </summary>
-            <typeparam name="TRequest"></typeparam>
-            <typeparam name="TResponse"></typeparam>
-            <param name="srv"></param>
-            <param name="methodName"></param>
-            <param name="package"></param>
-            <param name="srvName"></param>
-            <param name="mType"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Grpc.Extension.BaseService.GrpcServiceExtension.BuildMeta(System.Collections.IDictionary)">
-            <summary>
-            生成Grpc元数据信息(1.19以前可以反射处理)
-            </summary>
-            <param name="callHandlers"></param>
-        </member>
-        <member name="T:Grpc.Extension.BaseService.IGrpcBaseService">
-            <summary>
-            基础服务
-            </summary>
-        </member>
-        <member name="T:Grpc.Extension.BaseService.MetaService">
-            <summary>
-            Grpc元数据服务
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.BaseService.MetaService.RegisterMethod(Grpc.Core.ServerServiceDefinition.Builder)">
-            <summary>
-            注册grpc服务方法
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.BaseService.MetaService.Info(Grpc.Extension.Model.InfoRQ,Grpc.Core.ServerCallContext)">
-            <summary>
-            服务基本信息
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.BaseService.MetaService.MethodInfo(Grpc.Extension.Model.MethodInfoRQ,Grpc.Core.ServerCallContext)">
-            <summary>
-            服务方法的详细信息
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.BaseService.MetaService.MethodInvoke(Grpc.Extension.Model.MethodInvokeRQ,Grpc.Core.ServerCallContext)">
-            <summary>
-            服务方法调用
-            </summary>
-        </member>
-        <member name="T:Grpc.Extension.Common.CommonError">
-            <summary>
-            统一错误构建
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Common.CommonError.BuildRpcException(System.Exception)">
-            <summary>
-            返回一个rpc异常到客户端
-            </summary>
-        </member>
         <member name="T:Grpc.Extension.GrpcExtensions">
             <summary>
             Grpc扩展
@@ -187,154 +103,29 @@
             非Grpc方法
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Internal.ProtoCommentGenerator.GetComments(System.String[],System.String)">
+        <member name="T:Grpc.Extension.BaseService.GrpcServiceExtension">
             <summary>
-            获取注释集合
+            GrpcServiceExtension
             </summary>
-            <param name="types"></param>
-            <param name="fullName"></param>
+        </member>
+        <member name="M:Grpc.Extension.BaseService.GrpcServiceExtension.BuildMethod``2(Grpc.Extension.Abstract.IGrpcService,System.String,System.String,System.String,Grpc.Core.MethodType)">
+            <summary>
+            生成Grpc方法（CodeFirst方式）
+            </summary>
+            <typeparam name="TRequest"></typeparam>
+            <typeparam name="TResponse"></typeparam>
+            <param name="srv"></param>
+            <param name="methodName"></param>
+            <param name="package"></param>
+            <param name="srvName"></param>
+            <param name="mType"></param>
             <returns></returns>
         </member>
-        <member name="M:Grpc.Extension.Internal.ProtoCommentGenerator.GetComment(System.String,System.String)">
+        <member name="M:Grpc.Extension.BaseService.GrpcServiceExtension.BuildMeta(System.Collections.IDictionary)">
             <summary>
-            获取注释
+            生成Grpc元数据信息(1.19以前可以反射处理)
             </summary>
-            <param name="type"></param>
-            <param name="fullName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Grpc.Extension.Internal.ProtoCommentGenerator.AddMessageComment``1(System.String)">
-            <summary>
-            给Message加入注释
-            </summary>
-            <typeparam name="TEntity"></typeparam>
-            <param name="proto"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Grpc.Extension.Internal.ProtoCommentGenerator.GetProtoTypeFullName``1(System.String)">
-            <summary>
-            根据名字获取ProtoType的FullName
-            </summary>
-            <typeparam name="TEntity"></typeparam>
-            <param name="name"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Grpc.Extension.Internal.ProtoCommentGenerator.AddServiceComment(Grpc.Extension.Model.ProtoMethodInfo,System.Text.StringBuilder)">
-            <summary>
-            给Service加入注释
-            </summary>
-            <param name="proto"></param>
-            <param name="sb"></param>
-        </member>
-        <member name="P:Grpc.Extension.Internal.ProtoGenerator.protoMsgStartWithKeywords">
-            <summary>
-            proto的message可能的开头的关键字
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Internal.ProtoGenerator.AddProto``1(System.String)">
-            <summary>
-            添加proto
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Internal.ProtoGenerator.GetProto(System.String)">
-            <summary>
-            获取实体对应的proto
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Internal.ProtoGenerator.FilterHead(System.String)">
-            <summary>
-            过滤头部 只保留message部分
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Internal.ProtoGenerator.GenGrpcMessageProto(System.String,System.Collections.Generic.List{System.String},System.Boolean)">
-            <summary>
-            生成grpc的message的proto内容
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Internal.ProtoGenerator.GenGrpcServiceProto(System.String,System.String,System.String,System.Collections.Generic.List{Grpc.Extension.Model.ProtoMethodInfo},System.Boolean)">
-            <summary>
-            生成grpc的service的proto内容
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.Internal.ProtoGenerator.Gen(System.String,System.Boolean)">
-            <summary>
-            生成proto文件
-            </summary>
-        </member>
-        <member name="T:Grpc.Extension.Model.MethodInvokeRQ">
-            <summary>
-            MethodInvokeRQ
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.Model.MethodInvokeRQ.FullName">
-            <summary>
-            GrpcMethod FullName
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.Model.MethodInvokeRQ.RequestJson">
-            <summary>
-            RequestJson
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.Model.ProtoInfo.Methods">
-            <summary>
-            grpc服务方法信息 用于生成proto文件
-            </summary>
-        </member>
-        <member name="T:Grpc.Extension.Model.ProtoMethodInfo">
-            <summary>
-            注册到grpc的服务方法信息
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.Model.XmlCommentInfo.FullName">
-            <summary>
-            FullName(Math.MathGrpc.Add(Math.Model.AddRequest,Grpc.Core.ServerCallContext))
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.Model.XmlCommentInfo.Type">
-            <summary>
-            Type(T:类，M:方法，P:属性，F:字段，E:事件）
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.Model.XmlCommentInfo.Summary">
-            <summary>
-            Summary(注释)
-            </summary>
-        </member>
-        <member name="T:Grpc.Extension.GrpcExtensionsOptions">
-            <summary>
-            GrpcServerOptions
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.GrpcExtensionsOptions.GlobalPackage">
-            <summary>
-            grpc服务的包名
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.GrpcExtensionsOptions.GlobalService">
-            <summary>
-            grpc服务的对外服务名
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.GrpcExtensionsOptions.GlobalSaveResponseEnable">
-            <summary>
-            是否输出响应内容
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.GrpcExtensionsOptions.ProtoNameSpace">
-            <summary>
-            生成proto文件的c#命名空间
-            </summary>
-        </member>
-        <member name="F:Grpc.Extension.GrpcExtensionsOptions.GenBaseServiceProtoEnable">
-            <summary>
-            是否为基础服务生成proto文件
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.GrpcExtensionsOptions.FillPropExcludePrefixs">
-            <summary>
-            生成Json对象时排除前缀
-            </summary>
+            <param name="callHandlers"></param>
         </member>
         <member name="T:Grpc.Extension.GrpcServerOptions">
             <summary>

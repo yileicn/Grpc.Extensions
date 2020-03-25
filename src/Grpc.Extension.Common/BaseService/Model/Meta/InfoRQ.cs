@@ -1,10 +1,10 @@
 ﻿
 using ProtoBuf;
 
-namespace Grpc.Extension.Model
+namespace Grpc.Extension.BaseService.Model
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    internal class InfoRQ
+    public class InfoRQ
     {
         [ProtoMember(1)]
         public string MethodName { get; set; }

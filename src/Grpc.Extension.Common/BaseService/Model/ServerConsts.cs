@@ -1,6 +1,6 @@
-﻿namespace Grpc.Extension.Abstract
+﻿namespace Grpc.Extension.BaseService.Model
 {
-    internal class ServerConsts
+    public class ServerConsts
     {
         public const string BaseServicePackage = "grpc";
 

@@ -1,21 +1,16 @@
-﻿using Grpc.Core;
-using System;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Grpc.Extension.Model;
 
-namespace Grpc.Extension.Internal
+namespace Grpc.Extension.BaseService
 {
-    internal class MonitorManager
+    public class MonitorManager
     {
         private static readonly object syncSaveResponseMethods = new object();
         private static List<string> saveResponseMethods = new List<string>();
         private static readonly Lazy<MonitorManager> instance = new Lazy<MonitorManager>(() => new MonitorManager(), true);
 
-        internal static MonitorManager Instance
+        public static MonitorManager Instance
         {
             get { return instance.Value; }
         }

@@ -1,11 +1,11 @@
 ﻿using Grpc.Core;
 using System;
-using Grpc.Extension.Model;
 using System.Linq;
 using Grpc.Extension.Common.Internal;
 using Grpc.Extension.Common;
 using Grpc.Extension.Abstract.Model;
 using Grpc.Extension.Abstract.Discovery;
+using Grpc.Extension.BaseService.Model;
 
 namespace Grpc.Extension
 {

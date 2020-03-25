@@ -1,9 +1,9 @@
 ﻿using ProtoBuf;
 
-namespace Grpc.Extension.Model
+namespace Grpc.Extension.BaseService.Model
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    internal class MethodInfoRS
+    public class MethodInfoRS
     {
         [ProtoMember(1)]
         public string RequestJson { get; set; }

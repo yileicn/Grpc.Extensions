@@ -4,10 +4,11 @@ using Grpc.Core;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Extension.Common;
-using Grpc.Extension.Internal;
+using Grpc.Extension.BaseService;
 using Grpc.Extension.Abstract;
 using Grpc.Extension.Abstract.Model;
 using Grpc.Extension.Common.Internal;
+using Grpc.Extension.BaseService.Model;
 
 namespace Grpc.Extension.Interceptors
 {

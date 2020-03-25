@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Grpc.Extension.Model
+namespace Grpc.Extension.BaseService.Model
 {
     internal class XmlCommentInfo
     {

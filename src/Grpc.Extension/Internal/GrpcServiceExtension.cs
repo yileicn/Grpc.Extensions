@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Grpc.Extension.Common;
-using Grpc.Extension.Model;
-using Grpc.Extension.Internal;
+using Grpc.Extension.Common.Internal;
 using Grpc.Extension.Abstract;
+using Grpc.Extension.BaseService.Model;
 
 namespace Grpc.Extension.BaseService
 {
@@ -17,7 +17,7 @@ namespace Grpc.Extension.BaseService
     internal static class GrpcServiceExtension
     {
         /// <summary>
-        /// 生成Grpc方法（CodeFirst方式，用于生成BaseService）
+        /// 生成Grpc方法（CodeFirst方式）
         /// </summary>
         /// <typeparam name="TRequest"></typeparam>
         /// <typeparam name="TResponse"></typeparam>

@@ -7,6 +7,7 @@ using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Extension.Abstract;
 using Grpc.Extension.BaseService;
+using Grpc.Extension.BaseService.Model;
 using Grpc.Extension.Client;
 using Grpc.Extension.Common;
 using Grpc.Extension.Common.Internal;

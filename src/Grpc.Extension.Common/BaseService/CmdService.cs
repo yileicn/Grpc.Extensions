@@ -1,25 +1,15 @@
 ﻿using Grpc.Core;
 using System;
 using System.Threading.Tasks;
-using Grpc.Extension.Internal;
-using Grpc.Extension.Model;
-using Grpc.Extension.Abstract;
+using Grpc.Extension.BaseService.Model;
 
 namespace Grpc.Extension.BaseService
 {
     /// <summary>
     /// 执行命令的服务
     /// </summary>
-    internal class CmdService : IGrpcBaseService
+    public class CmdService : IGrpcBaseService
     {
-        /// <summary>
-        /// 注册服务方法
-        /// </summary>
-        public void RegisterMethod(ServerServiceDefinition.Builder builder)
-        {
-            builder.AddMethod(this.BuildMethod<AddDelThrottleRQ, CmdRS>("AddDelThrottle", "grpc", ServerConsts.BaseServiceName), AddDelThrottle);
-            builder.AddMethod(this.BuildMethod<AddDelSaveResponseEnableRQ, CmdRS>("AddDelSaveResponseEnable", "grpc", ServerConsts.BaseServiceName), AddDelSaveResponseEnable);
-        }
         /// <summary>
         /// 添加删除截流的method
         /// </summary>

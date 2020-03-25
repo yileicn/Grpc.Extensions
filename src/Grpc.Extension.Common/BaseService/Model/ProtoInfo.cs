@@ -3,9 +3,9 @@ using ProtoBuf;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Grpc.Extension.Model
+namespace Grpc.Extension.BaseService.Model
 {
-    internal class ProtoInfo
+    public class ProtoInfo
     {
         /// <summary>
         /// grpc服务方法信息 用于生成proto文件
@@ -16,7 +16,7 @@ namespace Grpc.Extension.Model
     /// <summary>
     /// 注册到grpc的服务方法信息
     /// </summary>
-    internal class ProtoMethodInfo
+    public class ProtoMethodInfo
     {
         public string ServiceName { get; set; }
 

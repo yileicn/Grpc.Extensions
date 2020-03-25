@@ -1,9 +1,9 @@
 ﻿using ProtoBuf;
 
-namespace Grpc.Extension.Model
+namespace Grpc.Extension.BaseService.Model
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    internal class CmdRS
+    public class CmdRS
     {
         [ProtoMember(1)]
         public bool Result { get; set; }

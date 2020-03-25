@@ -1,10 +1,10 @@
 ﻿using ProtoBuf;
 using System.Collections.Generic;
 
-namespace Grpc.Extension.Model
+namespace Grpc.Extension.BaseService.Model
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    internal class InfoRS
+    public class InfoRS
     {
         [ProtoMember(1)]
         public string IpAndPort { get; set; }
@@ -13,11 +13,11 @@ namespace Grpc.Extension.Model
         public long StartTime { get; set; }
 
         [ProtoMember(3)]
-        public List<MethodInfo> MethodInfos { get; set; }
+        public List<GrpcMethodInfo> MethodInfos { get; set; }
     }
 
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    internal class MethodInfo
+    public class GrpcMethodInfo
     {
         public string Name { get; set; }
 

@@ -1,4 +1,4 @@
-﻿using Grpc.Extension.Model;
+﻿using Grpc.Extension.BaseService.Model;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -6,9 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Grpc.Extension.Internal
+namespace Grpc.Extension.Common.Internal
 {
-    internal static class ProtoGenerator
+    public static class ProtoGenerator
     {
         /// <summary>
         /// proto的message可能的开头的关键字
@@ -18,7 +18,7 @@ namespace Grpc.Extension.Internal
         /// <summary>
         /// 添加proto
         /// </summary>
-        internal static void AddProto<TEntity>(string entityName)
+        public static void AddProto<TEntity>(string entityName)
         {
             if (!ProtoMethodInfo.Protos.ContainsKey(entityName))
             {

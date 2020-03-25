@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Grpc.Extension.Model
+namespace Grpc.Extension.BaseService.Model
 {
-    internal class MetaModel
+    public class MetaModel
     {
         public static string Ip { get; set; }
 
@@ -15,7 +15,7 @@ namespace Grpc.Extension.Model
         public static List<MetaMethodModel> Methods { get; set; } = new List<MetaMethodModel>();
     }
 
-    internal class MetaMethodModel
+    public class MetaMethodModel
     {
         public string FullName { get; set; }
 

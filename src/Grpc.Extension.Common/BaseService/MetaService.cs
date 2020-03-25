@@ -3,29 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Grpc.Core;
-using Grpc.Extension.Model;
+using Grpc.Extension.BaseService.Model;
 using System.Linq;
 using Grpc.Extension.Common;
-using Grpc.Extension.Internal;
-using Grpc.Extension.Abstract;
 
 namespace Grpc.Extension.BaseService
 {
     /// <summary>
     /// Grpc元数据服务
     /// </summary>
-    internal class MetaService : IGrpcBaseService
+    public class MetaService : IGrpcBaseService
     {
-        /// <summary>
-        /// 注册grpc服务方法
-        /// </summary>
-        public void RegisterMethod(ServerServiceDefinition.Builder builder)
-        {
-            builder.AddMethod(this.BuildMethod<InfoRQ, InfoRS>("Info", "grpc", ServerConsts.BaseServiceName), Info);
-            builder.AddMethod(this.BuildMethod<MethodInfoRQ, MethodInfoRS>("MethodInfo", "grpc", ServerConsts.BaseServiceName), MethodInfo);
-            builder.AddMethod(this.BuildMethod<MethodInvokeRQ, MethodInvokeRS>("MethodInvoke", "grpc", ServerConsts.BaseServiceName), MethodInvoke);
-
-        }
         /// <summary>
         /// 服务基本信息
         /// </summary>
@@ -38,10 +26,10 @@ namespace Grpc.Extension.BaseService
                 {
                     methods = methods?.Where(q => q.ToLower().Contains(rq.MethodName.Trim().ToLower())).ToList();
                 }
-                var methodInfos = new List<MethodInfo>();
+                var methodInfos = new List<GrpcMethodInfo>();
                 foreach (var m in methods)
                 {
-                    var info = new MethodInfo { Name = m };
+                    var info = new GrpcMethodInfo { Name = m };
                     info.IsThrottled = ThrottleManager.Instance.IsThrottled(m);
                     info.SaveResponseEnable = MonitorManager.Instance.SaveResponseMethodEnable(m);
                     methodInfos.Add(info);

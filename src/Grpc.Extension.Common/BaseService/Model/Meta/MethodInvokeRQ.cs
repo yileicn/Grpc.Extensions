@@ -1,12 +1,12 @@
 ﻿using ProtoBuf;
 
-namespace Grpc.Extension.Model
+namespace Grpc.Extension.BaseService.Model
 {
     /// <summary>
     /// MethodInvokeRQ
     /// </summary>
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    internal class MethodInvokeRQ
+    public class MethodInvokeRQ
     {
         /// <summary>
         /// GrpcMethod FullName

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Grpc.Core;
-using Grpc.Extension.Abstract;
-using Grpc.Extension.Internal;
+using Grpc.Extension.BaseService;
+using Grpc.Extension.BaseService.Model;
 
 namespace Grpc.Extension.Interceptors
 {

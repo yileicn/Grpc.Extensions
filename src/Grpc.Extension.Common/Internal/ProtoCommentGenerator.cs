@@ -1,15 +1,14 @@
-﻿using Grpc.Extension.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using Grpc.Extension.Common;
 using System.Reflection;
 using ProtoBuf;
+using Grpc.Extension.BaseService.Model;
 
-namespace Grpc.Extension.Internal
+namespace Grpc.Extension.Common.Internal
 {
     internal static class ProtoCommentGenerator
     {

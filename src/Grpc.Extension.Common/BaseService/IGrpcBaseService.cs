@@ -8,7 +8,7 @@ namespace Grpc.Extension.BaseService
     /// <summary>
     /// 基础服务
     /// </summary>
-    internal interface IGrpcBaseService : IGrpcService
+    public interface IGrpcBaseService : IGrpcService
     {
 
     }

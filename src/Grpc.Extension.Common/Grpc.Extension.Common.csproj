@@ -22,4 +22,8 @@
     <PackageReference Include="Scrutor" Version="3.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Grpc.Extension.Abstract\Grpc.Extension.Abstract.csproj" />
+  </ItemGroup>
+
 </Project>
