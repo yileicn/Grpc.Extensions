@@ -18,7 +18,7 @@ namespace Grpc.Extension
         /// <summary>
         /// 添加Grpc扩展
         /// </summary>
-        /// <typeparam name="TStartup"></typeparam>
+        /// <typeparam name="TStartup">实现IGrpcService的类所在程序集下的任意类</typeparam>
         /// <param name="services"></param>
         /// <param name="conf"></param>
         /// <returns></returns>
@@ -51,7 +51,7 @@ namespace Grpc.Extension
         /// <param name="services"></param>
         /// <param name="conf"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJaeger(this IServiceCollection services, IConfiguration conf)
+        private static IServiceCollection AddJaeger(this IServiceCollection services, IConfiguration conf)
         {
             var key = "GrpcServer:Jaeger";
             var jaegerOptions = conf.GetSection(key).Get<JaegerOptions>();

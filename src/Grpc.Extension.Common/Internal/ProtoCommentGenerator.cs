@@ -151,7 +151,9 @@ namespace Grpc.Extension.Common.Internal
             var handler = MetaModel.Methods.FirstOrDefault(p => p.FullName == proto.FullName)?.Handler;
             if (handler != null)
             {
-                var fullName = handler.Method.GetPropertyValue<string>("FullName", BindingFlags.Instance | BindingFlags.NonPublic);
+
+                //var fullName = handler.Method.GetPropertyValue<string>("FullName", BindingFlags.Instance | BindingFlags.NonPublic);
+                var fullName = GetMethodFullName(handler.Method);
                 //将方法的FullName转换成注释的FullName
                 var xmlFullName = fullName.Replace(" ", "").Replace("`1[", "{").Replace("]", "}");
                 comment = GetComment("M", xmlFullName);
@@ -160,6 +162,18 @@ namespace Grpc.Extension.Common.Internal
                     sb.AppendLine(AddComment(comment, "   "));
                 }
             }
+        }
+
+        /// <summary>
+        /// 获取方法的FullName
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        private static string GetMethodFullName(MethodInfo method)
+        {
+            var parameters = method.GetParameters();
+            var paraStr = string.Join(",", parameters.Select(p => p.ParameterType.ToString()));
+            return $"{method.DeclaringType.FullName}.{method.Name}({paraStr})";
         }
     }
 }
