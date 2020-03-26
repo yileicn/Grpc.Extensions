@@ -98,17 +98,7 @@
             <param name="package"></param>
             <param name="serviceName"></param>
         </member>
-        <member name="T:Grpc.Extension.Internal.NotGrpcMethodAttribute">
-            <summary>
-            非Grpc方法
-            </summary>
-        </member>
-        <member name="T:Grpc.Extension.BaseService.GrpcServiceExtension">
-            <summary>
-            GrpcServiceExtension
-            </summary>
-        </member>
-        <member name="M:Grpc.Extension.BaseService.GrpcServiceExtension.BuildMethod``2(Grpc.Extension.Abstract.IGrpcService,System.String,System.String,System.String,Grpc.Core.MethodType)">
+        <member name="M:Grpc.Extension.Internal.GrpcMethodHelper.BuildMethod``2(Grpc.Extension.Abstract.IGrpcService,System.String,System.String,System.String,Grpc.Core.MethodType)">
             <summary>
             生成Grpc方法（CodeFirst方式）
             </summary>
@@ -120,6 +110,11 @@
             <param name="srvName"></param>
             <param name="mType"></param>
             <returns></returns>
+        </member>
+        <member name="T:Grpc.Extension.BaseService.GrpcServiceExtension">
+            <summary>
+            GrpcServiceExtension
+            </summary>
         </member>
         <member name="M:Grpc.Extension.BaseService.GrpcServiceExtension.BuildMeta(System.Collections.IDictionary)">
             <summary>
