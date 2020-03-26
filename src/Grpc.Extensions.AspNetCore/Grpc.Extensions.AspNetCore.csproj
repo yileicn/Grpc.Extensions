@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore.Server" Version="2.24.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Grpc.Extension.Abstract\Grpc.Extension.Abstract.csproj" />
+    <ProjectReference Include="..\Grpc.Extension.Client\Grpc.Extension.Client.csproj" />
+    <ProjectReference Include="..\Grpc.Extension.Common\Grpc.Extension.Common.csproj" />
+    <ProjectReference Include="..\Grpc.Extension.Discovery\Grpc.Extension.Discovery.csproj" />
+  </ItemGroup>
+
+</Project>

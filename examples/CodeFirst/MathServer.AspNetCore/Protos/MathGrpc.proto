@@ -1,0 +1,42 @@
+syntax = "proto3";
+option csharp_namespace = "MathGrpc";
+package math;
+
+
+service MathGrpc {
+   //加法
+   rpc Add(AddRequest) returns(IntMessage);
+
+   //减法
+   rpc Sub(SubRequest) returns(IntMessage);
+
+   //客户端流求和
+   rpc Sum(stream SumRequest) returns(IntMessage);
+
+   //服务端流求和
+   rpc SumServerStream(SumRequest) returns(stream IntMessage);
+
+}
+
+
+
+//加法请求参数
+message AddRequest {
+   //第一个数字
+   int32 Num1 = 1;
+   //第二个数字
+   int32 Num2 = 2;
+}
+
+message SubRequest {
+   int32 Num1 = 1;
+   int32 Num2 = 2;
+}
+
+message SumRequest {
+   int32 Num = 1;
+}
+
+message IntMessage {
+   int32 Value = 1;
+}
