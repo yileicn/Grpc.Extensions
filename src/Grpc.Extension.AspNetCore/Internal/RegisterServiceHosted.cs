@@ -35,7 +35,9 @@ namespace Grpc.Extension.AspNetCore.Internal
         }
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _hostApplicationLifetime.ApplicationStarted.Register(Start);
+            if(_grpcServerOptions.EnableDiscovery)
+                _hostApplicationLifetime.ApplicationStarted.Register(Start);
+
             return Task.CompletedTask;
         }
 
@@ -67,7 +69,8 @@ namespace Grpc.Extension.AspNetCore.Internal
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _serviceRegister.DeregisterService();
+            if(_grpcServerOptions.EnableDiscovery)
+                _serviceRegister.DeregisterService();
 
             return Task.CompletedTask;
         }

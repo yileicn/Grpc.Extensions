@@ -24,16 +24,21 @@ namespace Grpc.Extension
         /// <returns></returns>
         public static Server StartAndRegisterService(this Server server)
         {
+            //启动服务
             server.Start();
             var ipAndPort = server.Ports.FirstOrDefault();
-            if (ipAndPort != null)
-            {
-                MetaModel.StartTime = DateTime.Now;
-                MetaModel.Ip = ipAndPort.Host;
-                MetaModel.Port = ipAndPort.BoundPort;
-                Console.WriteLine($"server listening {MetaModel.Ip}:{MetaModel.Port}");
+            if (ipAndPort == null) return server;
+            //输出启动信息
+            MetaModel.StartTime = DateTime.Now;
+            MetaModel.Ip = ipAndPort.Host;
+            MetaModel.Port = ipAndPort.BoundPort;
+            Console.WriteLine($"server listening {MetaModel.Ip}:{MetaModel.Port}");
 
-                var grpcServerOptions = ServiceProviderAccessor.GetService<IOptions<GrpcServerOptions>>().Value;
+            //服务注册
+            var grpcServerOptions = ServiceProviderAccessor.GetService<IOptions<GrpcServerOptions>>().Value;
+            
+            if (grpcServerOptions.EnableDiscovery)
+            {
                 //检查服务注册配制
                 if (string.IsNullOrWhiteSpace(grpcServerOptions.DiscoveryUrl))
                     throw new ArgumentException("GrpcServer:DiscoveryUrl is null");
@@ -61,8 +66,13 @@ namespace Grpc.Extension
         public static Server StopAndDeRegisterService(this Server server)
         {
             //服务反注册
-            var serviceRegister = ServiceProviderAccessor.GetService<IServiceRegister>();
-            serviceRegister.DeregisterService();
+            var grpcServerOptions = ServiceProviderAccessor.GetService<IOptions<GrpcServerOptions>>().Value;
+            if (grpcServerOptions.EnableDiscovery)
+            {
+                var serviceRegister = ServiceProviderAccessor.GetService<IServiceRegister>();
+                serviceRegister.DeregisterService();
+            }
+            //停止服务
             server.ShutdownAsync().Wait();
             
             return server;

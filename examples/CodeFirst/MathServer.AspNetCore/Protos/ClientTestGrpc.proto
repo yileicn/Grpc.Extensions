@@ -1,0 +1,17 @@
+syntax = "proto3";
+option csharp_namespace = "MathGrpc";
+
+
+service ClientTestGrpc {
+   rpc ClientTest(EmptyMessage) returns(StringMessage);
+
+}
+
+
+
+message EmptyMessage {
+}
+
+message StringMessage {
+   string Value = 1;
+}

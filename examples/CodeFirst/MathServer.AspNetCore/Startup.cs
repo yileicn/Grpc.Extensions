@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Grpc.Extension.BaseService;
-using Grpc.Extensions.AspNetCore;
+﻿using Grpc.Extension.AspNetCore;
 using Math;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using static Helloworld.Greeter;
+using Grpc.Extension.Client;
 
 namespace MathServer.AspNetCore
 {
@@ -27,6 +24,8 @@ namespace MathServer.AspNetCore
         {
             //添加Grpc扩展
             services.AddGrpcExtensions(_conf);
+            //添加第三方GrpcClient
+            services.AddGrpcClientByDiscovery<GreeterClient>("Math.Test");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +42,8 @@ namespace MathServer.AspNetCore
             {
                 //ProtoFirst的Grpc
                 endpoints.MapGrpcService<GreeterGrpcImpl>();
+                //当IGrpcService在多个程序集下时使用
+                endpoints.MapIGrpcServices<ClientTestGrpc>();
                 endpoints.MapGet("/", async context =>
                 {
                     await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");

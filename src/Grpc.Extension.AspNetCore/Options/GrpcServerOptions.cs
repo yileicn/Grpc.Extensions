@@ -16,6 +16,11 @@ namespace Grpc.Extension.AspNetCore
         public string ServiceAddress { get; set; }
 
         /// <summary>
+        /// 是否启用服务注册和服务发现
+        /// </summary>
+        public bool EnableDiscovery { get; set; } = true;
+
+        /// <summary>
         /// 服务注册地址(http://192.168.8.6:8500)
         /// </summary>
         public string DiscoveryUrl { get; set; }

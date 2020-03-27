@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <Protobuf Include="Protos\helloworld.proto" GrpcServices="Server" />
+    <Protobuf Include="..\..\protos\helloworld.proto" GrpcServices="Server,Client">
+      <Link>Protos\helloworld.proto</Link>
+    </Protobuf>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.24.0" />
+	<PackageReference Include="Grpc.AspNetCore" Version="2.24.0" />
     <PackageReference Include="Grpc.Tools" Version="2.24.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,7 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Grpc.Extensions.AspNetCore\Grpc.Extensions.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\src\Grpc.Extension.AspNetCore\Grpc.Extension.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\src\Grpc.Extension.Client\Grpc.Extension.Client.csproj" />
     <ProjectReference Include="..\Math\Math.csproj" />
   </ItemGroup>
 

@@ -129,7 +129,12 @@
         </member>
         <member name="P:Grpc.Extension.GrpcServerOptions.ServiceAddress">
             <summary>
-            Grpc服务地址(192.168.*.*:)
+            Grpc服务地址(192.168.*.*:0)
+            </summary>
+        </member>
+        <member name="P:Grpc.Extension.GrpcServerOptions.EnableDiscovery">
+            <summary>
+            是否启用服务注册和服务发现
             </summary>
         </member>
         <member name="P:Grpc.Extension.GrpcServerOptions.DiscoveryUrl">
