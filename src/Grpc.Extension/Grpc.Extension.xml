@@ -177,12 +177,12 @@
             ServerBuilder
             </summary>
         </member>
-        <member name="M:Grpc.Extension.ServerBuilder.#ctor(System.IServiceProvider,Microsoft.Extensions.Configuration.IConfiguration,System.Collections.Generic.IEnumerable{Grpc.Extension.Interceptors.ServerInterceptor},System.Collections.Generic.IEnumerable{Grpc.Extension.Abstract.IGrpcService},Microsoft.Extensions.Logging.ILoggerFactory)">
+        <member name="M:Grpc.Extension.ServerBuilder.#ctor(System.IServiceProvider,Microsoft.Extensions.Options.IOptions{Grpc.Extension.GrpcServerOptions},System.Collections.Generic.IEnumerable{Grpc.Extension.Interceptors.ServerInterceptor},System.Collections.Generic.IEnumerable{Grpc.Extension.Abstract.IGrpcService},Microsoft.Extensions.Logging.ILoggerFactory)">
             <summary>
             ServerBuilder
             </summary>
             <param name="serviceProvider"></param>
-            <param name="conf"></param>
+            <param name="grpcServerOptions"></param>
             <param name="serverInterceptors"></param>
             <param name="grpcServices"></param>
             <param name="loggerFactory"></param>
@@ -194,11 +194,10 @@
             <param name="action"></param>
             <returns></returns>
         </member>
-        <member name="M:Grpc.Extension.ServerBuilder.InitGrpcOptions(Microsoft.Extensions.Configuration.IConfiguration)">
+        <member name="M:Grpc.Extension.ServerBuilder.InitGrpcOptions">
             <summary>
-            从配制文件初始化
+            初始化配制
             </summary>
-            <param name="conf"></param>
         </member>
         <member name="M:Grpc.Extension.ServerBuilder.UseGrpcOptions(System.Action{Grpc.Extension.GrpcServerOptions})">
             <summary>

@@ -8,6 +8,7 @@ using Grpc.Extension.Abstract.Model;
 using Grpc.Extension.Abstract.Discovery;
 using Grpc.Extension.Abstract;
 using Grpc.Extension.Client.Model;
+using Microsoft.Extensions.Options;
 
 namespace Grpc.Extension.Client.Internal
 {
@@ -20,6 +21,7 @@ namespace Grpc.Extension.Client.Internal
         private IServiceDiscovery _serviceDiscovery;
         private ILoadBalancer _loadBalancer;
         private IMemoryCache _memoryCache;
+        private GrpcClientOptions _grpcClientOptions;
 
         /// <summary>
         /// Channel统一管理
@@ -27,11 +29,13 @@ namespace Grpc.Extension.Client.Internal
         /// <param name="serviceDiscovery"></param>
         /// <param name="loadBalancer"></param>
         /// <param name="memoryCache"></param>
-        public ChannelPool(IServiceDiscovery serviceDiscovery, ILoadBalancer loadBalancer,IMemoryCache memoryCache)
+        /// <param name="grpcClientOptions"></param>
+        public ChannelPool(IServiceDiscovery serviceDiscovery, ILoadBalancer loadBalancer,IMemoryCache memoryCache, IOptions<GrpcClientOptions> grpcClientOptions)
         {
             this._serviceDiscovery = serviceDiscovery;
             this._loadBalancer = loadBalancer;
             this._memoryCache = memoryCache;
+            this._grpcClientOptions = grpcClientOptions.Value;
         }
 
         internal static List<ChannelConfig> Configs { get; set; } = new List<ChannelConfig>();
@@ -52,7 +56,7 @@ namespace Grpc.Extension.Client.Internal
             }
             else//from discovery
             {
-                var discoveryUrl = !string.IsNullOrWhiteSpace(config.DiscoveryUrl) ? config.DiscoveryUrl : GrpcClientOptions.Instance.DiscoveryUrl;
+                var discoveryUrl = !string.IsNullOrWhiteSpace(config.DiscoveryUrl) ? config.DiscoveryUrl : _grpcClientOptions.DiscoveryUrl;
                 var endPoint = GetEndpoint(config.DiscoveryServiceName, discoveryUrl, config.DiscoveryServiceTag);
                 return GetChannelCore(endPoint,config);
             }
@@ -68,7 +72,7 @@ namespace Grpc.Extension.Client.Internal
             var healthEndpoints = _memoryCache.GetOrCreate(serviceName, cacheEntry =>
             {
                 isCache = false;
-                cacheEntry.SetAbsoluteExpiration(TimeSpan.FromSeconds(GrpcClientOptions.Instance.ServiceAddressCacheTime));
+                cacheEntry.SetAbsoluteExpiration(TimeSpan.FromSeconds(_grpcClientOptions.ServiceAddressCacheTime));
                 return _serviceDiscovery.GetEndpoints(serviceName, dicoveryUrl, serviceTag);
             });
             if (healthEndpoints == null || healthEndpoints.Count == 0)

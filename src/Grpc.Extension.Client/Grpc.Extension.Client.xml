@@ -9,19 +9,13 @@
             GrpcClient启动类
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Client.GrpcClientApp.#ctor(System.IServiceProvider,Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILoggerFactory)">
+        <member name="M:Grpc.Extension.Client.GrpcClientApp.#ctor(System.IServiceProvider,Microsoft.Extensions.Options.IOptions{Grpc.Extension.Client.GrpcClientOptions},Microsoft.Extensions.Logging.ILoggerFactory)">
             <summary>
             GrpcClientApp
             </summary>
             <param name="serviceProvider"></param>
-            <param name="conf"></param>
+            <param name="grpcClientOptions"></param>
             <param name="loggerFactory"></param>
-        </member>
-        <member name="M:Grpc.Extension.Client.GrpcClientApp.InitGrpcOption">
-            <summary>
-            从配制文件初始化
-            </summary>
-            <returns></returns>
         </member>
         <member name="M:Grpc.Extension.Client.GrpcClientApp.UseGrpcOptions(System.Action{Grpc.Extension.Client.GrpcClientOptions})">
             <summary>
@@ -215,13 +209,14 @@
             Channel统一管理
             </summary>
         </member>
-        <member name="M:Grpc.Extension.Client.Internal.ChannelPool.#ctor(Grpc.Extension.Abstract.Discovery.IServiceDiscovery,Grpc.Extension.Abstract.ILoadBalancer,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
+        <member name="M:Grpc.Extension.Client.Internal.ChannelPool.#ctor(Grpc.Extension.Abstract.Discovery.IServiceDiscovery,Grpc.Extension.Abstract.ILoadBalancer,Microsoft.Extensions.Caching.Memory.IMemoryCache,Microsoft.Extensions.Options.IOptions{Grpc.Extension.Client.GrpcClientOptions})">
             <summary>
             Channel统一管理
             </summary>
             <param name="serviceDiscovery"></param>
             <param name="loadBalancer"></param>
             <param name="memoryCache"></param>
+            <param name="grpcClientOptions"></param>
         </member>
         <member name="M:Grpc.Extension.Client.Internal.ChannelPool.GetChannel(System.String)">
             <summary>
@@ -314,11 +309,6 @@
         <member name="T:Grpc.Extension.Client.GrpcClientOptions">
             <summary>
             GrpcClientOptions
-            </summary>
-        </member>
-        <member name="P:Grpc.Extension.Client.GrpcClientOptions.Instance">
-            <summary>
-            Instance
             </summary>
         </member>
         <member name="P:Grpc.Extension.Client.GrpcClientOptions.DiscoveryUrl">

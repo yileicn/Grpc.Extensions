@@ -11,12 +11,6 @@ namespace Grpc.Extension
     /// </summary>
     public class GrpcServerOptions
     {
-        private static readonly GrpcServerOptions _instance = new GrpcServerOptions();
-        internal static GrpcServerOptions Instance
-        {
-            get { return _instance; }
-        }
-
         /// <summary>
         /// Grpc服务地址(192.168.*.*:)
         /// </summary>

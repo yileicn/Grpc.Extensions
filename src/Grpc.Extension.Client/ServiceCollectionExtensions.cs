@@ -10,6 +10,7 @@ using Grpc.Extension.Discovery;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OpenTracing;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,8 @@ namespace Grpc.Extension.Client
         /// <returns></returns>
         public static IServiceCollection AddGrpcClientExtensions(this IServiceCollection services, IConfiguration conf)
         {
+            //注入配制
+            services.Configure<GrpcClientOptions>(conf.GetSection("GrpcClient"));
             //GrpcClientApp
             services.AddSingleton<GrpcClientApp>();
             //添加客户端中间件的CallInvoker
@@ -109,7 +112,8 @@ namespace Grpc.Extension.Client
         {
             services.AddSingleton<ClientInterceptor>(sp => 
             {
-                return new ClientCallTimeout(GrpcClientOptions.Instance.GrpcCallTimeOut);
+                var options = sp.GetService<IOptions<GrpcClientOptions>>().Value;
+                return new ClientCallTimeout(options.GrpcCallTimeOut);
             });
             return services;
         }
@@ -133,8 +137,8 @@ namespace Grpc.Extension.Client
             {
                 services.AddSingleton<ITracer>(sp =>
                 {
-                    var options = GrpcClientOptions.Instance.Jaeger;
-                    var tracer = new Jaeger.Tracer.Builder(options.ServiceName)
+                    var options = sp.GetService<IOptions<GrpcClientOptions>>().Value;
+                    var tracer = new Jaeger.Tracer.Builder(options.Jaeger.ServiceName)
                     .WithLoggerFactory(sp.GetService<ILoggerFactory>())
                     .WithSampler(new Jaeger.Samplers.ConstSampler(true))
                     .WithReporter(new Jaeger.Reporters.RemoteReporter.Builder()
