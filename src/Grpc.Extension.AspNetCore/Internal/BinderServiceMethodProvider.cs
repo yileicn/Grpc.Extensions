@@ -1,11 +1,9 @@
 ﻿using Grpc.AspNetCore.Server.Model;
 using Grpc.Extension.Abstract;
-using Grpc.Extension.Common.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Reflection;
 
-namespace Grpc.Extensions.AspNetCore.Internal
+namespace Grpc.Extension.AspNetCore.Internal
 {
     internal class BinderServiceMethodProvider<TService> : IServiceMethodProvider<TService> where TService : class
     {

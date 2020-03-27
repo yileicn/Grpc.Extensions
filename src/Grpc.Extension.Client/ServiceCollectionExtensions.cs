@@ -68,7 +68,7 @@ namespace Grpc.Extension.Client
         }
 
         /// <summary>
-        /// 添加GrpcClient,生成元数据
+        /// 添加GrpcClient到Discovery,生成元数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="services"></param>
@@ -88,6 +88,22 @@ namespace Grpc.Extension.Client
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             channelConfig.GrpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
             ChannelPool.Configs.Add(channelConfig);
+            return services;
+        }
+
+        /// <summary>
+        /// 添加GrpcClient到Discovery,生成元数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="discoveryServiceName">Discovery上客户端服务名字</param>
+        /// <param name="discoveryUrl">Discovery的服务器地址</param>
+        /// <param name="channelOptions">ChannelOption</param>
+        /// <returns></returns>
+        public static IServiceCollection AddGrpcClientByDiscovery<T>(this IServiceCollection services, string discoveryServiceName, string discoveryUrl = "", IEnumerable<ChannelOption> channelOptions = null) where T : ClientBase<T>
+        {
+            services.AddGrpcClient<T>(discoveryServiceName, discoveryUrl, channelOptions);
+
             return services;
         }
 

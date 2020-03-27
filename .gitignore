@@ -119,3 +119,7 @@ nuget/tools/*
 nuget/*.nupkg
 nuget/*.unitypackage
 .vs/
+/examples/HttpGateway
+*.bat
+/nupkgs
+*.nuspec

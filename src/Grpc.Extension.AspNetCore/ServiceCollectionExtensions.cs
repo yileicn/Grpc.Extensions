@@ -4,7 +4,7 @@ using Grpc.Extension;
 using Grpc.Extension.AspNetCore;
 using Grpc.Extension.Client;
 using Grpc.Extension.Interceptors;
-using Grpc.Extensions.AspNetCore.Internal;
+using Grpc.Extension.AspNetCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 using OpenTracing;
 using System;
 
-namespace Grpc.Extensions.AspNetCore
+namespace Grpc.Extension.AspNetCore
 {
     public static class ServiceCollectionExtensions
     {

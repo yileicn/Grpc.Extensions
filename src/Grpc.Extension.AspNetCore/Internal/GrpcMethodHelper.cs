@@ -2,14 +2,13 @@
 using System.Linq;
 using System.Reflection;
 using Grpc.Core;
-using Grpc.Extension;
 using Grpc.Extension.Abstract;
 using Grpc.Extension.BaseService;
 using Grpc.Extension.BaseService.Model;
 using Grpc.Extension.Common;
 using Grpc.Extension.Common.Internal;
 
-namespace Grpc.Extensions.AspNetCore.Internal
+namespace Grpc.Extension.AspNetCore.Internal
 {
     // ReSharper disable once IdentifierTypo
     internal static class GrpcMethodHelper

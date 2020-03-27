@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace Grpc.Extensions.AspNetCore.Internal
+namespace Grpc.Extension.AspNetCore.Internal
 {
     internal class ProviderServiceBinder<TService> : ServiceBinderBase where TService : class
     {

@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using System.Linq;
 
-namespace Grpc.Extensions.AspNetCore.Internal
+namespace Grpc.Extension.AspNetCore.Internal
 {
     public class RegisterServiceHosted : IHostedService
     {

@@ -1,20 +1,20 @@
 ﻿using Grpc.Extension;
 using Grpc.Extension.Abstract;
-using Grpc.Extension.AspNetCore;
 using Grpc.Extension.BaseService;
+using Grpc.Extension.Client;
 using Grpc.Extension.Common.Internal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTracing;
 using OpenTracing.Util;
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace Grpc.Extensions.AspNetCore
+namespace Grpc.Extension.AspNetCore
 {
     public static class IApplicationBuilderExtensions
     {
@@ -31,20 +31,26 @@ namespace Grpc.Extensions.AspNetCore
             //注入基本配制
             configureOptions?.Invoke(GrpcExtensionsOptions.Instance);
             //使用基础服务
-            builder.UseEndpoints(endpoints => endpoints.MapIGrpcServices<TStartup>());
+            builder.UseEndpoints(endpoints => {
+                endpoints.MapIGrpcServices<TStartup>();
+                //使用基础服务
+                endpoints.MapGrpcService<CmdService>();
+                endpoints.MapGrpcService<MetaService>();
+            });
             //默认使用
-            builder.UseLoggerFactory()//使用LoggerFactory
+            builder.InitGrpcOptions()//初始化配制
+                .UseLoggerFactory()//使用LoggerFactory
                 .UseJaeger();//使用Jaeger
 
             return builder;
         }
 
         /// <summary>
-        /// MapGrpcService所有的IGrpcService和基础服务
+        /// MapGrpcService(TStartup程序集下所有的IGrpcService)
         /// </summary>
-        /// <typeparam name="TStartup"></typeparam>
+        /// <typeparam name="TStartup">实现IGrpcService的类所在程序集下的任意类</typeparam>
         /// <param name="endpoints"></param>
-        private static void MapIGrpcServices<TStartup>(this IEndpointRouteBuilder endpoints)
+        public static void MapIGrpcServices<TStartup>(this IEndpointRouteBuilder endpoints)
         {
             //获取所有IGrpcService并调用MapGrpcService方法
             var grpcServices = typeof(TStartup).Assembly.GetTypes().Where(p => typeof(IGrpcService).IsAssignableFrom(p) && p.IsClass);
@@ -54,9 +60,33 @@ namespace Grpc.Extensions.AspNetCore
                 var mapGrpcService = method.MakeGenericMethod(service);
                 mapGrpcService.Invoke(null, new object[] { endpoints });
             }
-            //使用基础服务
-            endpoints.MapGrpcService<CmdService>();
-            endpoints.MapGrpcService<MetaService>();
+        }
+
+        /// <summary>
+        /// 初始化配制
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        private static IApplicationBuilder InitGrpcOptions(this IApplicationBuilder builder)
+        {
+            var provider = builder.ApplicationServices;
+            var serverOptions = provider.GetService<IOptions<GrpcServerOptions>>().Value;
+
+            //Jaeger配置
+            if (serverOptions.Jaeger != null && string.IsNullOrWhiteSpace(serverOptions.Jaeger.ServiceName))
+                serverOptions.Jaeger.ServiceName = serverOptions.DiscoveryServiceName;
+
+            #region 默认的客户端配制
+
+            var clientOptions = provider.GetService<IOptions<GrpcClientOptions>>().Value;
+            clientOptions.DiscoveryUrl = serverOptions.DiscoveryUrl;
+            clientOptions.DefaultErrorCode = serverOptions.DefaultErrorCode;
+            clientOptions.Jaeger = serverOptions.Jaeger;
+            clientOptions.GrpcCallTimeOut = serverOptions.GrpcCallTimeOut;
+
+            #endregion
+
+            return builder;
         }
 
         /// <summary>
@@ -80,7 +110,7 @@ namespace Grpc.Extensions.AspNetCore
         /// <returns></returns>
         private static IApplicationBuilder UseJaeger(this IApplicationBuilder builder)
         {
-            var serverOptions = ServiceProviderAccessor.GetService<IOptions<GrpcServerOptions>>()?.Value;
+            var serverOptions = ServiceProviderAccessor.GetService<IOptions<GrpcServerOptions>>().Value;
             if (serverOptions.Jaeger != null && string.IsNullOrWhiteSpace(serverOptions.Jaeger.ServiceName))
                 serverOptions.Jaeger.ServiceName = serverOptions.DiscoveryServiceName;
 

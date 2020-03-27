@@ -1,5 +1,4 @@
-﻿using Grpc.Core;
-using Grpc.Extension.Abstract.Model;
+﻿using Grpc.Extension.Abstract.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;

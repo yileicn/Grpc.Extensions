@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.Extension.Discovery", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.Extension.Abstract", "src\Grpc.Extension.Abstract\Grpc.Extension.Abstract.csproj", "{ABCD8408-7BED-431F-BBC2-E880DC597EB5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.Extensions.AspNetCore", "src\Grpc.Extensions.AspNetCore\Grpc.Extensions.AspNetCore.csproj", "{5EC20A87-DF9C-4A79-B847-EB7DD5C1553F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.Extensions.AspNetCore", "src\Grpc.Extension.AspNetCore\Grpc.Extension.AspNetCore.csproj", "{5EC20A87-DF9C-4A79-B847-EB7DD5C1553F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathServer.AspNetCore", "examples\CodeFirst\MathServer.AspNetCore\MathServer.AspNetCore.csproj", "{CF0443B5-DC32-4C80-B80E-A3F8D6E1792B}"
 EndProject
