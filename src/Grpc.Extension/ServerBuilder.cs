@@ -7,6 +7,7 @@ using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Extension.Abstract;
 using Grpc.Extension.BaseService;
+using Grpc.Extension.BaseService.Model;
 using Grpc.Extension.Client;
 using Grpc.Extension.Common;
 using Grpc.Extension.Common.Internal;
@@ -14,6 +15,7 @@ using Grpc.Extension.Interceptors;
 using Grpc.Extension.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OpenTracing;
 using OpenTracing.Util;
 
@@ -27,29 +29,31 @@ namespace Grpc.Extension
         private readonly List<ServerInterceptor> _interceptors = new List<ServerInterceptor>();
         private readonly List<ServerServiceDefinition> _serviceDefinitions = new List<ServerServiceDefinition>();
         private readonly List<IGrpcService> _grpcServices = new List<IGrpcService>();
+        private readonly GrpcServerOptions _grpcServerOptions;
         private readonly ILoggerFactory _loggerFactory;
 
         /// <summary>
         /// ServerBuilder
         /// </summary>
         /// <param name="serviceProvider"></param>
-        /// <param name="conf"></param>
+        /// <param name="grpcServerOptions"></param>
         /// <param name="serverInterceptors"></param>
         /// <param name="grpcServices"></param>
         /// <param name="loggerFactory"></param>
         public ServerBuilder(IServiceProvider serviceProvider,
-            IConfiguration conf,
+            IOptions<GrpcServerOptions> grpcServerOptions,
             IEnumerable<ServerInterceptor> serverInterceptors,
             IEnumerable<IGrpcService> grpcServices,
             ILoggerFactory loggerFactory)
         {
             ServiceProviderAccessor.SetServiceProvider(serviceProvider);
             this._grpcServices.AddRange(grpcServices);
+            this._grpcServerOptions = grpcServerOptions.Value;
 
             this._loggerFactory = loggerFactory;
 
             //初始化配制,注入中间件,GrpcService
-            this.InitGrpcOptions(conf)//初始化配制
+            this.InitGrpcOptions()//初始化配制
                 .UseInterceptor(serverInterceptors)//注入中间件
                 .UseLoggerFactory()//使用LoggerFactory
                 .UseJaeger();
@@ -67,34 +71,19 @@ namespace Grpc.Extension
         }
 
         /// <summary>
-        /// 从配制文件初始化
+        /// 初始化配制
         /// </summary>
-        /// <param name="conf"></param>
-        private ServerBuilder InitGrpcOptions(IConfiguration conf)
+        private ServerBuilder InitGrpcOptions()
         {
-            var grpcServer = conf.GetSection("GrpcServer");
-
-            var serverOptions = GrpcServerOptions.Instance;
-            serverOptions.ServiceAddress = grpcServer["ServiceAddress"];
-            //Discovery配制
-            serverOptions.DiscoveryUrl = grpcServer["DiscoveryUrl"] ?? grpcServer["ConsulUrl"];
-            serverOptions.DiscoveryServiceName = grpcServer["DiscoveryServiceName"] ?? grpcServer["ConsulServiceName"];
-            serverOptions.DiscoveryServiceTags = grpcServer["DiscoveryServiceTags"] ?? grpcServer["ConsulTags"];
-            //错误码配制
-            if(int.TryParse(grpcServer["DefaultErrorCode"], out int defaultErrorCode))
-                serverOptions.DefaultErrorCode = defaultErrorCode;
+            var serverOptions = _grpcServerOptions;
+            
             //Jaeger配置
-            serverOptions.Jaeger = grpcServer.GetSection("Jaeger").Get<JaegerOptions>();
             if (serverOptions.Jaeger != null && string.IsNullOrWhiteSpace(serverOptions.Jaeger.ServiceName))
                 serverOptions.Jaeger.ServiceName = serverOptions.DiscoveryServiceName;
 
-            //Grpc调用超时时间配置
-            if (double.TryParse(grpcServer["GrpcCallTimeOut"], out double grpcCallTimeOut))
-                serverOptions.GrpcCallTimeOut = grpcCallTimeOut;
-
             #region 默认的客户端配制
 
-            var clientOptions = GrpcClientOptions.Instance;
+            var clientOptions = ServiceProviderAccessor.GetService<IOptions<GrpcClientOptions>>().Value;
             clientOptions.DiscoveryUrl = serverOptions.DiscoveryUrl;
             clientOptions.DefaultErrorCode = serverOptions.DefaultErrorCode;
             clientOptions.Jaeger = serverOptions.Jaeger;
@@ -112,7 +101,7 @@ namespace Grpc.Extension
         /// <returns></returns>
         public ServerBuilder UseGrpcOptions(Action<GrpcServerOptions> options)
         {
-            options(GrpcServerOptions.Instance);
+            options(_grpcServerOptions);
             return this;
         }
 
@@ -252,7 +241,7 @@ namespace Grpc.Extension
         /// <returns></returns>
         private void UseJaeger()
         {
-            var jaeger = GrpcServerOptions.Instance.Jaeger;
+            var jaeger = _grpcServerOptions.Jaeger;
             if (jaeger?.CheckConfig() == true)
             {
                 var tracer = ServiceProviderAccessor.GetService<ITracer>();
@@ -267,10 +256,10 @@ namespace Grpc.Extension
         public Server Build()
         {
             //检查服务配制
-            if (string.IsNullOrWhiteSpace(GrpcServerOptions.Instance.ServiceAddress))
+            if (string.IsNullOrWhiteSpace(_grpcServerOptions.ServiceAddress))
                 throw new ArgumentException(@"GrpcServer:ServiceAddress is null");
 
-            Server server = new Server(GrpcServerOptions.Instance.ChannelOptions);
+            Server server = new Server(_grpcServerOptions.ChannelOptions);
             //使用拦截器
             var serviceDefinitions = ApplyInterceptor(_serviceDefinitions, _interceptors);
             //添加服务定义
@@ -279,7 +268,7 @@ namespace Grpc.Extension
                 server.Services.Add(serviceDefinition);
             }
             //添加服务IPAndPort
-            var ipPort = NetHelper.GetIPAndPort(GrpcServerOptions.Instance.ServiceAddress);
+            var ipPort = NetHelper.GetIPAndPort(_grpcServerOptions.ServiceAddress);
             server.Ports.Add(new ServerPort(ipPort.Item1, ipPort.Item2, ServerCredentials.Insecure));
 
             return server;

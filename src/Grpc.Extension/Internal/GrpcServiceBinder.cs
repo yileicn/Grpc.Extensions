@@ -1,5 +1,5 @@
 ﻿using Grpc.Core;
-using Grpc.Extension.Model;
+using Grpc.Extension.BaseService.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;

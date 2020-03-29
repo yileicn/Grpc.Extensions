@@ -1,11 +1,12 @@
 ﻿using Grpc.Core;
 using System;
-using Grpc.Extension.Model;
 using System.Linq;
 using Grpc.Extension.Common.Internal;
 using Grpc.Extension.Common;
 using Grpc.Extension.Abstract.Model;
 using Grpc.Extension.Abstract.Discovery;
+using Grpc.Extension.BaseService.Model;
+using Microsoft.Extensions.Options;
 
 namespace Grpc.Extension
 {
@@ -23,27 +24,33 @@ namespace Grpc.Extension
         /// <returns></returns>
         public static Server StartAndRegisterService(this Server server)
         {
+            //启动服务
             server.Start();
             var ipAndPort = server.Ports.FirstOrDefault();
-            if (ipAndPort != null)
+            if (ipAndPort == null) return server;
+            //输出启动信息
+            MetaModel.StartTime = DateTime.Now;
+            MetaModel.Ip = ipAndPort.Host;
+            MetaModel.Port = ipAndPort.BoundPort;
+            Console.WriteLine($"server listening {MetaModel.Ip}:{MetaModel.Port}");
+
+            //服务注册
+            var grpcServerOptions = ServiceProviderAccessor.GetService<IOptions<GrpcServerOptions>>().Value;
+            
+            if (grpcServerOptions.EnableDiscovery)
             {
-                MetaModel.StartTime = DateTime.Now;
-                MetaModel.Ip = ipAndPort.Host;
-                MetaModel.Port = ipAndPort.BoundPort;
-                Console.WriteLine($"server listening {MetaModel.Ip}:{MetaModel.Port}");
-                
                 //检查服务注册配制
-                if (string.IsNullOrWhiteSpace(GrpcServerOptions.Instance.DiscoveryUrl))
+                if (string.IsNullOrWhiteSpace(grpcServerOptions.DiscoveryUrl))
                     throw new ArgumentException("GrpcServer:DiscoveryUrl is null");
-                if (string.IsNullOrWhiteSpace(GrpcServerOptions.Instance.DiscoveryServiceName))
+                if (string.IsNullOrWhiteSpace(grpcServerOptions.DiscoveryServiceName))
                     throw new ArgumentException("GrpcServer:DiscoveryServiceName is null");
 
                 //服务注册
                 var serviceRegister = ServiceProviderAccessor.GetService<IServiceRegister>();
                 Console.WriteLine($"use {serviceRegister.GetType().Name} register");
-                Console.WriteLine($"    DiscoveryUrl:{GrpcServerOptions.Instance.DiscoveryUrl}");
-                Console.WriteLine($"    ServiceName:{GrpcServerOptions.Instance.DiscoveryServiceName}");
-                var registerModel = GrpcServerOptions.Instance.ToJson().FromJson<ServiceRegisterModel>();
+                Console.WriteLine($"    DiscoveryUrl:{grpcServerOptions.DiscoveryUrl}");
+                Console.WriteLine($"    ServiceName:{grpcServerOptions.DiscoveryServiceName}");
+                var registerModel = grpcServerOptions.ToJson().FromJson<ServiceRegisterModel>();
                 registerModel.ServiceIp = ipAndPort.Host;
                 registerModel.ServicePort = ipAndPort.BoundPort;
                 serviceRegister.RegisterService(registerModel);
@@ -59,8 +66,13 @@ namespace Grpc.Extension
         public static Server StopAndDeRegisterService(this Server server)
         {
             //服务反注册
-            var serviceRegister = ServiceProviderAccessor.GetService<IServiceRegister>();
-            serviceRegister.DeregisterService();
+            var grpcServerOptions = ServiceProviderAccessor.GetService<IOptions<GrpcServerOptions>>().Value;
+            if (grpcServerOptions.EnableDiscovery)
+            {
+                var serviceRegister = ServiceProviderAccessor.GetService<IServiceRegister>();
+                serviceRegister.DeregisterService();
+            }
+            //停止服务
             server.ShutdownAsync().Wait();
             
             return server;

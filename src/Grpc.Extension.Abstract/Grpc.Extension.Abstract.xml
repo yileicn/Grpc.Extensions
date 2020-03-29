@@ -36,7 +36,12 @@
         </member>
         <member name="T:Grpc.Extension.Abstract.IGrpcService">
             <summary>
-            GrpcService
+            GrpcService(CodeFirst)
+            </summary>
+        </member>
+        <member name="T:Grpc.Extension.Abstract.NotGrpcMethodAttribute">
+            <summary>
+            非Grpc方法
             </summary>
         </member>
         <member name="T:Grpc.Extension.Abstract.ILoadBalancer">

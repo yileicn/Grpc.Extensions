@@ -13,7 +13,7 @@
 5.DashBoard(远程调用，手动熔断，日志输出控制)
 6.Grpc CodeFirst</Description>
     <Company />
-    <Version>1.4.3</Version>
+    <Version>1.4.5</Version>
     <RepositoryType>git</RepositoryType>
     <PackageTags>grpc,dashboard,consul,micorservice,opentracing,polly</PackageTags>
     <RepositoryUrl>https://github.com/yileicn/Grpc.Extensions/</RepositoryUrl>
@@ -28,11 +28,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.Core" Version="1.19.0" />
+    <PackageReference Include="Grpc.Core" Version="2.24.0" />
     <PackageReference Include="Jaeger" Version="0.2.2" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>

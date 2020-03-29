@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.4.4</Version>
+    <Version>1.4.5</Version>
     <PackageProjectUrl>https://github.com/yileicn/Grpc.Extensions/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/yileicn/Grpc.Extensions/</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -13,13 +13,17 @@
 
   <ItemGroup>
     <PackageReference Include="AspectCore.Extensions.Reflection" Version="1.1.0" />
-    <PackageReference Include="Grpc.Core" Version="1.19.0" />
+    <PackageReference Include="Grpc.Core" Version="2.24.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="protobuf-net" Version="2.4.0" />
     <PackageReference Include="Scrutor" Version="3.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Grpc.Extension.Abstract\Grpc.Extension.Abstract.csproj" />
   </ItemGroup>
 
 </Project>

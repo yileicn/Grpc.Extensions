@@ -28,7 +28,6 @@ namespace GreeterServer
         {
             using (var host = BuildHost(args))
             {
-                AppServiceProvider.ServiceProvider = host.Services;
                 host.Run();
             }
         }

@@ -11,16 +11,15 @@ namespace Grpc.Extension
     /// </summary>
     public class GrpcServerOptions
     {
-        private static readonly GrpcServerOptions _instance = new GrpcServerOptions();
-        internal static GrpcServerOptions Instance
-        {
-            get { return _instance; }
-        }
-
         /// <summary>
-        /// Grpc服务地址(192.168.*.*:)
+        /// Grpc服务地址(192.168.*.*:0)
         /// </summary>
         public string ServiceAddress { get; set; }
+
+        /// <summary>
+        /// 是否启用服务注册和服务发现
+        /// </summary>
+        public bool EnableDiscovery { get; set; } = true;
 
         /// <summary>
         /// 服务注册地址(http://192.168.8.6:8500)

@@ -8,6 +8,7 @@ build:clean
 	-dotnet pack ./src/Grpc.Extension.Common/Grpc.Extension.Common.csproj -c Release -o ./nupkgs
 	-dotnet pack ./src/Grpc.Extension.Client/Grpc.Extension.Client.csproj -c Release -o ./nupkgs
 	-dotnet pack ./src/Grpc.Extension/Grpc.Extension.csproj -c Release -o ./nupkgs
+	-dotnet pack ./src/Grpc.Extension.AspNetCore/Grpc.Extension.AspNetCore.csproj -c Release -o ./nupkgs
 
 push-dev:build
 	#method one

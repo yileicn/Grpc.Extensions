@@ -2,6 +2,7 @@
 using Grpc.Extension.Common.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OpenTracing;
 using OpenTracing.Util;
 using System;
@@ -13,47 +14,24 @@ namespace Grpc.Extension.Client
     /// </summary>
     public class GrpcClientApp
     {
-        private IConfiguration _conf;
+        private readonly GrpcClientOptions _grpcClientOptions;
         private readonly ILoggerFactory _loggerFactory;
 
         /// <summary>
         /// GrpcClientApp
         /// </summary>
         /// <param name="serviceProvider"></param>
-        /// <param name="conf"></param>
+        /// <param name="grpcClientOptions"></param>
         /// <param name="loggerFactory"></param>
-        public GrpcClientApp(IServiceProvider serviceProvider, IConfiguration conf, ILoggerFactory loggerFactory)
+        public GrpcClientApp(IServiceProvider serviceProvider, IOptions<GrpcClientOptions> grpcClientOptions, ILoggerFactory loggerFactory)
         {
             ServiceProviderAccessor.SetServiceProvider(serviceProvider);
-            _conf = conf;
+            _grpcClientOptions = grpcClientOptions.Value;
             _loggerFactory = loggerFactory;
 
-            this.InitGrpcOption()//初始化配制
-                .UseLoggerFactory()//使用LoggerFactory
+            this.UseLoggerFactory()//使用LoggerFactory
                 .UseJaeger();
 
-        }
-
-        /// <summary>
-        /// 从配制文件初始化
-        /// </summary>
-        /// <returns></returns>
-        private GrpcClientApp InitGrpcOption()
-        {
-            //初始化GrpcClientOption
-            var clientConfig = _conf.GetSection("GrpcClient").Get<GrpcClientOptions>();
-
-            if(clientConfig != null)
-            {
-                var clientOptions = GrpcClientOptions.Instance;
-                clientOptions.DiscoveryUrl = clientConfig.DiscoveryUrl;
-                clientOptions.ServiceAddressCacheTime = clientConfig.ServiceAddressCacheTime;
-                clientOptions.DefaultErrorCode = clientConfig.DefaultErrorCode;
-                clientOptions.Jaeger = clientConfig.Jaeger;
-                clientOptions.GrpcCallTimeOut = clientConfig.GrpcCallTimeOut;
-            }
-
-            return this;
         }
 
         /// <summary>
@@ -63,7 +41,7 @@ namespace Grpc.Extension.Client
         /// <returns></returns>
         public GrpcClientApp UseGrpcOptions(Action<GrpcClientOptions> options)
         {
-            options(GrpcClientOptions.Instance);
+            options(_grpcClientOptions);
             return this;
         }
 
@@ -98,7 +76,7 @@ namespace Grpc.Extension.Client
         /// </summary>
         private void UseJaeger()
         {
-            var jaeger = GrpcClientOptions.Instance.Jaeger;
+            var jaeger = _grpcClientOptions.Jaeger;
             if (jaeger?.CheckConfig() == true)
             {
                 var tracer = ServiceProviderAccessor.GetService<ITracer>();
@@ -112,7 +90,7 @@ namespace Grpc.Extension.Client
         public void Run()
         {
             //检查服务发现配制
-            if (string.IsNullOrWhiteSpace(GrpcClientOptions.Instance.DiscoveryUrl))
+            if (string.IsNullOrWhiteSpace(_grpcClientOptions.DiscoveryUrl))
                 throw new ArgumentException("GrpcClient:DiscoveryUrl is null");
         }
     }

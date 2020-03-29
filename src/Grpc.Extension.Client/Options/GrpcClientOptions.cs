@@ -10,15 +10,6 @@ namespace Grpc.Extension.Client
     /// </summary>
     public class GrpcClientOptions
     {
-        private static readonly GrpcClientOptions _instance = new GrpcClientOptions();
-        /// <summary>
-        /// Instance
-        /// </summary>
-        public static GrpcClientOptions Instance
-        {
-            get { return _instance; }
-        }
-
         /// <summary>
         /// 服务发现地址(http://192.168.8.6:8500)
         /// </summary>

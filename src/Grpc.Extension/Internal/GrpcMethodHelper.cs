@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Extension.Abstract;
 using Grpc.Extension.BaseService;
+using Grpc.Extension.BaseService.Model;
+using Grpc.Extension.Common;
+using Grpc.Extension.Common.Internal;
 
 namespace Grpc.Extension.Internal
 {
@@ -22,7 +25,7 @@ namespace Grpc.Extension.Internal
         // ReSharper disable once IdentifierTypo
         static GrpcMethodHelper()
         {
-            buildMethod = typeof(GrpcServiceExtension).GetMethod("BuildMethod");
+            buildMethod = typeof(GrpcMethodHelper).GetMethod("BuildMethod");
             var methods = typeof(ServerServiceDefinition.Builder).GetMethods().Where(p => p.Name == "AddMethod");
             foreach (var method in methods)
             {
@@ -109,10 +112,47 @@ namespace Grpc.Extension.Internal
                 addMethod.MakeGenericMethod(reallyInputType, reallyOutputType).Invoke(builder, new[] { buildMethodResult, serverMethodDelegate });
             }
         }
-    }
 
-    /// <summary>
-    /// 非Grpc方法
-    /// </summary>
-    public sealed class NotGrpcMethodAttribute : Attribute { }
+        /// <summary>
+        /// 生成Grpc方法（CodeFirst方式）
+        /// </summary>
+        /// <typeparam name="TRequest"></typeparam>
+        /// <typeparam name="TResponse"></typeparam>
+        /// <param name="srv"></param>
+        /// <param name="methodName"></param>
+        /// <param name="package"></param>
+        /// <param name="srvName"></param>
+        /// <param name="mType"></param>
+        /// <returns></returns>
+        public static Method<TRequest, TResponse> BuildMethod<TRequest, TResponse>(this IGrpcService srv,
+            string methodName, string package = null, string srvName = null, MethodType mType = MethodType.Unary)
+        {
+            var serviceName = srvName ??
+                              GrpcExtensionsOptions.Instance.GlobalService ??
+                              srv.GetType().Name;
+            var pkg = package ?? GrpcExtensionsOptions.Instance.GlobalPackage;
+            if (!string.IsNullOrWhiteSpace(pkg))
+            {
+                serviceName = $"{pkg}.{serviceName}";
+            }
+            #region 为生成proto收集信息
+            if (!(srv is IGrpcBaseService) || GrpcExtensionsOptions.Instance.GenBaseServiceProtoEnable)
+            {
+                ProtoInfo.Methods.Add(new ProtoMethodInfo
+                {
+                    ServiceName = serviceName,
+                    MethodName = methodName,
+                    RequestName = typeof(TRequest).Name,
+                    ResponseName = typeof(TResponse).Name,
+                    MethodType = mType
+                });
+                ProtoGenerator.AddProto<TRequest>(typeof(TRequest).Name);
+                ProtoGenerator.AddProto<TResponse>(typeof(TResponse).Name);
+            }
+            #endregion
+            var request = Marshallers.Create<TRequest>((arg) => ProtobufExtensions.Serialize<TRequest>(arg), data => ProtobufExtensions.Deserialize<TRequest>(data));
+            var response = Marshallers.Create<TResponse>((arg) => ProtobufExtensions.Serialize<TResponse>(arg), data => ProtobufExtensions.Deserialize<TResponse>(data));
+            return new Method<TRequest, TResponse>(mType, serviceName, methodName, request, response);
+        }
+    }
 }

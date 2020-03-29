@@ -7,6 +7,7 @@ using OpenTracing;
 using Microsoft.Extensions.Configuration;
 using Grpc.Extension.Client;
 using Grpc.Extension.Abstract;
+using Microsoft.Extensions.Options;
 
 namespace Grpc.Extension
 {
@@ -18,12 +19,14 @@ namespace Grpc.Extension
         /// <summary>
         /// 添加Grpc扩展
         /// </summary>
-        /// <typeparam name="TStartup"></typeparam>
+        /// <typeparam name="TStartup">实现IGrpcService的类所在程序集下的任意类</typeparam>
         /// <param name="services"></param>
         /// <param name="conf"></param>
         /// <returns></returns>
         public static IServiceCollection AddGrpcExtensions<TStartup>(this IServiceCollection services, IConfiguration conf)
         {
+            //注入配制
+            services.Configure<GrpcServerOptions>(conf.GetSection("GrpcServer"));
             //添加IGrpService
             services.Scan(scan => scan
                 .FromAssemblyOf<TStartup>()
@@ -51,7 +54,7 @@ namespace Grpc.Extension
         /// <param name="services"></param>
         /// <param name="conf"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJaeger(this IServiceCollection services, IConfiguration conf)
+        private static IServiceCollection AddJaeger(this IServiceCollection services, IConfiguration conf)
         {
             var key = "GrpcServer:Jaeger";
             var jaegerOptions = conf.GetSection(key).Get<JaegerOptions>();
@@ -60,8 +63,8 @@ namespace Grpc.Extension
 
             //jaeger
             services.AddSingleton<ITracer>(sp => {
-                var options = GrpcServerOptions.Instance.Jaeger;
-                var serviceName = options.ServiceName;
+                var options = sp.GetService<IOptions<GrpcServerOptions>>().Value;
+                var serviceName = options.Jaeger.ServiceName;
                 var tracer = new Jaeger.Tracer.Builder(serviceName)
                .WithLoggerFactory(sp.GetService<ILoggerFactory>())
                .WithSampler(new Jaeger.Samplers.ConstSampler(true))
