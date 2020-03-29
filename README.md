@@ -19,14 +19,20 @@
 - Grpc ProtoFirst
 	- 通过Proto生成代码和注释
 - Grpc CodeFirst
-	- 通过代码生成proto和注释(GrpcMethod自动注册)
+	- 通过代码生成proto和注释给第三方语言使用(GrpcMethod自动注册)
 	- 代码更干净且方便扩展，例如可以在ProtoMessage上打验证特性来统一处理验证逻辑等
 	- 更方便拆分GrpcService到多个类，而不是使用partial class
 
 ### NuGet Package
-- [Grpc.Extensions](https://www.nuget.org/packages/FM.Grpc.Extensions/)
-- [Grpc.Extensions.Client](https://www.nuget.org/packages/FM.Grpc.Extensions.Client/)
-- [Grpc.Extensions.Discovery](https://www.nuget.org/packages/FM.Grpc.Extensions.Discovery/)
+支持NetFramework4.6,NetCore2.1
+- [Grpc.Extensions 服务端](https://www.nuget.org/packages/FM.Grpc.Extensions/)
+- [Grpc.Extensions.Client 客户端](https://www.nuget.org/packages/FM.Grpc.Extensions.Client/)
+- [Grpc.Extensions.Discovery 服务注册和发现](https://www.nuget.org/packages/FM.Grpc.Extensions.Discovery/)
+
+支持asp.netcore3.0
+- [Grpc.Extensions.AspNetCore 服务端](https://www.nuget.org/packages/FM.Grpc.Extensions.AspNetCore/)
+- [Grpc.Extensions.Client 客户端](https://www.nuget.org/packages/FM.Grpc.Extensions.Client/)
+- [Grpc.Extensions.Discovery 服务注册和发现](https://www.nuget.org/packages/FM.Grpc.Extensions.Discovery/)
 
 ### Documentation
 - [Grpc ProtoFirst Demo](https://github.com/yileicn/Grpc.Extensions/tree/master/examples/Greeter)
@@ -40,6 +46,8 @@
 ## 依赖的技术栈
 -  [dotnet standard 2.0]()
 -  [gRPC - An RPC library and framework](https://github.com/grpc/grpc)
+-  [gRPC-dotnet - gRPC for .NET](https://github.com/grpc/grpc-dotnet)
+-  [Protobuf-net - Protocol Buffers library for idiomatic .NET](https://github.com/protobuf-net/protobuf-net)
 -  [Consul - Service Discovery and Configuration Made Easy](https://consul.io)
 -  [Polly - Polly is a .NET resilience and transient-fault-handling library](https://github.com/App-vNext/Polly)
 -  [OpenTracing(Jaeger) - a Distributed Tracing System](https://github.com/jaegertracing/jaeger)
