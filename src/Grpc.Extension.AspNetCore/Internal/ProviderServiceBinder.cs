@@ -28,11 +28,11 @@ namespace Grpc.Extension.AspNetCore.Internal
 
         public override void AddMethod<TRequest, TResponse>(Method<TRequest, TResponse> method, ClientStreamingServerMethod<TRequest, TResponse> handler)
         {
-            if (_isIGrpcService)
-            {
-                var (invoker, metadata) = CreateModelCore<ClientStreamingServerMethod<TService, TRequest, TResponse>>(
+            var (invoker, metadata) = CreateModelCore<ClientStreamingServerMethod<TService, TRequest, TResponse>>(
                 method.Name,
                 new[] { typeof(IAsyncStreamReader<TRequest>), typeof(ServerCallContext) });
+            if (_isIGrpcService)
+            {
                 _context.AddClientStreamingMethod<TRequest, TResponse>(method, metadata, invoker);
             }
             AddMetaMethod((new MetaMethodModel
@@ -40,18 +40,18 @@ namespace Grpc.Extension.AspNetCore.Internal
                 FullName = method.FullName,
                 RequestType = typeof(TRequest),
                 ResponseType = typeof(TResponse),
-                Handler = handler
-            }));
+                ServiceType = typeof(TService),
+                Handler = invoker
+            })); 
         }
 
         public override void AddMethod<TRequest, TResponse>(Method<TRequest, TResponse> method, DuplexStreamingServerMethod<TRequest, TResponse> handler)
         {
-            if (_isIGrpcService)
-            {
-                var (invoker, metadata) = CreateModelCore<DuplexStreamingServerMethod<TService, TRequest, TResponse>>(
+            var (invoker, metadata) = CreateModelCore<DuplexStreamingServerMethod<TService, TRequest, TResponse>>(
                 method.Name,
                 new[] { typeof(IAsyncStreamReader<TRequest>), typeof(IServerStreamWriter<TResponse>), typeof(ServerCallContext) });
-
+            if (_isIGrpcService)
+            {
                 _context.AddDuplexStreamingMethod<TRequest, TResponse>(method, metadata, invoker);
             }
             AddMetaMethod((new MetaMethodModel
@@ -59,18 +59,18 @@ namespace Grpc.Extension.AspNetCore.Internal
                 FullName = method.FullName,
                 RequestType = typeof(TRequest),
                 ResponseType = typeof(TResponse),
-                Handler = handler
+                ServiceType = typeof(TService),
+                Handler = invoker
             }));
         }
 
         public override void AddMethod<TRequest, TResponse>(Method<TRequest, TResponse> method, ServerStreamingServerMethod<TRequest, TResponse> handler)
         {
-            if (_isIGrpcService)
-            {
-                var (invoker, metadata) = CreateModelCore<ServerStreamingServerMethod<TService, TRequest, TResponse>>(
+            var (invoker, metadata) = CreateModelCore<ServerStreamingServerMethod<TService, TRequest, TResponse>>(
                 method.Name,
                 new[] { typeof(TRequest), typeof(IServerStreamWriter<TResponse>), typeof(ServerCallContext) });
-
+            if (_isIGrpcService)
+            {
                 _context.AddServerStreamingMethod<TRequest, TResponse>(method, metadata, invoker);
             }
             AddMetaMethod((new MetaMethodModel
@@ -78,18 +78,18 @@ namespace Grpc.Extension.AspNetCore.Internal
                 FullName = method.FullName,
                 RequestType = typeof(TRequest),
                 ResponseType = typeof(TResponse),
-                Handler = handler
+                ServiceType = typeof(TService),
+                Handler = invoker
             }));
         }
 
         public override void AddMethod<TRequest, TResponse>(Method<TRequest, TResponse> method, UnaryServerMethod<TRequest, TResponse> handler)
         {
-            if (_isIGrpcService)
-            {
-                var (invoker, metadata) = CreateModelCore<UnaryServerMethod<TService, TRequest, TResponse>>(
+            var (invoker, metadata) = CreateModelCore<UnaryServerMethod<TService, TRequest, TResponse>>(
                 method.Name,
                 new[] { typeof(TRequest), typeof(ServerCallContext) });
-
+            if (_isIGrpcService)
+            {
                 _context.AddUnaryMethod<TRequest, TResponse>(method, metadata, invoker);
             }
             AddMetaMethod((new MetaMethodModel
@@ -97,8 +97,23 @@ namespace Grpc.Extension.AspNetCore.Internal
                 FullName = method.FullName,
                 RequestType = typeof(TRequest),
                 ResponseType = typeof(TResponse),
-                Handler = handler
+                ServiceType =  typeof(TService),
+                Handler = invoker
             }));
+        }
+
+        private Delegate GetOrCreateHandler<TDelegate>(Delegate handler ,string methodName, Type[] methodParameters)
+        {
+            if (handler != null) return handler;
+            //创建Handler
+            var handlerMethod = GetMethod(methodName, methodParameters);
+            if (handlerMethod == null)
+            {
+                throw new InvalidOperationException($"Could not find '{methodName}' on {typeof(TService)}.");
+            }
+            handler = handlerMethod.CreateDelegate(typeof(TDelegate),null);
+
+            return handler;
         }
 
         private (TDelegate invoker, List<object> metadata) CreateModelCore<TDelegate>(string methodName, Type[] methodParameters) where TDelegate : Delegate

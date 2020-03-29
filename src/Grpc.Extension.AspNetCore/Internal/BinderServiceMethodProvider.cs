@@ -7,11 +7,6 @@ namespace Grpc.Extension.AspNetCore.Internal
 {
     internal class BinderServiceMethodProvider<TService> : IServiceMethodProvider<TService> where TService : class
     {
-        private IServiceProvider _serviceProvider;
-        public BinderServiceMethodProvider(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
         public void OnServiceMethodDiscovery(ServiceMethodProviderContext<TService> context)
         {
             var bindMethodInfo = BindMethodFinder.GetBindMethod(typeof(TService));
@@ -30,8 +25,7 @@ namespace Grpc.Extension.AspNetCore.Internal
                         bindMethodInfo.Invoke(null, new object?[] { binder, typeof(TService) });
                     else
                     {
-                        var service = ActivatorUtilities.CreateInstance<TService>(_serviceProvider);
-                        bindMethodInfo.Invoke(null, new object?[] { binder, service });
+                        bindMethodInfo.Invoke(null, new object?[] { binder, null });
                     }
                 }
                 catch (Exception ex)

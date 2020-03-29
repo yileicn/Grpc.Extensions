@@ -24,5 +24,7 @@ namespace Grpc.Extension.BaseService.Model
         public Type ResponseType { get; set; }
 
         public Delegate Handler { get; set; }
+
+        public Type ServiceType { get; set; }
     }
 }

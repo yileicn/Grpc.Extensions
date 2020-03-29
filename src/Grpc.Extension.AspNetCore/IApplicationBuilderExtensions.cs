@@ -35,7 +35,7 @@ namespace Grpc.Extension.AspNetCore
                 endpoints.MapIGrpcServices<TStartup>();
                 //使用基础服务
                 endpoints.MapGrpcService<CmdService>();
-                endpoints.MapGrpcService<MetaService>();
+                endpoints.MapGrpcService<MetaServiceAspnetCore>();
             });
             //默认使用
             builder.InitGrpcOptions()//初始化配制
