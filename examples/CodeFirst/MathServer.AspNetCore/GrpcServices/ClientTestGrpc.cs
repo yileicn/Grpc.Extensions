@@ -9,11 +9,18 @@ namespace MathServer.AspNetCore
 {
     public class ClientTestGrpc : IGrpcService
     {
+        private readonly TestScope _testScope;
+        private readonly GreeterClient _greeterClient;
+
+        public ClientTestGrpc(TestScope testScope, GreeterClient greeterClient)
+        {
+            _testScope = testScope;
+            _greeterClient = greeterClient;
+        }
         public async Task<StringMessage> ClientTest(EmptyMessage request, ServerCallContext context)
         {
-            var greeterClient = ServiceProviderAccessor.GetService<GreeterClient>();
-            var result = await greeterClient.SayHelloAsync(new Helloworld.HelloRequest() { Name = "yilei" });
-            return new StringMessage() { Value = result.Message };
+            var result = await _greeterClient.SayHelloAsync(new Helloworld.HelloRequest() { Name = "yilei" });
+            return new StringMessage() { Value = $"{result.Message},guid {_testScope.Id} " };
         }
     }
 }

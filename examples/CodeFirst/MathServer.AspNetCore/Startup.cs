@@ -22,6 +22,7 @@ namespace MathServer.AspNetCore
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<TestScope>();
             //添加Grpc扩展
             services.AddGrpcExtensions(_conf);
             //添加第三方GrpcClient
@@ -37,6 +38,9 @@ namespace MathServer.AspNetCore
             }
             
             app.UseRouting();
+
+            //不使用Request Scope
+            //app.UseMiddleware<ServiceProvidersMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

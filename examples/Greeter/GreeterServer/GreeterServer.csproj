@@ -165,7 +165,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\AppServiceProvider.cs" />
     <Compile Include="Common\ScopeServiceProvider.cs" />
     <Compile Include="GreeterImpl.cs" />
     <Compile Include="GrpcHostServiceV2.cs" />
