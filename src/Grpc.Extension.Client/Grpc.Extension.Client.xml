@@ -360,6 +360,15 @@
             <param name="channelOptions">ChannelOption</param>
             <returns></returns>
         </member>
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClient``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Grpc.Extension.Client.Model.ChannelConfig})">
+            <summary>
+            添加GrpcClient到Discovery,生成元数据
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="services"></param>
+            <param name="configureChannel"></param>
+            <returns></returns>
+        </member>
         <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClientByDiscovery``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String,System.Collections.Generic.IEnumerable{Grpc.Core.ChannelOption})">
             <summary>
             添加GrpcClient到Discovery,生成元数据

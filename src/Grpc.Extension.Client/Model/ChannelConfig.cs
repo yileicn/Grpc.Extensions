@@ -6,7 +6,7 @@ namespace Grpc.Extension.Client.Model
     /// <summary>
     /// ChannelConfig
     /// </summary>
-    internal class ChannelConfig
+    public class ChannelConfig
     {
         /// <summary>
         /// Discovery的服务器地址(http://192.168.8.6:8500)

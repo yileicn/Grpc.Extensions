@@ -96,6 +96,25 @@ namespace Grpc.Extension.Client
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="services"></param>
+        /// <param name="configureChannel"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, Action<ChannelConfig> configureChannel) where T : ClientBase<T>
+        {
+            services.AddSingleton<T>();
+            var channelConfig = new ChannelConfig();
+            configureChannel(channelConfig);
+            var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
+            channelConfig.GrpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
+            ChannelPool.Configs.Add(channelConfig);
+
+            return services;
+        }
+
+        /// <summary>
+        /// 添加GrpcClient到Discovery,生成元数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="services"></param>
         /// <param name="discoveryServiceName">Discovery上客户端服务名字</param>
         /// <param name="discoveryUrl">Discovery的服务器地址</param>
         /// <param name="channelOptions">ChannelOption</param>
