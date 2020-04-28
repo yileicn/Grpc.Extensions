@@ -111,6 +111,11 @@
             <param name="mType"></param>
             <returns></returns>
         </member>
+        <member name="T:Grpc.Extension.Internal.GrpcServerHosted">
+            <summary>
+            GrpcServer
+            </summary>
+        </member>
         <member name="T:Grpc.Extension.BaseService.GrpcServiceExtension">
             <summary>
             GrpcServiceExtension

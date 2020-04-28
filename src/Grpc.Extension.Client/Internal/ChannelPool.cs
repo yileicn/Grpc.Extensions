@@ -9,6 +9,7 @@ using Grpc.Extension.Abstract.Discovery;
 using Grpc.Extension.Abstract;
 using Grpc.Extension.Client.Model;
 using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace Grpc.Extension.Client.Internal
 {
@@ -36,6 +37,7 @@ namespace Grpc.Extension.Client.Internal
             this._loadBalancer = loadBalancer;
             this._memoryCache = memoryCache;
             this._grpcClientOptions = grpcClientOptions.Value;
+            this._serviceDiscovery.ServiceChanged += ServiceDiscovery_ServiceChanged;
         }
 
         internal static List<ChannelConfig> Configs { get; set; } = new List<ChannelConfig>();
@@ -43,7 +45,7 @@ namespace Grpc.Extension.Client.Internal
         /// <summary>
         /// 根据客户端代理类型获取channel
         /// </summary>
-        public Channel GetChannel(string grpcServiceName)
+        public async Task<Channel> GetChannel(string grpcServiceName)
         {
             var config = Configs?.FirstOrDefault(q => q.GrpcServiceName == grpcServiceName?.Trim());
             if (config == null)
@@ -52,28 +54,28 @@ namespace Grpc.Extension.Client.Internal
             }
             if (config.UseDirect)
             {
-                return GetChannelCore(config.DirectEndpoint,config);
+                return await GetChannelCore(config.DirectEndpoint,config);
             }
             else//from discovery
             {
                 var discoveryUrl = !string.IsNullOrWhiteSpace(config.DiscoveryUrl) ? config.DiscoveryUrl : _grpcClientOptions.DiscoveryUrl;
-                var endPoint = GetEndpoint(config.DiscoveryServiceName, discoveryUrl, config.DiscoveryServiceTag);
-                return GetChannelCore(endPoint,config);
+                var endPoint = await GetEndpoint(config.DiscoveryServiceName, discoveryUrl, config.DiscoveryServiceTag);
+                return await GetChannelCore(endPoint,config);
             }
         }
 
         /// <summary>
         /// 根据服务名称返回服务地址
         /// </summary>
-        private string GetEndpoint(string serviceName, string dicoveryUrl, string serviceTag)
+        private async Task<string> GetEndpoint(string serviceName, string dicoveryUrl, string serviceTag)
         {
             //获取健康的endpoints
             var isCache = true;
-            var healthEndpoints = _memoryCache.GetOrCreate(serviceName, cacheEntry =>
+            var healthEndpoints = await _memoryCache.GetOrCreateAsync(serviceName, async cacheEntry =>
             {
                 isCache = false;
-                cacheEntry.SetAbsoluteExpiration(TimeSpan.FromSeconds(_grpcClientOptions.ServiceAddressCacheTime));
-                return _serviceDiscovery.GetEndpoints(serviceName, dicoveryUrl, serviceTag);
+                //cacheEntry.SetAbsoluteExpiration(TimeSpan.FromSeconds(_grpcClientOptions.ServiceAddressCacheTime));
+                return await _serviceDiscovery.GetEndpoints(serviceName, dicoveryUrl, serviceTag);
             });
             if (healthEndpoints == null || healthEndpoints.Count == 0)
             {
@@ -85,18 +87,38 @@ namespace Grpc.Extension.Client.Internal
             return _loadBalancer.SelectEndpoint(serviceName, healthEndpoints);
         }
 
-        private Channel GetChannelCore(string endpoint,ChannelConfig config)
+        /// <summary>
+        /// 服务地址和端口发生改变
+        /// </summary>
+        /// <param name="serviceName"></param>
+        /// <param name="healthEndpoints"></param>
+        private void ServiceDiscovery_ServiceChanged(string serviceName, List<string> healthEndpoints)
+        {
+            _memoryCache.Set(serviceName, healthEndpoints);
+            //关闭不健康的Channel
+            ShutdownErrorChannel(healthEndpoints, serviceName);
+        }
+
+        private async Task<Channel> GetChannelCore(string endpoint,ChannelConfig config)
         {
             //获取channel，不存在就添加
-            var channel = _channels.GetOrAdd(endpoint, (key) => CreateChannel(key,config)).Channel;
+            if (!_channels.TryGetValue(endpoint, out var channelInfo))
+            {
+                //新增或者修改channel
+                channelInfo = await CreateChannel(endpoint, config);
+                _channels.AddOrUpdate(endpoint, channelInfo, (k, v) => channelInfo);
+            }
+
+            var channel = channelInfo.Channel;
             //检查channel状态
             if (channel.State != ChannelState.Ready)
             {
                 //状态异常就关闭后重建
-                channel.ShutdownAsync();
+                _ = channel.ShutdownAsync();
                 _channels.TryRemove(config.DiscoveryServiceName, out var tmp);
                 //新增或者修改channel
-                return _channels.AddOrUpdate(endpoint, (key) => CreateChannel(key, config), (key, value) => CreateChannel(key,config)).Channel;
+                channelInfo = await CreateChannel(endpoint, config);
+                return _channels.AddOrUpdate(endpoint, (key) => channelInfo, (key, value) => channelInfo).Channel;
             }
             else
             {
@@ -104,7 +126,7 @@ namespace Grpc.Extension.Client.Internal
             }
         }
 
-        private ChannelInfo CreateChannel(string endPoint, ChannelConfig config)
+        private async Task<ChannelInfo> CreateChannel(string endPoint, ChannelConfig config)
         {
             var channel = new Channel(endPoint, ChannelCredentials.Insecure, config.ChannelOptions);
 
@@ -114,7 +136,7 @@ namespace Grpc.Extension.Client.Internal
             {
                 try
                 {
-                    channel.ConnectAsync(DateTime.UtcNow.AddSeconds(1)).Wait();
+                    await channel.ConnectAsync(DateTime.UtcNow.AddSeconds(1));
                 }
                 catch (Exception ex)
                 {
@@ -132,7 +154,7 @@ namespace Grpc.Extension.Client.Internal
                     //重新获取Endpoint,故障转移
                     if (!config.UseDirect)
                     {
-                        endPoint = GetEndpoint(config.DiscoveryServiceName, config.DiscoveryUrl, config.DiscoveryServiceTag);
+                        endPoint = await GetEndpoint(config.DiscoveryServiceName, config.DiscoveryUrl, config.DiscoveryServiceTag);
                         channel = new Channel(endPoint, ChannelCredentials.Insecure);
                     }
                 }
