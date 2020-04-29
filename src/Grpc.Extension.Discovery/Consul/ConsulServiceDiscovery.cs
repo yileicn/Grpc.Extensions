@@ -15,6 +15,7 @@ namespace Grpc.Extension.Discovery.Consul
     {
         private ConcurrentDictionary<string, ConsulClient> _consulClients = new ConcurrentDictionary<string, ConsulClient>();
         private ConcurrentDictionary<string, ulong> _lastIndexs = new ConcurrentDictionary<string, ulong>();
+        private ConcurrentBag<string> _pollForChanges = new ConcurrentBag<string>();
 
         public event ServiceChangedEvent ServiceChanged;
 
@@ -28,7 +29,8 @@ namespace Grpc.Extension.Discovery.Consul
             //更新LastIndex
             UpdateLastIndex(serviceName, res);
             //PollForChanges
-            _ = Task.Run(() => PollForChanges(serviceName, consulUrl, consulTag));  
+            _ = Task.Run(() => PollForChanges(serviceName, consulUrl, consulTag));
+            
             return res.Response.Select(q => $"{q.Service.Address}:{q.Service.Port}").ToList();
         }        
         
@@ -46,10 +48,13 @@ namespace Grpc.Extension.Discovery.Consul
         /// <returns></returns>
         private async Task PollForChanges(string serviceName, string consulUrl, string consulTag)
         {
+            if (_pollForChanges.Contains(serviceName)) return;
+            _pollForChanges.Add(serviceName);
+
             var client = CreateConsulClient(consulUrl);
             while (true)
             {
-                _lastIndexs.TryGetValue(serviceName, out var lastIndex);
+                _lastIndexs.TryGetValue(serviceName, out var lastIndex);                
                 var queryOptions = new QueryOptions() { WaitIndex = lastIndex };
                 var res = await client.Health.Service(serviceName, consulTag, true, queryOptions);
                 if (res != null && UpdateLastIndex(serviceName,res))
@@ -73,7 +78,6 @@ namespace Grpc.Extension.Discovery.Consul
                 _lastIndexs.AddOrUpdate(serviceName, queryResult.LastIndex, (k, v) => queryResult.LastIndex);
                 return true;
             }
-            
             return false;
         }
 
