@@ -35,11 +35,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.Extension.AspNetCore",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathServer.AspNetCore", "examples\CodeFirst\MathServer.AspNetCore\MathServer.AspNetCore.csproj", "{CF0443B5-DC32-4C80-B80E-A3F8D6E1792B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreeterClientTest", "examples\Greeter\GreeterClientTest\GreeterClientTest.csproj", "{ACCF4597-3748-4117-8633-1CB767F8CCC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreeterClientHost", "examples\Greeter\GreeterClientHost\GreeterClientHost.csproj", "{ACCF4597-3748-4117-8633-1CB767F8CCC3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreeterClient", "examples\Greeter\GreeterClient\GreeterClient.csproj", "{724DFC8C-4B57-4C3F-811C-0463BE2A2829}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNetCore3.0", "AspNetCore3.0", "{291086F1-5608-46C9-9976-BD969B8C8256}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathClientHost", "examples\CodeFirst\MathClientHost\MathClientHost.csproj", "{5B3DC8DC-AC90-4BF2-9E1C-DE46F9782160}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +105,10 @@ Global
 		{724DFC8C-4B57-4C3F-811C-0463BE2A2829}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{724DFC8C-4B57-4C3F-811C-0463BE2A2829}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{724DFC8C-4B57-4C3F-811C-0463BE2A2829}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B3DC8DC-AC90-4BF2-9E1C-DE46F9782160}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B3DC8DC-AC90-4BF2-9E1C-DE46F9782160}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B3DC8DC-AC90-4BF2-9E1C-DE46F9782160}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B3DC8DC-AC90-4BF2-9E1C-DE46F9782160}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -119,6 +125,7 @@ Global
 		{CF0443B5-DC32-4C80-B80E-A3F8D6E1792B} = {BE41EB1C-CB4F-4EDD-9E47-17D54308B014}
 		{ACCF4597-3748-4117-8633-1CB767F8CCC3} = {94B12F76-D786-4D94-A9F4-8DD7DD73685F}
 		{724DFC8C-4B57-4C3F-811C-0463BE2A2829} = {94B12F76-D786-4D94-A9F4-8DD7DD73685F}
+		{5B3DC8DC-AC90-4BF2-9E1C-DE46F9782160} = {BE41EB1C-CB4F-4EDD-9E47-17D54308B014}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89FBBEF6-DF3C-43D4-BD32-075D5E3D14F2}

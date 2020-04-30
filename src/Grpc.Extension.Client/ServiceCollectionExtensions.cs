@@ -34,7 +34,8 @@ namespace Grpc.Extension.Client
         public static IServiceCollection AddGrpcClientExtensions(this IServiceCollection services, IConfiguration conf)
         {
             //注入配制
-            services.Configure<GrpcClientOptions>(conf.GetSection("GrpcClient"));
+            var key = conf["GrpcServer:ServiceAddress"] != null ? "GrpcServer" : "GrpcClient";
+            services.Configure<GrpcClientOptions>(conf.GetSection(key));
             //GrpcClientApp
             services.AddSingleton<GrpcClientApp>();
             //添加客户端中间件的CallInvoker
