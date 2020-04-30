@@ -10,6 +10,7 @@ using Grpc.Extension.Abstract;
 using Grpc.Extension.Client.Model;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
+using Grpc.Extension.Common;
 
 namespace Grpc.Extension.Client.Internal
 {
@@ -18,7 +19,7 @@ namespace Grpc.Extension.Client.Internal
     /// </summary>
     internal class ChannelPool
     {
-        private ConcurrentDictionary<string, ChannelInfo> _channels = new ConcurrentDictionary<string, ChannelInfo>();
+        private AtomicConcurrentDictionary<string, ChannelInfo> _channels = new AtomicConcurrentDictionary<string, ChannelInfo>();
         private IServiceDiscovery _serviceDiscovery;
         private ILoadBalancer _loadBalancer;
         private IMemoryCache _memoryCache;
@@ -102,14 +103,9 @@ namespace Grpc.Extension.Client.Internal
         private async Task<Channel> GetChannelCore(string endpoint,ChannelConfig config)
         {
             //获取channel，不存在就添加
-            if (!_channels.TryGetValue(endpoint, out var channelInfo))
-            {
-                //新增或者修改channel
-                channelInfo = await CreateChannel(endpoint, config);
-                _channels.AddOrUpdate(endpoint, channelInfo, (k, v) => channelInfo);
-            }
-
+            var channelInfo = await _channels.GetOrAddAsync(endpoint, async (key) => await CreateChannel(key, config));
             var channel = channelInfo.Channel;
+
             //检查channel状态
             if (channel.State != ChannelState.Ready)
             {

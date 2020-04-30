@@ -228,6 +228,13 @@
             根据服务名称返回服务地址
             </summary>
         </member>
+        <member name="M:Grpc.Extension.Client.Internal.ChannelPool.ServiceDiscovery_ServiceChanged(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            服务地址和端口发生改变
+            </summary>
+            <param name="serviceName"></param>
+            <param name="healthEndpoints"></param>
+        </member>
         <member name="M:Grpc.Extension.Client.Internal.ChannelPool.ShutdownErrorChannel(System.Collections.Generic.List{System.String},System.String)">
             <summary>
             关闭不健康Channel
