@@ -50,11 +50,11 @@ namespace Grpc.Extension.AspNetCore.Internal
                 return;
             }
             //添加服务IPAndPort
-            var ipPort = NetHelper.GetIPAndPort(_grpcServerOptions.ServiceAddress);
+            var registerIp = NetHelper.GetIp(_grpcServerOptions.ServiceAddress);
             var serverAddress = BindingAddress.Parse(serverAddressesFeature.Addresses.First());
 
             MetaModel.StartTime = DateTime.Now;
-            MetaModel.Ip = ipPort.Item1;
+            MetaModel.Ip = NetHelper.GetLocalIp();
             MetaModel.Port = serverAddress.Port;
             Console.WriteLine($"server listening {MetaModel.Ip}:{MetaModel.Port}");
             //使用BaseServices
@@ -62,7 +62,7 @@ namespace Grpc.Extension.AspNetCore.Internal
             Console.WriteLine($"    DiscoveryUrl:{_grpcServerOptions.DiscoveryUrl}");
             Console.WriteLine($"    ServiceName:{_grpcServerOptions.DiscoveryServiceName}");
             var registerModel = _grpcServerOptions.ToJson().FromJson<ServiceRegisterModel>();
-            registerModel.ServiceIp = MetaModel.Ip;
+            registerModel.ServiceIp = registerIp;
             registerModel.ServicePort = MetaModel.Port;
             _serviceRegister.RegisterService(registerModel);
         }

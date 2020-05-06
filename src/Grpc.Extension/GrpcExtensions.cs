@@ -36,6 +36,7 @@ namespace Grpc.Extension
 
             //服务注册
             var grpcServerOptions = ServiceProviderAccessor.GetService<IOptions<GrpcServerOptions>>().Value;
+            var registerIP = NetHelper.GetIp(grpcServerOptions.ServiceAddress);
             
             if (grpcServerOptions.EnableDiscovery)
             {
@@ -51,7 +52,7 @@ namespace Grpc.Extension
                 Console.WriteLine($"    DiscoveryUrl:{grpcServerOptions.DiscoveryUrl}");
                 Console.WriteLine($"    ServiceName:{grpcServerOptions.DiscoveryServiceName}");
                 var registerModel = grpcServerOptions.ToJson().FromJson<ServiceRegisterModel>();
-                registerModel.ServiceIp = ipAndPort.Host;
+                registerModel.ServiceIp = registerIP;
                 registerModel.ServicePort = ipAndPort.BoundPort;
                 serviceRegister.RegisterService(registerModel);
             }
