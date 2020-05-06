@@ -4,14 +4,26 @@
         <name>Grpc.Extension.Abstract</name>
     </assembly>
     <members>
+        <member name="T:Grpc.Extension.Abstract.Discovery.ServiceChangedEvent">
+            <summary>
+            服务地址和端口发生改变
+            </summary>
+            <param name="serviceName"></param>
+            <param name="healthEndpoints"></param>
+        </member>
         <member name="T:Grpc.Extension.Abstract.Discovery.IServiceDiscovery">
             <summary>
             服务发现
             </summary>
         </member>
+        <member name="E:Grpc.Extension.Abstract.Discovery.IServiceDiscovery.ServiceChanged">
+            <summary>
+            服务地址和端口发生改变
+            </summary>
+        </member>
         <member name="M:Grpc.Extension.Abstract.Discovery.IServiceDiscovery.GetEndpoints(System.String,System.String,System.String)">
             <summary>
-            获取服务地址列表
+            获取健康的服务地址列表
             </summary>
             <param name="serviceName"></param>
             <param name="discoveryUrl"></param>

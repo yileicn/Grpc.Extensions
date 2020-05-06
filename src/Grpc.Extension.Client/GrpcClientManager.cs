@@ -9,6 +9,7 @@ using Grpc.Core;
 using Grpc.Extension.Common.Internal;
 using Grpc.Extension.Client.Interceptors;
 using Grpc.Extension.Client.Internal;
+using System.Threading.Tasks;
 
 namespace Grpc.Extension.Client
 {
@@ -35,13 +36,13 @@ namespace Grpc.Extension.Client
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T GetGrpcClient<T>() where T : ClientBase<T>
+        public async Task<T> GetGrpcClient<T>() where T : ClientBase<T>
         {
             var channelManager = ServiceProviderAccessor.GetService<ChannelPool>();
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             var grpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
 
-            var channel = channelManager.GetChannel(grpcServiceName);
+            var channel = await channelManager.GetChannel(grpcServiceName);
             var callInvoker = channel.Intercept(_clientInterceptors.ToArray());
             var client = Activator.CreateInstance(typeof(T), callInvoker);
 

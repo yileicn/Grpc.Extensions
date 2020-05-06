@@ -75,7 +75,7 @@ namespace Grpc.Extension.Client.Internal
                 where TRequest : class
                 where TResponse : class
         {
-            var channel = _channelManager.GetChannel(method.ServiceName);
+            var channel = _channelManager.GetChannel(method.ServiceName).GetAwaiter().GetResult();
             return new CallInvocationDetails<TRequest, TResponse>(channel, method, host, options);
         }
     }
