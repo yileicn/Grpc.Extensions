@@ -5,6 +5,8 @@ using System.Linq;
 using System.Collections.Concurrent;
 using Grpc.Extension.Abstract.Discovery;
 using System.Threading.Tasks;
+using Grpc.Extension.Abstract;
+using Grpc.Extension.Abstract.Model;
 
 namespace Grpc.Extension.Discovery.Consul
 {
@@ -54,13 +56,21 @@ namespace Grpc.Extension.Discovery.Consul
             var client = CreateConsulClient(consulUrl);
             while (true)
             {
-                _lastIndexs.TryGetValue(serviceName, out var lastIndex);                
-                var queryOptions = new QueryOptions() { WaitIndex = lastIndex };
-                var res = await client.Health.Service(serviceName, consulTag, true, queryOptions);
-                if (res != null && UpdateLastIndex(serviceName,res))
+                try
                 {
-                    ServiceChanged?.Invoke(serviceName, res.Response.Select(q => $"{q.Service.Address}:{q.Service.Port}").ToList());
+                    _lastIndexs.TryGetValue(serviceName, out var lastIndex);
+                    var queryOptions = new QueryOptions() { WaitIndex = lastIndex };
+                    var res = await client.Health.Service(serviceName, consulTag, true, queryOptions);
+                    if (res != null && UpdateLastIndex(serviceName, res))
+                    {
+                        ServiceChanged?.Invoke(serviceName, res.Response.Select(q => $"{q.Service.Address}:{q.Service.Port}").ToList());
+                    }
                 }
+                catch (Exception ex)
+                {
+                    LoggerAccessor.Instance.OnLoggerError(new InternalException(GrpcErrorCode.Internal, "PollForChanges", ex), LogType.ClientLog);
+                }
+               
             }
         }
 
