@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using Grpc.Extension.Abstract.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -53,6 +54,7 @@ namespace Grpc.Extension
         /// <summary>
         /// ChannelOption
         /// </summary>
+        [JsonIgnore]
         public IEnumerable<ChannelOption> ChannelOptions { get; set; }
 
         /// <summary>

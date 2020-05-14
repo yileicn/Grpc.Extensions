@@ -26,6 +26,8 @@ namespace Grpc.Extension.Common
             if (string.IsNullOrWhiteSpace(ipSegment))
                 throw new ArgumentNullException(nameof(ipSegment));
 
+            ipSegment = ipSegment.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries)[0];
+
             //如果设置的IP支持* 的时候,再去智能的选择ip
             if (!ipSegment.Contains("*"))
             {
@@ -58,7 +60,22 @@ namespace Grpc.Extension.Common
         /// </summary>
         /// <param name="serviceAddress"></param>
         /// <returns></returns>
-        public static Tuple<string,int> GetIPAndPort(string serviceAddress)
+        public static Tuple<string, int> GetIPAndPort(string serviceAddress)
+        {
+            //解析ip
+            var ip = NetHelper.GetIp(serviceAddress);
+            //解析port
+            var port = NetHelper.GetPort(serviceAddress);
+
+            return Tuple.Create(ip, port);
+        }
+
+        /// <summary>
+        /// 解析端口
+        /// </summary>
+        /// <param name="serviceAddress"></param>
+        /// <returns></returns>
+        public static int GetPort(string serviceAddress)
         {
             //解析ip
             var ipPort = serviceAddress.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
@@ -68,7 +85,8 @@ namespace Grpc.Extension.Common
             if (ipPort.Length == 2) int.TryParse(ipPort[1], out port);
             //随机端口
             if (port == 0) port = GetAvailablePort();
-            return Tuple.Create(ip, port);
+
+            return port;
         }
 
         /// <summary>
