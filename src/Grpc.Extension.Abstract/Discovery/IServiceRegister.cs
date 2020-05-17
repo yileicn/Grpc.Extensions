@@ -1,4 +1,5 @@
 ﻿using Grpc.Extension.Abstract.Model;
+using System.Threading.Tasks;
 
 namespace Grpc.Extension.Abstract.Discovery
 {
@@ -11,11 +12,11 @@ namespace Grpc.Extension.Abstract.Discovery
         /// 服务注册
         /// </summary>
         /// <param name="model"></param>
-        void RegisterService(ServiceRegisterModel model);
+        Task RegisterService(ServiceRegisterModel model);
 
         /// <summary>
         /// 服务反注册
         /// </summary>
-        void DeregisterService();
+        Task DeregisterService();
     }
 }

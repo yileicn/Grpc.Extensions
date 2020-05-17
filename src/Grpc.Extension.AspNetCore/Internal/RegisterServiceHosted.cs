@@ -36,12 +36,12 @@ namespace Grpc.Extension.AspNetCore.Internal
         public Task StartAsync(CancellationToken cancellationToken)
         {
             if(_grpcServerOptions.EnableDiscovery)
-                _hostApplicationLifetime.ApplicationStarted.Register(Start);
+                _hostApplicationLifetime.ApplicationStarted.Register(async () => await Start());
 
             return Task.CompletedTask;
         }
 
-        public void Start()
+        public async Task Start()
         {
             var serverAddressesFeature = _server.Features?.Get<IServerAddressesFeature>();
             if (serverAddressesFeature == null || serverAddressesFeature.Addresses.Count == 0)
@@ -64,15 +64,13 @@ namespace Grpc.Extension.AspNetCore.Internal
             var registerModel = _grpcServerOptions.ToJson().FromJson<ServiceRegisterModel>();
             registerModel.ServiceIp = registerIp;
             registerModel.ServicePort = MetaModel.Port;
-            _serviceRegister.RegisterService(registerModel);
+            await _serviceRegister.RegisterService(registerModel);
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
             if(_grpcServerOptions.EnableDiscovery)
-                _serviceRegister.DeregisterService();
-
-            return Task.CompletedTask;
+                await _serviceRegister.DeregisterService();
         }
     }
 }
