@@ -328,6 +328,11 @@
             服务地址缓存时间(秒)
             </summary>
         </member>
+        <member name="P:Grpc.Extension.Client.GrpcClientOptions.DiscoveryServiceTag">
+            <summary>
+            服务发现Tag(用于筛选指定版本的服务)
+            </summary>
+        </member>
         <member name="P:Grpc.Extension.Client.GrpcClientOptions.DefaultErrorCode">
             <summary>
             默认错误码
@@ -356,7 +361,7 @@
             <param name="conf"></param>
             <returns></returns>
         </member>
-        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClient``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String,System.Collections.Generic.IEnumerable{Grpc.Core.ChannelOption})">
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClient``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String,System.Collections.Generic.IEnumerable{Grpc.Core.ChannelOption},System.String)">
             <summary>
             添加GrpcClient到Discovery,生成元数据
             </summary>
@@ -365,9 +370,10 @@
             <param name="discoveryServiceName">Discovery上客户端服务名字</param>
             <param name="discoveryUrl">Discovery的服务器地址</param>
             <param name="channelOptions">ChannelOption</param>
+            <param name="discoveryServiceTag">服务发现Tag(用于筛选指定版本的服务)</param>
             <returns></returns>
         </member>
-        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClientByDiscovery``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String,System.Collections.Generic.IEnumerable{Grpc.Core.ChannelOption})">
+        <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddGrpcClientByDiscovery``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String,System.Collections.Generic.IEnumerable{Grpc.Core.ChannelOption},System.String)">
             <summary>
             添加GrpcClient到Discovery,生成元数据
             </summary>
@@ -376,6 +382,7 @@
             <param name="discoveryServiceName">Discovery上客户端服务名字</param>
             <param name="discoveryUrl">Discovery的服务器地址</param>
             <param name="channelOptions">ChannelOption</param>
+            <param name="discoveryServiceTag">服务发现Tag(用于筛选指定版本的服务)</param>
             <returns></returns>
         </member>
         <member name="M:Grpc.Extension.Client.ServiceCollectionExtensions.AddClientMonitor(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
