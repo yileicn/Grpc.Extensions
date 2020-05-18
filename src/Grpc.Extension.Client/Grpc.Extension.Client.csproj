@@ -13,7 +13,7 @@
 5.DashBoard(远程调用，手动熔断，日志输出控制)
 6.Grpc CodeFirst</Description>
     <Company />
-    <Version>1.4.7-alpha1</Version>
+    <Version>1.4.7</Version>
     <RepositoryType>git</RepositoryType>
     <PackageTags>grpc,dashboard,consul,micorservice,opentracing,polly</PackageTags>
     <RepositoryUrl>https://github.com/yileicn/Grpc.Extensions/</RepositoryUrl>
