@@ -34,7 +34,7 @@ namespace Grpc.Extension.Client
         public static IServiceCollection AddGrpcClientExtensions(this IServiceCollection services, IConfiguration conf)
         {
             //注入配制
-            var key = conf["GrpcServer:ServiceAddress"] != null ? "GrpcServer" : "GrpcClient";
+            var key = conf.GetSection("GrpcClient").Exists() ? "GrpcClient" : "GrpcServer";
             services.Configure<GrpcClientOptions>(conf.GetSection(key));
             //GrpcClientApp
             services.AddSingleton<GrpcClientApp>();
@@ -147,7 +147,7 @@ namespace Grpc.Extension.Client
         public static IServiceCollection AddClientJaeger(this IServiceCollection services, IConfiguration conf)
         {
             //读取Jaeger配制
-            var key = conf["GrpcServer:ServiceAddress"] != null ? "GrpcServer" : "GrpcClient";
+            var key = conf.GetSection("GrpcClient").Exists() ? "GrpcClient" : "GrpcServer";
             var jaegerOptions = conf.GetSection($"{key}:Jaeger").Get<JaegerOptions>();
             if (jaegerOptions == null || jaegerOptions.Enable == false)
                 return services;
