@@ -34,7 +34,7 @@ namespace Grpc.Extension.Client
         public static IServiceCollection AddGrpcClientExtensions(this IServiceCollection services, IConfiguration conf)
         {
             //注入配制
-            var key = conf["GrpcServer:ServiceAddress"] != null ? "GrpcServer" : "GrpcClient";
+            var key = conf.GetSection("GrpcClient").Exists() ? "GrpcClient" : "GrpcServer";
             services.Configure<GrpcClientOptions>(conf.GetSection(key));
             //GrpcClientApp
             services.AddSingleton<GrpcClientApp>();
@@ -76,15 +76,17 @@ namespace Grpc.Extension.Client
         /// <param name="discoveryServiceName">Discovery上客户端服务名字</param>
         /// <param name="discoveryUrl">Discovery的服务器地址</param>
         /// <param name="channelOptions">ChannelOption</param>
+        /// <param name="discoveryServiceTag">服务发现Tag(用于筛选指定版本的服务)</param>
         /// <returns></returns>
-        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, string discoveryServiceName, string discoveryUrl = "", IEnumerable<ChannelOption> channelOptions = null) where T : ClientBase<T>
+        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services, string discoveryServiceName, string discoveryUrl = "", IEnumerable<ChannelOption> channelOptions = null, string discoveryServiceTag = "") where T : ClientBase<T>
         {
             services.AddSingleton<T>();
             var channelConfig = new ChannelConfig
             {
                 DiscoveryUrl = discoveryUrl,
                 DiscoveryServiceName = discoveryServiceName,
-                ChannelOptions = channelOptions
+                ChannelOptions = channelOptions,
+                DiscoveryServiceTag = discoveryServiceTag
             };
             var bindFlags = BindingFlags.Static | BindingFlags.NonPublic;
             channelConfig.GrpcServiceName = typeof(T).DeclaringType.GetFieldValue<string>("__ServiceName", bindFlags);
@@ -100,10 +102,11 @@ namespace Grpc.Extension.Client
         /// <param name="discoveryServiceName">Discovery上客户端服务名字</param>
         /// <param name="discoveryUrl">Discovery的服务器地址</param>
         /// <param name="channelOptions">ChannelOption</param>
+        /// <param name="discoveryServiceTag">服务发现Tag(用于筛选指定版本的服务)</param>
         /// <returns></returns>
-        public static IServiceCollection AddGrpcClientByDiscovery<T>(this IServiceCollection services, string discoveryServiceName, string discoveryUrl = "", IEnumerable<ChannelOption> channelOptions = null) where T : ClientBase<T>
+        public static IServiceCollection AddGrpcClientByDiscovery<T>(this IServiceCollection services, string discoveryServiceName, string discoveryUrl = "", IEnumerable<ChannelOption> channelOptions = null, string discoveryServiceTag = "") where T : ClientBase<T>
         {
-            services.AddGrpcClient<T>(discoveryServiceName, discoveryUrl, channelOptions);
+            services.AddGrpcClient<T>(discoveryServiceName, discoveryUrl, channelOptions, discoveryServiceTag);
 
             return services;
         }
@@ -144,7 +147,7 @@ namespace Grpc.Extension.Client
         public static IServiceCollection AddClientJaeger(this IServiceCollection services, IConfiguration conf)
         {
             //读取Jaeger配制
-            var key = conf["GrpcServer:ServiceAddress"] != null ? "GrpcServer" : "GrpcClient";
+            var key = conf.GetSection("GrpcClient").Exists() ? "GrpcClient" : "GrpcServer";
             var jaegerOptions = conf.GetSection($"{key}:Jaeger").Get<JaegerOptions>();
             if (jaegerOptions == null || jaegerOptions.Enable == false)
                 return services;

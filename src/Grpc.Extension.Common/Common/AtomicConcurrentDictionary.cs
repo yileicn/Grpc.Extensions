@@ -12,7 +12,7 @@ namespace Grpc.Extension.Common
     /// <typeparam name="TValue"></typeparam>
     public class AtomicConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<TKey, TValue>
     {
-        private static readonly ConcurrentDictionary<int, Lazy<SemaphoreSlim>> _semaphores = new ConcurrentDictionary<int, Lazy<SemaphoreSlim>>();
+        private static readonly LazyConcurrentDictionary<int, SemaphoreSlim> _semaphores = new LazyConcurrentDictionary<int, SemaphoreSlim>();
         public async Task<TValue> GetOrAddAsync(TKey key, Func<TKey, Task<TValue>> valueFactory)
         {
             if (base.TryGetValue(key, out var value))
@@ -40,18 +40,7 @@ namespace Grpc.Extension.Common
         private SemaphoreSlim GetSemaphore(TKey key)
         {
             var semaphoreKey = key.GetHashCode();
-            if (!_semaphores.TryGetValue(semaphoreKey, out var semaphore))
-            {
-                semaphore = _semaphores.GetOrAdd(semaphoreKey,
-                    k => new Lazy<SemaphoreSlim>(
-                        () =>
-                        {
-                            return new SemaphoreSlim(1);
-                        }, true));
-            }
-
-            return semaphore.Value;
-
+            return _semaphores.GetOrAdd(semaphoreKey, k => new SemaphoreSlim(1));
         }
     }
 }

@@ -63,7 +63,15 @@ namespace Grpc.Extension.Discovery.Consul
                     var res = await client.Health.Service(serviceName, consulTag, true, queryOptions);
                     if (res != null && UpdateLastIndex(serviceName, res))
                     {
-                        ServiceChanged?.Invoke(serviceName, res.Response.Select(q => $"{q.Service.Address}:{q.Service.Port}").ToList());
+                        if (res.Response.Count() == 0)
+                        {
+                            var ex = new Exception($"get health {serviceName} is null, StatuCode:{res.StatusCode}");
+                            LoggerAccessor.Instance.OnLoggerError(new InternalException(GrpcErrorCode.Internal, $"PollForChanges", ex), LogType.ClientLog);
+                        }
+                        else
+                        {
+                            ServiceChanged?.Invoke(serviceName, res.Response.Select(q => $"{q.Service.Address}:{q.Service.Port}").ToList());
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -80,7 +88,7 @@ namespace Grpc.Extension.Discovery.Consul
         /// <param name="serviceName"></param>
         /// <param name="queryResult"></param>
         /// <returns></returns>
-        private bool UpdateLastIndex(string serviceName, QueryResult queryResult)
+        private bool UpdateLastIndex(string serviceName, QueryResult<ServiceEntry[]> queryResult)
         {
             _lastIndexs.TryGetValue(serviceName, out var lastIndex);
             if (queryResult.LastIndex > lastIndex)

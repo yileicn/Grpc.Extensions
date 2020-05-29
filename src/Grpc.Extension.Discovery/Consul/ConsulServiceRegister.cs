@@ -4,6 +4,7 @@ using Grpc.Extension.Abstract.Discovery;
 using Grpc.Extension.Abstract.Model;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Grpc.Extension.Discovery.Consul
 {
@@ -30,19 +31,18 @@ namespace Grpc.Extension.Discovery.Consul
         /// </summary>
         /// <param name="ip"></param>
         /// <param name="port"></param>
-        public void RegisterService(ServiceRegisterModel model)
+        public async Task RegisterService(ServiceRegisterModel model)
         {
             this._model = model;
             this._client = CreateConsulClient();
 
-            RegisterServiceCore();
+            await RegisterServiceCore();
 
             //因为公司的consul不支持consul主动检查服务状态，所以启动定时器主动去检测
-            _timerTTL = new Timer(state => DoTTL(), null, Timeout.Infinite, Timeout.Infinite);
-            DoTTL();
+            _timerTTL = new Timer(async state => await DoTTL(), null, 0, Timeout.Infinite);
         }
 
-        private void RegisterServiceCore()
+        private async Task RegisterServiceCore()
         {
             var registration = new AgentServiceRegistration()
             {
@@ -70,15 +70,15 @@ namespace Grpc.Extension.Discovery.Consul
                     DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1),
                 }
             };
-            _client.Agent.ServiceRegister(registration).Wait();
+            await _client.Agent.ServiceRegister(registration);
         }
 
         /// <summary>
         /// 从consul反注册
         /// </summary>
-        public void DeregisterService()
+        public Task DeregisterService()
         {
-            _client.Agent.ServiceDeregister(GetServiceId()).Wait();
+            return _client.Agent.ServiceDeregister(GetServiceId());
         }
 
         private string GetServiceId()
@@ -91,12 +91,12 @@ namespace Grpc.Extension.Discovery.Consul
             return $"service:{GetServiceId()}";
         }
 
-        private void DoTTL()
+        private async Task DoTTL()
         {
             _timerTTL.Change(Timeout.Infinite, Timeout.Infinite);
             try
             {
-                _client.Agent.PassTTL(GetTTLCheckId(), "timer:" + DateTime.Now).Wait();
+                await _client.Agent.PassTTL(GetTTLCheckId(), "timer:" + DateTime.Now);
             }
             catch (Exception ex)
             {
@@ -112,7 +112,7 @@ namespace Grpc.Extension.Discovery.Consul
                  */
                 if (ex.ToString().Contains($"CheckID \"{GetTTLCheckId()}\" does not have associated TTL"))
                 {
-                    RegisterServiceCore();
+                    await RegisterServiceCore();
                 }
             }
             finally

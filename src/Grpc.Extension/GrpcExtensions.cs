@@ -54,7 +54,7 @@ namespace Grpc.Extension
                 var registerModel = grpcServerOptions.ToJson().FromJson<ServiceRegisterModel>();
                 registerModel.ServiceIp = registerIP;
                 registerModel.ServicePort = ipAndPort.BoundPort;
-                serviceRegister.RegisterService(registerModel);
+                serviceRegister.RegisterService(registerModel).Wait();
             }
             return server;
         }
@@ -71,7 +71,7 @@ namespace Grpc.Extension
             if (grpcServerOptions.EnableDiscovery)
             {
                 var serviceRegister = ServiceProviderAccessor.GetService<IServiceRegister>();
-                serviceRegister.DeregisterService();
+                serviceRegister.DeregisterService().Wait();
             }
             //停止服务
             server.ShutdownAsync().Wait();

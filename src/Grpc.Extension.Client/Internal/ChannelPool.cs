@@ -60,7 +60,8 @@ namespace Grpc.Extension.Client.Internal
             else//from discovery
             {
                 var discoveryUrl = !string.IsNullOrWhiteSpace(config.DiscoveryUrl) ? config.DiscoveryUrl : _grpcClientOptions.DiscoveryUrl;
-                var endPoint = await GetEndpoint(config.DiscoveryServiceName, discoveryUrl, config.DiscoveryServiceTag);
+                var discoveryServiceTag = !string.IsNullOrWhiteSpace(config.DiscoveryServiceTag) ? config.DiscoveryServiceTag : _grpcClientOptions.DiscoveryServiceTag;
+                var endPoint = await GetEndpoint(config.DiscoveryServiceName, discoveryUrl, discoveryServiceTag);
                 return await GetChannelCore(endPoint,config);
             }
         }

@@ -21,6 +21,11 @@ namespace Grpc.Extension.Client
         public int ServiceAddressCacheTime { get; set; } = 10;
 
         /// <summary>
+        /// 服务发现Tag(用于筛选指定版本的服务)
+        /// </summary>
+        public string DiscoveryServiceTag { get; set; }
+
+        /// <summary>
         /// 默认错误码
         /// </summary>
         public int DefaultErrorCode
