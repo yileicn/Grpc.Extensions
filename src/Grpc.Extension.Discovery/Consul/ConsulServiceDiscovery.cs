@@ -66,7 +66,7 @@ namespace Grpc.Extension.Discovery.Consul
                         if (res.Response.Count() == 0)
                         {
                             var ex = new Exception($"get health {serviceName} is null, StatuCode:{res.StatusCode}");
-                            LoggerAccessor.Instance.OnLoggerError(new InternalException(GrpcErrorCode.Internal, $"PollForChanges", ex));
+                            LoggerAccessor.Instance.OnLoggerError(new InternalException(GrpcErrorCode.Internal, $"PollForChanges", ex), LogType.ClientLog);
                         }
                         else
                         {
