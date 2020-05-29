@@ -30,6 +30,7 @@ namespace Grpc.Extension
         private readonly List<ServerServiceDefinition> _serviceDefinitions = new List<ServerServiceDefinition>();
         private readonly List<IGrpcService> _grpcServices = new List<IGrpcService>();
         private readonly GrpcServerOptions _grpcServerOptions;
+        private readonly IEnumerable<ServerInterceptor> _serverInterceptors;
         private readonly ILoggerFactory _loggerFactory;
 
         /// <summary>
@@ -49,14 +50,8 @@ namespace Grpc.Extension
             ServiceProviderAccessor.SetServiceProvider(serviceProvider);
             this._grpcServices.AddRange(grpcServices);
             this._grpcServerOptions = grpcServerOptions.Value;
-
+            this._serverInterceptors = serverInterceptors;
             this._loggerFactory = loggerFactory;
-
-            //初始化配制,注入中间件,GrpcService
-            this.InitGrpcOptions()//初始化配制
-                .UseInterceptor(serverInterceptors)//注入中间件
-                .UseLoggerFactory()//使用LoggerFactory
-                .UseJaeger();
         }
 
         /// <summary>
@@ -258,6 +253,12 @@ namespace Grpc.Extension
             //检查服务配制
             if (string.IsNullOrWhiteSpace(_grpcServerOptions.ServiceAddress))
                 throw new ArgumentException(@"GrpcServer:ServiceAddress is null");
+
+            //初始化配制,注入中间件,GrpcService
+            this.InitGrpcOptions()//初始化配制
+                .UseInterceptor(_serverInterceptors)//注入中间件
+                .UseLoggerFactory()//使用LoggerFactory
+                .UseJaeger();
 
             Server server = new Server(_grpcServerOptions.ChannelOptions);
             //使用拦截器
