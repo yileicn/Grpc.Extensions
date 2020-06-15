@@ -61,9 +61,9 @@ namespace Grpc.Extension.Discovery.Consul
                 //    DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1)
                 //}
                 //因为公司的consul不支持consul主动检查服务状态，所以主动去TTL consul
-                Check = new AgentCheckRegistration
+                Check = new NewAgentCheckRegistration
                 {
-                    ID = GetTTLCheckId(),
+                    CheckID = GetTTLCheckId(),//consul 1.3使用ID,consul 1.7使用CheckID
                     Name = "ttlcheck",
                     TTL = TimeSpan.FromSeconds(15),
                     Status = HealthStatus.Passing,
