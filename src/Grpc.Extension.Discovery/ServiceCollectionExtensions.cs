@@ -1,6 +1,9 @@
 ﻿using Grpc.Extension.Abstract.Discovery;
 using Grpc.Extension.Discovery.Consul;
+using Grpc.Extension.Discovery.Consul.Checks;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Linq;
 
 namespace Grpc.Extension.Discovery
 {
@@ -14,11 +17,17 @@ namespace Grpc.Extension.Discovery
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddConsulDiscovery(this IServiceCollection services)
+        public static IServiceCollection AddConsulDiscovery(this IServiceCollection services, Action<ConsulServiceBuilder> builder = null)
         {
-            services.AddSingleton<IServiceRegister, ConsulServiceRegister>();
-            services.AddSingleton<IServiceDiscovery, ConsulServiceDiscovery>();
-
+            if (!services.Any(p => p.ImplementationType == typeof(ConsulServiceRegister)))
+            {
+                services.AddSingleton<IServiceRegister, ConsulServiceRegister>();
+                services.AddSingleton<IServiceDiscovery, ConsulServiceDiscovery>();
+                services.AddSingleton<IConsulCheck, TTLCheck>();
+            }
+            var obj = new ConsulServiceBuilder(services);
+            builder?.Invoke(obj);
+            
             return services;
         }
     }
