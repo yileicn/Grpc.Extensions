@@ -2,6 +2,7 @@
 using Grpc.Extension.Abstract;
 using Grpc.Extension.Abstract.Discovery;
 using Grpc.Extension.Abstract.Model;
+using Grpc.Extension.Discovery.Consul.Checks;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,13 +18,15 @@ namespace Grpc.Extension.Discovery.Consul
         private string _guid;
         private ConsulClient _client;
         private ServiceRegisterModel _model;
+        private IConsulCheck _check;
 
         /// <summary>
         /// Consul服务注册
         /// </summary>
-        public ConsulServiceRegister()
+        public ConsulServiceRegister(IConsulCheck check)
         {
             this._guid = Guid.NewGuid().ToString();
+            this._check = check;
         }
 
         /// <summary>
@@ -37,9 +40,6 @@ namespace Grpc.Extension.Discovery.Consul
             this._client = CreateConsulClient();
 
             await RegisterServiceCore();
-
-            //因为公司的consul不支持consul主动检查服务状态，所以启动定时器主动去检测
-            _timerTTL = new Timer(async state => await DoTTL(), null, 0, Timeout.Infinite);
         }
 
         private async Task RegisterServiceCore()
@@ -52,25 +52,15 @@ namespace Grpc.Extension.Discovery.Consul
                 EnableTagOverride = true,
                 Address = _model.ServiceIp,
                 Port = _model.ServicePort,
-                //因为公司的consul不支持consul主动检查服务状态，所以注释掉
-                //Check = new AgentServiceCheck
-                //{
-                //    TCP = $"{_model.ServiceIp}:{_model.ServicePort}",
-                //    Interval = TimeSpan.FromSeconds(15),
-                //    Status = HealthStatus.Passing,
-                //    DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1)
-                //}
-                //因为公司的consul不支持consul主动检查服务状态，所以主动去TTL consul
-                Check = new AgentCheckRegistration
-                {
-                    ID = GetTTLCheckId(),
-                    Name = "ttlcheck",
-                    TTL = TimeSpan.FromSeconds(15),
-                    Status = HealthStatus.Passing,
-                    DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1),
-                }
             };
+            var check = _check.GetCheck(registration);
+            registration.Check = check;
             await _client.Agent.ServiceRegister(registration);
+
+            if (check.Name.StartsWith("ttlcheck"))
+            {
+                _timerTTL = new Timer(async state => await DoTTL(), null, 0, Timeout.Infinite);
+            }
         }
 
         /// <summary>
