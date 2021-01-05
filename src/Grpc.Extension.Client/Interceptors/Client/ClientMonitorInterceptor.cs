@@ -33,7 +33,16 @@ namespace Grpc.Extension.Client.Interceptors
             }
             catch (Exception ex)
             {
-                ex.Data.Add("Request", model);
+                var dataRequest = ex.Data["Request"];
+                if (dataRequest != null)
+                {
+                    model.Items.TryAdd("OriginRequest", dataRequest);
+                    ex.Data["Request"] = model;
+                }
+                else
+                {
+                    ex.Data.Add("Request", model);
+                }
                 model.Status = "error";
                 model.ResponseTime = DateTime.Now;
                 model.Exception = ex.GetFlatException();
@@ -66,7 +75,16 @@ namespace Grpc.Extension.Client.Interceptors
             }
             catch (Exception ex)
             {
-                ex.Data.Add("Request", model);
+                var dataRequest = ex.Data["Request"];
+                if (dataRequest != null)
+                {
+                    model.Items.TryAdd("OriginRequest", dataRequest);
+                    ex.Data["Request"] = model;
+                }
+                else
+                {
+                    ex.Data.Add("Request", model);
+                }                
                 model.Status = "error";
                 model.ResponseTime = DateTime.Now;
                 model.Exception = ex.GetFlatException();
