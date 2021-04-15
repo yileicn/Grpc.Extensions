@@ -22,37 +22,35 @@ namespace Grpc.Extension.Client.Interceptors
                 RequestHeaders = context.Options.Headers.ToDictionary(p => p.Key, p => p.Value),
                 TraceId = context.Options.Headers?.Where(p => p.Key == Consts.TraceId).FirstOrDefault()?.Value
             };
-            try
-            {
-                var result = continuation(request, context);
-                var data = result.GetAwaiter().GetResult();
-                //model.ResponseData = data.ToJson();
-                model.Status = "ok";
-                model.ResponseTime = DateTime.Now;
-                return result;
-            }
-            catch (Exception ex)
-            {
-                var dataRequest = ex.Data["Request"];
-                if (dataRequest != null)
+
+            var result = continuation(request, context);
+            var respAsync = result.ResponseAsync.ContinueWith(action => {
+                try
                 {
-                    model.Items.TryAdd("OriginRequest", dataRequest);
-                    ex.Data["Request"] = model;
+                    var response = action.Result;
+                    model.Status = "ok";
+                    //model.ResponseData = response.ToJson();
+                    return response;
                 }
-                else
+                catch (AggregateException aex)
                 {
-                    ex.Data.Add("Request", model);
+                    var ex = aex.InnerException;
+                    SetExceptionData(ex, model);
+                    model.Status = "error";
+                    model.Exception = aex.GetFlatException();
+                    LoggerAccessor.Instance.OnLoggerError(ex, LogType.ClientLog);
+                    throw ex;
                 }
-                model.Status = "error";
-                model.ResponseTime = DateTime.Now;
-                model.Exception = ex.GetFlatException();
-                LoggerAccessor.Instance.OnLoggerError(ex, LogType.ClientLog);
-                throw ex;
-            }
-            finally
-            {
-                LoggerAccessor.Instance.OnLoggerMonitor(model.ToJson(), LogType.ClientLog);
-            }
+                finally
+                {
+                    model.ResponseTime = DateTime.Now;
+                    LoggerAccessor.Instance.OnLoggerMonitor(model.ToJson(), LogType.ClientLog);
+                }
+            });
+            //var response = result.GetAwaiter().GetResult();
+                
+            return new AsyncUnaryCall<TResponse>(respAsync, result.ResponseHeadersAsync, result.GetStatus, result.GetTrailers, result.Dispose);
+            
         }
 
         public override TResponse BlockingUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, BlockingUnaryCallContinuation<TRequest, TResponse> continuation)
@@ -70,29 +68,19 @@ namespace Grpc.Extension.Client.Interceptors
             {
                 var result = continuation(request, context);
                 model.Status = "ok";
-                model.ResponseTime = DateTime.Now;
                 return result;
             }
             catch (Exception ex)
             {
-                var dataRequest = ex.Data["Request"];
-                if (dataRequest != null)
-                {
-                    model.Items.TryAdd("OriginRequest", dataRequest);
-                    ex.Data["Request"] = model;
-                }
-                else
-                {
-                    ex.Data.Add("Request", model);
-                }                
-                model.Status = "error";
-                model.ResponseTime = DateTime.Now;
+                SetExceptionData(ex, model);
+                model.Status = "error";                
                 model.Exception = ex.GetFlatException();
                 LoggerAccessor.Instance.OnLoggerError(ex, LogType.ClientLog);
                 throw ex;
             }
             finally
             {
+                model.ResponseTime = DateTime.Now;
                 LoggerAccessor.Instance.OnLoggerMonitor(model.ToJson(), LogType.ClientLog);
             }
         }
@@ -120,6 +108,20 @@ namespace Grpc.Extension.Client.Interceptors
                 }
             }
             return context;
+        }
+
+        private void SetExceptionData(Exception ex, MonitorModel model)
+        {
+            var dataRequest = ex.Data["Request"];
+            if (dataRequest != null)
+            {
+                model.Items.TryAdd("OriginRequest", dataRequest);
+                ex.Data["Request"] = model;
+            }
+            else
+            {
+                ex.Data.Add("Request", model);
+            }
         }
     }
 }
