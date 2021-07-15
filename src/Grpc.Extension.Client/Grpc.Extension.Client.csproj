@@ -3,22 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>FM.Grpc.Extensions.Client</PackageId>
-    <Authors>RabbitYi</Authors>
-    <PackageProjectUrl>https://github.com/yileicn/Grpc.Extensions/</PackageProjectUrl>
-    <Description>一个基于GRPC的简单微服务框架
-1.服务注册和发现
-2.服务自动负载均衡
-3.服务端中件间(性能监控[日志],全局错误处理,手动熔断)
-4.客户端中件间(认证，超时时间设置)
-5.DashBoard(远程调用，手动熔断，日志输出控制)
-6.Grpc CodeFirst</Description>
-    <Company />
-    <Version>1.4.8</Version>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>grpc,dashboard,consul,micorservice,opentracing,polly</PackageTags>
-    <RepositoryUrl>https://github.com/yileicn/Grpc.Extensions/</RepositoryUrl>
-    <AssemblyVersion>1.4.8.0</AssemblyVersion>
-    <FileVersion>1.4.8.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

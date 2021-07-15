@@ -72,19 +72,15 @@ namespace Grpc.Extension.Client.Internal
         private async Task<string> GetEndpoint(string serviceName, string dicoveryUrl, string serviceTag)
         {
             //获取健康的endpoints
-            var isCache = true;
-            var healthEndpoints = await _memoryCache.GetOrCreateAsync(serviceName, async cacheEntry =>
+            var healthEndpoints = await _memoryCache.GetOrCreateAtomicAsync(serviceName, cacheEntry =>
             {
-                isCache = false;
                 //cacheEntry.SetAbsoluteExpiration(TimeSpan.FromSeconds(_grpcClientOptions.ServiceAddressCacheTime));
-                return await _serviceDiscovery.GetEndpoints(serviceName, dicoveryUrl, serviceTag);
+                return _serviceDiscovery.GetEndpoints(serviceName, dicoveryUrl, serviceTag);
             });
             if (healthEndpoints == null || healthEndpoints.Count == 0)
             {
                 throw new InternalException(GrpcErrorCode.Internal,$"get endpoints from discovery of {serviceName} is null");
             }
-            //只有重新拉取了健康结点才需要去关闭不健康的Channel
-            if (isCache == false) ShutdownErrorChannel(healthEndpoints, serviceName);
 
             return _loadBalancer.SelectEndpoint(serviceName, healthEndpoints);
         }
