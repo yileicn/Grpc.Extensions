@@ -1,4 +1,5 @@
 FROM microsoft/aspnetcore:2.0.0
 WORKDIR /app
-COPY  ./  /app
+COPY ./  /app
+COPY ./grpcurl /usr/bin/
 ENTRYPOINT ["dotnet", "FM.GrpcDashboard.dll"]
