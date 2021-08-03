@@ -73,7 +73,7 @@ namespace FM.GrpcDashboard
                 var sids = services.Select(q => q.Service.ID).ToList();
                 foreach (var sid in sids)
                 {
-                    var res = client.Agent.ServiceDeregister(sid).Result;
+                    var res = await client.Agent.ServiceDeregister(sid);
                 }
             }
         }

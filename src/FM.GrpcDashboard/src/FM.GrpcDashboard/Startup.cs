@@ -1,3 +1,4 @@
+using FM.GrpcDashboard.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -35,7 +36,9 @@ namespace FM.GrpcDashboard
             services.AddMvc();
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
             services.TryAddSingleton<ConsulService, ConsulService>();
-            services.TryAddSingleton<GrpcService, GrpcService>();
+            services.AddSingleton<IGrpcReflection, GrpcService>();
+            services.AddSingleton<IGrpcReflection, GrpcServiceV2>();
+            services.AddSingleton<GrpcServiceProxy>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

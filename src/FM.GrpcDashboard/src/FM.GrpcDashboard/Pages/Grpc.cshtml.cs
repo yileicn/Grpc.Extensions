@@ -1,8 +1,10 @@
-﻿using Grpc;
+﻿using FM.GrpcDashboard.Services;
+using Grpc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FM.GrpcDashboard.Pages
 {
@@ -17,15 +19,15 @@ namespace FM.GrpcDashboard.Pages
         public InfoRS Info { get; set; }
 
         ConsulService _consulSrv;
-        GrpcService _grpcSrv;
+        GrpcServiceProxy _grpcSrv;
 
-        public GrpcModel(ConsulService consulSrv, GrpcService grpcSrv)
+        public GrpcModel(ConsulService consulSrv, GrpcServiceProxy grpcSrv)
         {
             _consulSrv = consulSrv;
             _grpcSrv = grpcSrv;
         }
 
-        public IActionResult OnGet(string serviceName, string serverAddress = null)
+        public async Task<IActionResult> OnGet(string serviceName, string serverAddress = null)
         {
             ServiceName = serviceName?.Trim();
             CurrentAddressInfo = serverAddress?.Trim();
@@ -42,11 +44,11 @@ namespace FM.GrpcDashboard.Pages
                 var ip = arr[0];
                 var port = int.Parse(arr[1]);
 
-                Info = _grpcSrv.GetInfo(ip, port).Result;
+                Info = await _grpcSrv.GetInfo(ip, port);
             }
             else
             {
-                var service = _consulSrv.GetService(ServiceName).Result;
+                var service = await _consulSrv.GetService(ServiceName);
                 if (service == null || service.Count == 0)
                 {
                     return RedirectToPage("Error", new { msg = $"consul中找不到服务{ServiceName}" });
@@ -56,7 +58,7 @@ namespace FM.GrpcDashboard.Pages
                 var port = service.First().Port;
                 CurrentAddressInfo = $"{ip}:{port}";
 
-                Info = _grpcSrv.GetInfo(ip, port).Result;
+                Info = await _grpcSrv.GetInfo(ip, port);
             }
 
             if (Info == null)

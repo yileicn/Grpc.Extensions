@@ -1,0 +1,67 @@
+syntax = "proto3";
+option csharp_namespace = "Grpc";
+package grpc;
+
+
+service BaseService {
+   //服务基本信息(方法列表)
+   rpc Info(InfoRQ) returns(InfoRS);
+   //服务方法的详细信息
+   rpc MethodInfo(MethodInfoRQ) returns(MethodInfoRS);
+   //服务方法调用
+   rpc MethodInvoke(MethodInvokeRQ) returns(MethodInvokeRS);
+   
+   //添加删除截流的method
+   rpc AddDelThrottle(AddDelThrottleRQ) returns(CmdRS);
+   //添加删除是否允许保存响应的method
+   rpc AddDelSaveResponseEnable(AddDelSaveResponseEnableRQ) returns(CmdRS);
+}
+
+message AddDelThrottleRQ {
+   string MethodName = 1;
+   bool IsDel = 2;
+}
+
+message AddDelSaveResponseEnableRQ {
+   string MethodName = 1;
+   bool IsDel = 2;
+}
+
+message InfoRQ {
+   string MethodName = 1;
+}
+
+message MethodInfoRQ {
+   string FullName = 1;
+}
+
+message MethodInvokeRQ {
+   string FullName = 1;
+   string RequestJson = 2;
+}
+
+message CmdRS {
+   bool Result = 1;
+   string Message = 2;
+}
+
+message InfoRS {
+   string IpAndPort = 1;
+   int64 StartTime = 2;
+   repeated MethodInfo MethodInfos = 3;
+}
+
+message MethodInfo {
+   bool IsThrottled = 1;
+   string Name = 2;
+   bool SaveResponseEnable = 3;
+}
+
+message MethodInfoRS {
+   string RequestJson = 1;
+   string ResponseJson = 2;
+}
+
+message MethodInvokeRS {
+   string ResponseJson = 1;
+}

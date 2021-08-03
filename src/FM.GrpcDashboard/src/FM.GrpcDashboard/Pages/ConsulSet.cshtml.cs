@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FM.GrpcDashboard.Pages
 {
@@ -15,21 +17,21 @@ namespace FM.GrpcDashboard.Pages
             _config = config;
         }
 
-        public void OnGet()
+        public async Task OnGet()
         {
             ViewData["addr"] = _config["Consul"];
-            ViewData["Nodes"] = GetNodes(_config["Consul"]);
+            ViewData["Nodes"] = await GetNodes(_config["Consul"]);
         }
 
-        public SelectList GetNodes(string selected)
+        public async Task<SelectList> GetNodes(string selected)
         {
-            var nodes = _consulSrv.GetAllNode().Result;
+            var nodes = await _consulSrv.GetAllNode();
             var selectList = nodes.Select(p => new SelectListItem() { Value = "http://" + p.Address + ":8500/", Text = p.Name }).ToList();
             return new SelectList(selectList, "Value", "Text", selected);
 
         }
 
-        public void OnPost(string addr=null)
+        public void OnPost(string addr = null)
         {
             if (!string.IsNullOrWhiteSpace(addr))
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Threading.Tasks;
 
 namespace FM.GrpcDashboard.Pages
 {
@@ -18,11 +19,11 @@ namespace FM.GrpcDashboard.Pages
         /// <summary>
         /// 服务反注册
         /// </summary>
-        public IActionResult OnPostAsync(string serviceName)
+        public async Task<IActionResult> OnPostAsync(string serviceName)
         {
             ViewData["HttpMethod"] = "post";
             ViewData["ServiceName"] = serviceName;
-            _consulSrv.UnRegService(serviceName).GetAwaiter().GetResult();
+            await _consulSrv.UnRegService(serviceName);
             return Page();
         }
     }
