@@ -8,6 +8,13 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
         function fnSubmit() {
+            var customHeaders = $("#CustomHeaders").val()
+            if (customHeaders != "") {
+                if (!isJsonString(customHeaders)) {
+                    alert('自定义头json格式错误');
+                    return false;
+                }
+            }
             $('#btnSubmit').attr({ "disabled": "disabled" });
             $('#txtResp').text("");
             $.ajax({
