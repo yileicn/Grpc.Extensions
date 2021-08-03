@@ -43,6 +43,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNetCore3.0", "AspNetCore
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathClientHost", "examples\CodeFirst\MathClientHost\MathClientHost.csproj", "{5B3DC8DC-AC90-4BF2-9E1C-DE46F9782160}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C876F8C2-DCEB-4F0A-8E72-FE73E4BBDF58}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		Makefile = Makefile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
