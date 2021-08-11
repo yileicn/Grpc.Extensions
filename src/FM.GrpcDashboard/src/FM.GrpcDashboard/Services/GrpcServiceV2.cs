@@ -86,11 +86,47 @@ namespace FM.GrpcDashboard.Services
                     var outputType = fdp.MessageTypes.First(p => p.Name == outputTypeName);
                     var infoMethodRS = new MethodInfoRS()
                     {
-                        RequestJson = intputType.Fields.ToDictionary(p => p.Name, p => p.DefaultValue).ToJson(),
-                        ResponseJson = outputType.Fields.ToDictionary(p => p.Name, p => p.DefaultValue).ToJson()
+                        RequestJson = intputType.Fields.ToDictionary(p => p.Name, p => GetFiledDefaultValue(p, fdp.MessageTypes)).ToJson(),
+                        ResponseJson = outputType.Fields.ToDictionary(p => p.Name, p => GetFiledDefaultValue(p, fdp.MessageTypes)).ToJson()
                     };
-                    dicInfoMethods.AddOrUpdate(name, infoMethodRS, (k,v) => infoMethodRS);
+                    dicInfoMethods.AddOrUpdate(name, infoMethodRS, (k, v) => infoMethodRS);
                 }
+            }
+        }
+
+        private dynamic GetFiledDefaultValue(FieldDescriptorProto field, List<DescriptorProto> messageTypes)
+        {
+            switch (field.type)
+            {
+                case FieldDescriptorProto.Type.TypeDouble:
+                case FieldDescriptorProto.Type.TypeFloat:
+                case FieldDescriptorProto.Type.TypeInt64:
+                case FieldDescriptorProto.Type.TypeUint64:
+                case FieldDescriptorProto.Type.TypeInt32:
+                case FieldDescriptorProto.Type.TypeFixed64:
+                case FieldDescriptorProto.Type.TypeFixed32:
+                case FieldDescriptorProto.Type.TypeUint32:
+                case FieldDescriptorProto.Type.TypeEnum:
+                case FieldDescriptorProto.Type.TypeSfixed32:
+                case FieldDescriptorProto.Type.TypeSfixed64:
+                case FieldDescriptorProto.Type.TypeSint32:
+                case FieldDescriptorProto.Type.TypeSint64:
+                    return 0;
+                case FieldDescriptorProto.Type.TypeBool:
+                    return true;
+                case FieldDescriptorProto.Type.TypeString:
+                case FieldDescriptorProto.Type.TypeBytes:
+                case FieldDescriptorProto.Type.TypeGroup:
+                    return "";
+                case FieldDescriptorProto.Type.TypeMessage:
+                    var typeName = field.TypeName.Split('.').Last();
+                    var type = messageTypes.FirstOrDefault(p => p.Name == typeName);
+                    if (type != null)
+                        return type.Fields.ToDictionary(p => p.Name, p => GetFiledDefaultValue(p, messageTypes));
+                    else
+                        return "";
+                default:
+                    return "";
             }
         }
 
