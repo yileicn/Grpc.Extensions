@@ -12,7 +12,7 @@ namespace Grpc.Extension
         /// <summary>
         /// 是否启用Jaeger
         /// </summary>
-        public bool Enable { get; set; } = true;
+        public bool Enable { get; set; }
 
         /// <summary>
         /// 服务名
