@@ -31,7 +31,8 @@ namespace Grpc.Extension.Discovery.Consul
             //更新LastIndex
             UpdateLastIndex(serviceName, res);
             //PollForChanges
-            _ = Task.Run(() => PollForChanges(serviceName, consulUrl, consulTag));
+            if (!_pollForChanges.Contains(serviceName))
+                _ = Task.Run(() => PollForChanges(serviceName, consulUrl, consulTag));
             
             return res.Response.Select(q => $"{q.Service.Address}:{q.Service.Port}").ToList();
         }        
