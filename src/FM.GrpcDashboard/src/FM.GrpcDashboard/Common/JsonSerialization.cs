@@ -8,18 +8,20 @@ namespace System
         /// <summary>
         /// 使用json序列化为字符串
         /// </summary>
+        /// <param name="input"></param>
         /// <param name="dateTimeFormat">默认null,即使用json.net默认的序列化机制，如："\/Date(1439335800000+0800)\/"</param>
+        /// <param name="ignoreNullValue"></param>
         /// <returns></returns>
         public static string ToJson(this object input, string dateTimeFormat = "yyyy-MM-dd HH:mm:ss", bool ignoreNullValue = true)
         {
             var settings = new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                PreserveReferencesHandling = PreserveReferencesHandling.None
             };
             if (ignoreNullValue)
             {
-                settings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                settings.NullValueHandling = NullValueHandling.Ignore;
             };
 
             if (!string.IsNullOrWhiteSpace(dateTimeFormat))
@@ -30,7 +32,7 @@ namespace System
                 };
                 settings.Converters = jsonConverter;
             }
-            var format = Newtonsoft.Json.Formatting.Indented;
+            var format = Formatting.Indented;
             var json = JsonConvert.SerializeObject(input, format, settings);
             return json;
         }
@@ -41,6 +43,7 @@ namespace System
         /// <typeparam name="T"></typeparam>
         /// <param name="input"></param>
         /// <param name="dateTimeFormat">默认null,即使用json.net默认的序列化机制</param>
+        /// <param name="ignoreNullValue"></param>
         /// <returns></returns>
         public static T TryFromJson<T>(this string input, string dateTimeFormat = "yyyy-MM-dd HH:mm:ss", bool ignoreNullValue = true)
         {
@@ -69,7 +72,7 @@ namespace System
             };
             if (ignoreNullValue)
             {
-                settings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                settings.NullValueHandling = NullValueHandling.Ignore;
             }
 
             if (!string.IsNullOrWhiteSpace(dateTimeFormat))

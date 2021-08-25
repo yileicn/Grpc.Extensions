@@ -8,6 +8,13 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
         function fnSubmit() {
+            var customHeaders = $("#CustomHeaders").val()
+            if (customHeaders != "") {
+                if (!isJsonString(customHeaders)) {
+                    alert('自定义头json格式错误');
+                    return false;
+                }
+            }
             $('#btnSubmit').attr({ "disabled": "disabled" });
             $('#txtResp').text("");
             $.ajax({
@@ -29,7 +36,9 @@
 }
 <div>
     <form id="frm" method="post">
-        <div class="pull-right" style="margin:-45px 0 10px 0;">
+        <label>自定义头(json):</label><br />
+        @Html.TextArea("CustomHeaders", new { @class = "form-control" })
+        <div class="pull-right">
             <input type="hidden" name="Endpoint" value="@Model.Endpoint" />
             <input type="hidden" name="MethodName" value="@Model.MethodName" />
             <input id="btnSubmit" style="width:200px;" type="button" value="调用" class="btn btn-success" onclick="fnSubmit();" />

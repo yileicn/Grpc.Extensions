@@ -3,22 +3,26 @@ using Grpc.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using static Grpc.BaseService;
 
-namespace FM.GrpcDashboard
+namespace FM.GrpcDashboard.Services
 {
-    public class GrpcService
+    public class GrpcService : IGrpcReflection
     {
         ILogger _logger;
         IConfiguration _config;
         ConsulService _consulSrv;
+        int _grpcTimeout;
 
         public GrpcService(ILogger<GrpcService> logger, IConfiguration config, ConsulService consulSrv)
         {
             _logger = logger;
             _config = config;
             _consulSrv = consulSrv;
+            _grpcTimeout = _config.GetValue<int>("GrpcTimeout");
         }
         /// <summary>
         /// 获取服务基本信息
@@ -29,12 +33,13 @@ namespace FM.GrpcDashboard
             try
             {
                 var client = new BaseServiceClient(channel);
-                return client.Info(new InfoRQ { MethodName = "" }, deadline: DateTime.UtcNow.AddSeconds(_config.GetValue<int>("GrpcTimeout")));
+                return await client.InfoAsync(new InfoRQ { MethodName = "" }, 
+                    deadline: DateTime.UtcNow.AddSeconds(_grpcTimeout));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return null;
+                throw ex;
             }
             finally
             {
@@ -120,41 +125,49 @@ namespace FM.GrpcDashboard
         /// <summary>
         /// 获取方法信息
         /// </summary>
-        public MethodInfoRS GetMethodInfo(string endpoint, string methodName)
+        public async Task<MethodInfoRS> GetMethodInfo(string endpoint, string methodName)
         {
             var channel = new Channel(endpoint, ChannelCredentials.Insecure);
             try
             {
                 var client = new BaseServiceClient(channel);
-                return client.MethodInfo(new MethodInfoRQ
+                return await client.MethodInfoAsync(new MethodInfoRQ
                 {
                     FullName = methodName
-                }, deadline: DateTime.UtcNow.AddSeconds(_config.GetValue<int>("GrpcTimeout")));
+                }, deadline: DateTime.UtcNow.AddSeconds(_grpcTimeout));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return null;
+                throw ex;
             }
             finally
             {
-                channel.ShutdownAsync().Wait();
+                await channel.ShutdownAsync();
             }
         }
         /// <summary>
         /// grpc方法调用
         /// </summary>
-        public string MethodInvoke(string endpoint, string methodName, string requestJson)
+        public async Task<string> MethodInvoke(string endpoint, string methodName, string requestJson, Dictionary<string, string> customHeaders)
         {
             var channel = new Channel(endpoint, ChannelCredentials.Insecure);
             try
             {
                 var client = new BaseServiceClient(channel);
-                return client.MethodInvoke(new MethodInvokeRQ
+                var metadata = new Metadata();
+                foreach (var item in customHeaders)
+                {
+                    if (!metadata.Any(p => p.Key == item.Key))
+                        metadata.Add(new Metadata.Entry(item.Key, item.Value));
+                }
+                return (await client.MethodInvokeAsync(new MethodInvokeRQ
                 {
                     FullName = methodName,
                     RequestJson = requestJson
-                }/*, deadline: DateTime.UtcNow.AddSeconds(_config.GetValue<int>("GrpcTimeout"))*/).ResponseJson;
+                }, metadata
+                // , deadline: DateTime.UtcNow.AddSeconds(_grpcTimeout)
+                )).ResponseJson;
             }
             catch (Exception ex)
             {
@@ -163,7 +176,7 @@ namespace FM.GrpcDashboard
             }
             finally
             {
-                channel.ShutdownAsync().Wait();
+                await channel.ShutdownAsync();
             }
         }
     }
