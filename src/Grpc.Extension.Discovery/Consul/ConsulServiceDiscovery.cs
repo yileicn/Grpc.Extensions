@@ -75,6 +75,7 @@ namespace Grpc.Extension.Discovery.Consul
                         }
                     }
                 }
+                catch (TaskCanceledException) { }
                 catch (Exception ex)
                 {
                     LoggerAccessor.Instance.OnLoggerError(new InternalException(GrpcErrorCode.Internal, "PollForChanges", ex), LogType.ClientLog);
